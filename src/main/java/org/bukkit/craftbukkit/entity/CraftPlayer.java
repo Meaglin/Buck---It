@@ -4,11 +4,16 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.Packet;
 import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.Packet6SpawnPosition;
+import net.minecraft.server.Packet9Respawn;
+import net.minecraft.server.ServerConfigurationManager;
+import net.minecraft.server.WorldServer;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -62,11 +67,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         entity.a.b(new Packet3Chat(message));
     }
 
-    @Override
-    public void teleportTo(Location location) {
-        entity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
     public String getDisplayName() {
         return name;
     }
@@ -112,5 +112,42 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public boolean performCommand(String command) {
         return server.dispatchCommand(this, command);
+    }
+
+    @Override
+    public void teleportTo(Location location) {
+        WorldServer oldWorld = ((CraftWorld)getWorld()).getHandle();
+        WorldServer newWorld = ((CraftWorld)location.getWorld()).getHandle();
+        ServerConfigurationManager manager = server.getHandle();
+
+        if (oldWorld != newWorld) {
+            manager.c.k.a(entity);
+            manager.c.k.b(entity);
+            oldWorld.manager.b(entity);
+            manager.b.remove(entity);
+            oldWorld.e(entity);
+
+            EntityPlayer newEntity = new EntityPlayer(manager.c, newWorld, entity.name, new ItemInWorldManager(newWorld));
+
+            newEntity.id = entity.id;
+            newEntity.a = entity.a;
+            newEntity.health = entity.health;
+            newEntity.fireTicks = entity.fireTicks;
+            newEntity.inventory = entity.inventory;
+            newEntity.inventory.e = newEntity;
+            newEntity.activeContainer = entity.activeContainer;
+            newEntity.defaultContainer = entity.defaultContainer;
+            newWorld.A.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
+
+            newEntity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            newWorld.manager.a(newEntity);
+            newWorld.a(newEntity);
+            manager.b.add(newEntity);
+
+            entity.a.e = newEntity;
+            entity = newEntity;
+        } else {
+            entity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        }
     }
 }

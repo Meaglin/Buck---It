@@ -9,20 +9,21 @@ import java.util.Map;
 import java.util.Set;
 
 // CraftBukkit start
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.world.ChunkLoadEvent;
 // CraftBukkit end
 
 public class ChunkProviderServer implements IChunkProvider {
 
-    private Set a = new HashSet();
+    private LongHashset a = new LongHashset(); // CraftBukkit
     private Chunk b;
     private IChunkProvider c;
     private IChunkLoader d;
-    private Map e = new HashMap();
+    private LongHashtable<Chunk> e = new LongHashtable<Chunk>(); // CraftBukkit
     private List f = new ArrayList();
     private WorldServer g;
 
@@ -44,29 +45,113 @@ public class ChunkProviderServer implements IChunkProvider {
 
         return craftChunks;
     }
-    // CraftBukkit end
 
     public boolean a(int i, int j) {
-        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(i, j);
-
-        return this.e.containsKey(chunkcoordinates);
+        return this.e.containsKey(i, j);
     }
 
+    public void saveChunk(int x, int z) {
+        Chunk chunk = this.b(x, z);
+        chunk.e();
+        this.b(chunk);
+        this.a(chunk);
+    }
+
+    public boolean unloadChunk(int x, int z, boolean save, boolean safe) {
+        if (safe && isChunkInUse(x, z))
+            return false;
+        
+        Chunk chunk = this.b(x, z);
+        
+        if (save)
+            saveChunk(x, z);
+
+        this.a.remove(x, z);
+        this.e.remove(x, z);
+        this.f.remove(chunk);
+        return true;
+    }
+    
+    public boolean unloadChunkRequest(int x, int z, boolean safe) {
+        if (safe && isChunkInUse(x, z))
+            return false;
+        c(x, z);
+        return true;
+    }
+
+    public boolean isChunkInUse(int x, int z) {
+        CraftServer server = g.getServer();
+        Player[] players = server.getOnlinePlayers();
+        for (Player player : players) {
+            Location loc = player.getLocation();
+            if (loc.getWorld() != g.getWorld()) {
+                continue;
+            }
+            // If the chunk is within 256 blocks of a player, refuse to accept the unload request
+            // This is larger than the distance of loaded chunks that actually surround a player
+            // The player is the center of a 21x21 chunk grid, so the edge is 10 chunks (160 blocks) away from the player
+            if (Math.abs(loc.getBlockX() - (x << 4)) <= 256 && Math.abs(loc.getBlockZ() - (z << 4)) <= 256) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Chunk loadChunk(int x, int z, boolean generate) {
+        if (generate) {
+            // Use the default variant of loadChunk when generate == true.
+            return d(x, z);
+        }
+
+        this.a.remove(x, z);
+        Chunk chunk = (Chunk) this.e.get(x, z);
+
+        if (chunk == null) {
+            chunk = this.e(x, z);
+
+            if (chunk != null) {
+                this.e.put(x, z, chunk);
+                this.f.add(chunk);
+
+                chunk.c();
+                chunk.d();
+
+                if (!chunk.n && this.a(x + 1, z + 1) && this.a(x, z + 1) && this.a(x + 1, z)) {
+                    this.a(this, x, z);
+                }
+
+                if (this.a(x - 1, z) && !this.b(x - 1, z).n && this.a(x - 1, z + 1) && this.a(x, z + 1) && this.a(x - 1, z)) {
+                    this.a(this, x - 1, z);
+                }
+
+                if (this.a(x, z - 1) && !this.b(x, z - 1).n && this.a(x + 1, z - 1) && this.a(x, z - 1) && this.a(x + 1, z)) {
+                    this.a(this, x, z - 1);
+                }
+
+                if (this.a(x - 1, z - 1) && !this.b(x - 1, z - 1).n && this.a(x - 1, z - 1) && this.a(x, z - 1) && this.a(x - 1, z)) {
+                    this.a(this, x - 1, z - 1);
+                }
+            }
+        }
+        return chunk;
+    }
+    // CraftBukkit end
+    
     public void c(int i, int j) {
         int k = i * 16 + 8 - this.g.spawnX;
         int l = j * 16 + 8 - this.g.spawnZ;
         short short1 = 128;
 
         if (k < -short1 || k > short1 || l < -short1 || l > short1) {
-            this.a.add(new ChunkCoordinates(i, j));
+            this.a.add(i, j); // CraftBukkit
         }
     }
 
     public Chunk d(int i, int j) {
-        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(i, j);
-
-        this.a.remove(new ChunkCoordinates(i, j));
-        Chunk chunk = (Chunk) this.e.get(chunkcoordinates);
+        // CraftBukkit start
+        this.a.remove(i, j);
+        Chunk chunk = (Chunk) this.e.get(i, j);
+        // CraftBukkit end
 
         if (chunk == null) {
             chunk = this.e(i, j);
@@ -78,7 +163,7 @@ public class ChunkProviderServer implements IChunkProvider {
                 }
             }
 
-            this.e.put(chunkcoordinates, chunk);
+            this.e.put(i, j, chunk); // CraftBukkit
             this.f.add(chunk);
             if (chunk != null) {
                 chunk.c();
@@ -118,8 +203,7 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public Chunk b(int i, int j) {
-        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(i, j);
-        Chunk chunk = (Chunk) this.e.get(chunkcoordinates);
+        Chunk chunk = (Chunk) this.e.get(i, j); // CraftBukkit
 
         return chunk == null ? (this.g.x ? this.d(i, j) : this.b) : chunk;
     }
@@ -211,13 +295,15 @@ public class ChunkProviderServer implements IChunkProvider {
         if (!this.g.C) {
             for (int i = 0; i < 100; ++i) {
                 if (!this.a.isEmpty()) {
-                    ChunkCoordinates chunkcoordinates = (ChunkCoordinates) this.a.iterator().next();
-                    Chunk chunk = this.b(chunkcoordinates.a, chunkcoordinates.b);
-
+                    // CraftBukkit start
+                    long chunkcoordinates = this.a.popFirst();
+                    Chunk chunk = e.get(chunkcoordinates);
+                    if (chunk == null) continue;
+                    // CraftBukkit end
                     chunk.e();
                     this.b(chunk);
                     this.a(chunk);
-                    this.a.remove(chunkcoordinates);
+                    // this.a.remove(chunkcoordinates); // CraftBukkit
                     this.e.remove(chunkcoordinates);
                     this.f.remove(chunk);
                 }

@@ -24,11 +24,22 @@ import org.bukkit.World;
 
 public class CraftWorld implements World {
     private final WorldServer world;
+    private final Environment environment;
+    private final CraftServer server;
 
     private static final Random rand = new Random();
 
     public CraftWorld(WorldServer world) {
         this.world = world;
+        this.server = world.getServer();
+
+        if (world.q instanceof WorldProviderHell) {
+            environment = Environment.NETHER;
+        } else {
+            environment = Environment.NORMAL;
+        }
+
+        server.addWorld(this);
     }
 
     public Block getBlockAt(int x, int y, int z) {
@@ -64,7 +75,31 @@ public class CraftWorld implements World {
     }
 
     public void loadChunk(int x, int z) {
-         world.A.d(x, z);
+        loadChunk(x, z, true);
+    }
+
+    public boolean loadChunk(int x, int z, boolean generate) {
+        return world.A.loadChunk(x, z, generate) != null;
+    }
+
+    public boolean unloadChunk(int x, int z) {
+        return unloadChunk(x, z, true);
+    }
+
+    public boolean unloadChunk(int x, int z, boolean save) {
+        return unloadChunk(x, z, save, false);
+    }
+
+    public boolean unloadChunk(int x, int z, boolean save, boolean safe) {
+        return world.A.unloadChunk(x, z, save, safe);
+    }
+    
+    public boolean unloadChunkRequest(int x, int z) {
+        return unloadChunkRequest(x, z, true);
+    }
+    
+    public boolean unloadChunkRequest(int x, int z, boolean safe) {
+        return world.A.unloadChunkRequest(x, z, safe);
     }
 
     public boolean isChunkLoaded(Chunk chunk) {
@@ -189,7 +224,7 @@ public class CraftWorld implements World {
 
     @Override
     public String toString() {
-        return "CraftWorld";
+        return "CraftWorld{name=" + getName() + '}';
     }
 
     public long getTime() {
@@ -210,6 +245,10 @@ public class CraftWorld implements World {
 
     public void setFullTime(long time) {
         world.e = time;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
     }
 
     private final class ChunkCoordinate {

@@ -9,9 +9,13 @@ public class PlayerManager {
     private PlayerList b = new PlayerList();
     private List c = new ArrayList();
     private MinecraftServer d;
+    public WorldServer world; // Craftbukkit
 
-    public PlayerManager(MinecraftServer minecraftserver) {
+    // Craftbukkit - change of method signature
+    public PlayerManager(MinecraftServer minecraftserver, WorldServer world) {
         this.d = minecraftserver;
+
+        this.world = world; // Craftbukkit
     }
 
     public void a() {
@@ -22,7 +26,8 @@ public class PlayerManager {
         this.c.clear();
     }
 
-    private PlayerInstance a(int i, int j, boolean flag) {
+    // Craftbukkit - method signature changed!
+    private PlayerInstance a(int i, int j, boolean flag, WorldServer world) {
         long k = (long) i + 2147483647L | (long) j + 2147483647L << 32;
         PlayerInstance playerinstance = (PlayerInstance) this.b.a(k);
 
@@ -34,10 +39,11 @@ public class PlayerManager {
         return playerinstance;
     }
 
-    public void a(int i, int j, int k) {
+    // Craftbukkit - method signature changed!
+    public void a(int i, int j, int k, WorldServer world) {
         int l = i >> 4;
         int i1 = k >> 4;
-        PlayerInstance playerinstance = this.a(l, i1, false);
+        PlayerInstance playerinstance = this.a(l, i1, false, world);
 
         if (playerinstance != null) {
             playerinstance.a(i & 15, j, k & 15);
@@ -67,7 +73,7 @@ public class PlayerManager {
         int dz = 0;
 
         // Origin
-        this.a(i, j, true).a(entityplayer);
+        this.a(i, j, true, ((WorldServer)entityplayer.world)).a(entityplayer);
 
         // All but the last leg
         for (int legSize = 1; legSize <= size * 2; legSize++) {
@@ -77,7 +83,7 @@ public class PlayerManager {
                 for (int k = 0; k < legSize; k++ ) {
                     dx += dir[0];
                     dz += dir[1];
-                    this.a(i + dx, j + dz, true).a(entityplayer);
+                    this.a(i + dx, j + dz, true, ((WorldServer)entityplayer.world)).a(entityplayer); // Craftbukkit
                 }
             }
         }
@@ -87,7 +93,7 @@ public class PlayerManager {
         for (int k = 0; k < size * 2; k++) {
             dx += direction[facing][0];
             dz += direction[facing][1];
-            this.a(i + dx, j + dz, true).a(entityplayer);
+            this.a(i + dx, j + dz, true, ((WorldServer)entityplayer.world)).a(entityplayer);
         }
         // CraftBukkit end
 
@@ -100,7 +106,7 @@ public class PlayerManager {
 
         for (int k = i - 10; k <= i + 10; ++k) {
             for (int l = j - 10; l <= j + 10; ++l) {
-                PlayerInstance playerinstance = this.a(k, l, false);
+                PlayerInstance playerinstance = this.a(k, l, false, ((WorldServer)entityplayer.world));
 
                 if (playerinstance != null) {
                     playerinstance.b(entityplayer);
@@ -135,11 +141,11 @@ public class PlayerManager {
                 for (int k1 = i - 10; k1 <= i + 10; ++k1) {
                     for (int l1 = j - 10; l1 <= j + 10; ++l1) {
                         if (!this.a(k1, l1, k, l)) {
-                            this.a(k1, l1, true).a(entityplayer);
+                            this.a(k1, l1, true, ((WorldServer)entityplayer.world)).a(entityplayer);
                         }
 
                         if (!this.a(k1 - i1, l1 - j1, i, j)) {
-                            PlayerInstance playerinstance = this.a(k1 - i1, l1 - j1, false);
+                            PlayerInstance playerinstance = this.a(k1 - i1, l1 - j1, false, ((WorldServer)entityplayer.world));
 
                             if (playerinstance != null) {
                                 playerinstance.b(entityplayer);

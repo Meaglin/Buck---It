@@ -4,27 +4,37 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PropertyManager;
 import net.minecraft.server.ServerConfigurationManager;
+import net.minecraft.server.WorldManager;
+import net.minecraft.server.WorldServer;
 import org.bukkit.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.event.Event.Type;
+import org.bukkit.event.world.WorldEvent;
 
 public final class CraftServer implements Server {
     private final String serverName = "Craftbukkit";
     private final String serverVersion;
     private final String protocolVersion = "1.2_01";
     private final PluginManager pluginManager = new SimplePluginManager(this);
+    private final BukkitScheduler scheduler =  new CraftScheduler(this);
     private final CommandMap commandMap = new SimpleCommandMap(this);
     protected final MinecraftServer console;
     protected final ServerConfigurationManager server;
+    private final Map<String, World> worlds = new HashMap<String, World>();
 
     public CraftServer(MinecraftServer console, ServerConfigurationManager server) {
         this.console = console;
@@ -145,8 +155,12 @@ public final class CraftServer implements Server {
         return pluginManager;
     }
 
-    public World[] getWorlds() {
-        return new World[]{console.e.getWorld()};
+    public BukkitScheduler getScheduler() {
+        return scheduler;
+    }
+
+    public List<World> getWorlds() {
+        return new ArrayList<World>(worlds.values());
     }
 
     public ServerConfigurationManager getHandle() {
@@ -163,14 +177,16 @@ public final class CraftServer implements Server {
         console.d = config;
 
         boolean animals = config.a("spawn-monsters", console.m);
-        boolean monsters = config.a("spawn-monsters", console.e.k > 0);
+        boolean monsters = config.a("spawn-monsters", console.worlds.get(0).k > 0);
 
         console.l = config.a("online-mode", console.l);
         console.m = config.a("spawn-animals", console.m);
         console.n = config.a("pvp", console.n);
 
-        console.e.k = monsters ? 1 : 0;
-        console.e.a(monsters, animals);
+        for (WorldServer world : console.worlds) {
+            world.k = monsters ? 1 : 0;
+            world.a(monsters, animals);
+        }
 
         pluginManager.clearPlugins();
         commandMap.clearCommands();
@@ -180,5 +196,68 @@ public final class CraftServer implements Server {
     @Override
     public String toString() {
         return "CraftServer{" + "serverName=" + serverName + "serverVersion=" + serverVersion + "protocolVersion=" + protocolVersion + '}';
+    }
+
+    public World createWorld(String name, World.Environment environment) {
+        File folder = new File(name);
+        World world = getWorld(name);
+
+        if (world != null) {
+            return world;
+        }
+        
+        if ((folder.exists()) && (!folder.isDirectory())) {
+            throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
+        }
+
+        WorldServer internal = new WorldServer(console, new File("."), name, environment == World.Environment.NETHER ? -1 : 0);
+
+        internal.a(new WorldManager(console, internal));
+        internal.k = 1;
+        internal.a(true, true);
+        console.f.a(internal);
+        console.worlds.add(internal);
+
+        short short1 = 196;
+        long i = System.currentTimeMillis();
+        for (int j = -short1; j <= short1; j += 16) {
+            for (int k = -short1; k <= short1; k += 16) {
+                long l = System.currentTimeMillis();
+
+                if (l < i) {
+                    i = l;
+                }
+
+                if (l > i + 1000L) {
+                    int i1 = (short1 * 2 + 1) * (short1 * 2 + 1);
+                    int j1 = (j + short1) * (short1 * 2 + 1) + k + 1;
+
+                    System.out.println("Preparing spawn area for " + name + ", " + (j1 * 100 / i1) + "%");
+                    i = l;
+                }
+
+                internal.A.d(internal.spawnX + j >> 4, internal.spawnZ + k >> 4);
+
+                while (internal.d()) {
+                    ;
+                }
+            }
+        }
+        
+        return new CraftWorld(internal);
+    }
+
+    public MinecraftServer getServer() {
+        return console;
+    }
+
+    public World getWorld(String name) {
+        return worlds.get(name.toLowerCase());
+    }
+
+    protected void addWorld(World world) {
+        worlds.put(world.getName().toLowerCase(), world);
+
+        pluginManager.callEvent(new WorldEvent(Type.WORLD_LOADED, world));
     }
 }
