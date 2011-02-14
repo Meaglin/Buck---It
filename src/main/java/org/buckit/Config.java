@@ -157,7 +157,7 @@ public class Config {
             WARPS_ENABLED = gp.getBool("WarpsEnabled", "true");
             WARPS_GROUPS_ENABLED = gp.getBool("WarpsGroupsEnabled", "false");
             
-            DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","^0<{$username}>:");
+            DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","^0{$username}");
             TRACK_USER_ONLINE_TIME = gp.getBool("TrackUserOnlineTime", "true");
             NOT_ENOUGH_ACCESS_MESSAGE = gp.getProperty("AccessMessage", "Your are not allowed to use this command.");
             

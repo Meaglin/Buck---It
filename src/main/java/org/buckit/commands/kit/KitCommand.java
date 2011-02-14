@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.buckit.Config;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
+import org.buckit.util.TimeFormat;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,7 +45,7 @@ public class KitCommand extends Command {
         
         int lastused = (kit.getDelay() != 0 ? datasource.lastUsed(player.getPlayerId(), name) + kit.getDelay() : 0);
         if(lastused > (System.currentTimeMillis()/1000)) {
-            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "You cannot use this kit yet, please wait " + formatTime((int) (lastused - (System.currentTimeMillis()/1000))) + " before using this kit again.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "You cannot use this kit yet, please wait " + TimeFormat.formatRemaining((int) (lastused - (System.currentTimeMillis()/1000))) + " before using this kit again.");
         } else {
             ItemStack[] items = kit.getItems();
             player.getInventory().addItem(items);
@@ -53,44 +54,6 @@ public class KitCommand extends Command {
         return true;
     }
     
-    private static final int week = 60 * 60 * 24 * 7;
-    private static final int day = 60 * 60 * 24;
-    private static final int hour = 60 * 60;
-    private static final int minute = 60;
-    private static String formatTime(int duration) {
-        int weeks = 0,days = 0,hours = 0,minutes = 0,seconds = 0;
-        if(duration >= week){
-            weeks = (int) Math.floor(duration / week);
-            duration -= weeks * week;
-        }
-        if(duration >= day){
-            days = (int) Math.floor(duration / day);
-            duration -= days * day;
-        }
-        if(duration >= hour){
-            hours = (int) Math.floor(duration / hour);
-            duration -= hours * hour;
-        }
-        if(duration >= minute){
-            minutes = (int) Math.floor(duration / minute);
-            duration -= minutes * minute;
-        }
-        seconds = duration;
-        String rt = "";
-        
-        if(weeks != 0) rt += (weeks == 1 ? "1 day, " : weeks + " days, ");
-        if(hours != 0) rt += (hours == 1 ? "1 hour, " : hours + " hours, ");
-        if(minutes != 0) rt += (minutes == 1 ? "1 minute, " : minutes + " minutes, ");
-        if(seconds != 0){
-            if(rt.length() > 0){
-                rt = rt.substring(0, rt.length() - 2 );
-                rt += " and ";
-            }
-            rt += (seconds == 1 ? "1 second" : seconds + " seconds");
-        } else if(rt.length() > 0){
-            rt = rt.substring(0, rt.length() - 2);
-        }
-        
-        return rt;
-    }
+    
+    
 }

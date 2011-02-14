@@ -6,10 +6,10 @@ public class UserDataHolder {
 
     private int         id, firstlogin, lastlogin, uptime, bantime, mutetime;
     private String      username, usernameformat, commands;
-    private boolean     admin, canbuild;
+    private boolean     admin, canbuild, muted;
     private AccessLevel accesslevel;
 
-    public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int bantime, int mutetime, AccessLevel accesslevel) {
+    public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int bantime, int mutetime, AccessLevel accesslevel, boolean muted) {
         this.id = id;
         this.username = username;
         this.usernameformat = usernameformat;
@@ -22,6 +22,7 @@ public class UserDataHolder {
         this.bantime = bantime;
         this.mutetime = mutetime;
         this.accesslevel = accesslevel;
+        this.muted = muted;
     }
 
     /**
@@ -106,6 +107,23 @@ public class UserDataHolder {
      */
     public AccessLevel getAccessLevel() {
         return accesslevel;
+    }
+
+    /**
+     * @return the muted
+     */
+    public boolean isMuted() {
+        if((System.currentTimeMillis()/1000) < getMutetime())
+            return true;
+        
+        return muted;
+    }
+
+    /**
+     * @param muted the muted to set
+     */
+    public void setMuted(boolean muted) {
+        this.muted = muted;
     }
 
     /**
@@ -202,6 +220,10 @@ public class UserDataHolder {
      */
     public void setAccesslevel(AccessLevel accesslevel) {
         this.accesslevel = accesslevel;
+    }
+
+    public boolean getMuted() {
+        return muted;
     }
 
 }

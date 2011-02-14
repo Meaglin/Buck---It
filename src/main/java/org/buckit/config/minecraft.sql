@@ -14,7 +14,7 @@ CREATE TABLE `accessgroups` (
 CREATE TABLE `accesslevels` (
    `id` int(11) not null,
    `name` varchar(50),
-   `usernameformat` varchar(255) default '^0<{$username}>:',
+   `usernameformat` varchar(255) default '^0{$username}',
    `accessgroups` varchar(255),
    `admingroup` tinyint(1) default '0',
    `canbuild` tinyint(1) default '1',
@@ -61,6 +61,7 @@ CREATE TABLE `users` (
    `commands` longtext ,
    `canbuild` tinyint(1) not null default '0',
    `isadmin` tinyint(1) not null default '0',
+   `muted` tinyint(1) not null default '0',
    `accesslevel` int(11) not null default '0',
    PRIMARY KEY (`id`),
    UNIQUE KEY (`username`)
