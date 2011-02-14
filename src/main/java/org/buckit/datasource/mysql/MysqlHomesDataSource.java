@@ -42,6 +42,7 @@ public class MysqlHomesDataSource implements HomesDataSource {
             st.execute();
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -72,6 +73,7 @@ public class MysqlHomesDataSource implements HomesDataSource {
                 home = new Home(rs.getInt("id"), name, new Location(server.getWorld(rs.getString("world")), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("rotX"), rs.getFloat("rotY")));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return home;
         } finally {
             try {
@@ -102,6 +104,7 @@ public class MysqlHomesDataSource implements HomesDataSource {
                 homes.add(new Home(rs.getInt("id"), rs.getString("name"), new Location(server.getWorld(rs.getString("world")), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("rotX"), rs.getFloat("rotY"))));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return homes;
         } finally {
             try {
@@ -142,6 +145,7 @@ public class MysqlHomesDataSource implements HomesDataSource {
             st.execute();
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {

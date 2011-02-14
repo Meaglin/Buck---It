@@ -2,9 +2,9 @@ package org.buckit.commands.kit;
 
 import java.util.Arrays;
 
+import org.buckit.Config;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,25 +30,25 @@ public class KitCommand extends Command {
         if(!(sender instanceof Player))
             return false;
         
-        if(args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Please specify a kit name.");
+        if(args.length < 1) {
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Please specify a kit name.");
             return true;
         }
-        String name = args[1].toLowerCase();
+        String name = args[0].toLowerCase();
         Kit kit = datasource.getKit(name);
         Player player = ((Player)sender);
         if(kit == null || kit.getMinaccesslevel() > player.getAccessLevel().getId()) {
-            sender.sendMessage(ChatColor.RED + "No kit found with name '" + name + "' .");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No kit found with name '" + name + "' .");
             return true;
         } 
         
         int lastused = (kit.getDelay() != 0 ? datasource.lastUsed(player.getPlayerId(), name) + kit.getDelay() : 0);
         if(lastused > (System.currentTimeMillis()/1000)) {
-            sender.sendMessage(ChatColor.RED + "You cannot use this kit yet, please wait " + formatTime((int) (lastused - (System.currentTimeMillis()/1000))) + " before using this kit again.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "You cannot use this kit yet, please wait " + formatTime((int) (lastused - (System.currentTimeMillis()/1000))) + " before using this kit again.");
         } else {
             ItemStack[] items = kit.getItems();
             player.getInventory().addItem(items);
-            sender.sendMessage(ChatColor.GREEN + "There you go " + player.getName() + ".");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "There you go " + player.getName() + ".");
         }
         return true;
     }

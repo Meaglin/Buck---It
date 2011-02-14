@@ -34,8 +34,8 @@ public class ListWarpCommand extends Command {
             return false;
         
         String group = Config.WARPS_DEFAULT_GROUP_NAME;
-        if(args.length > 1 && Config.WARPS_GROUPS_ENABLED)
-            group = args[1].toLowerCase();
+        if(args.length > 0 && Config.WARPS_GROUPS_ENABLED)
+            group = args[0].toLowerCase();
         
         int accesslevel = ((Player)sender).getAccessLevel().getId();
         //some1 is bound to try this out .....
@@ -63,7 +63,7 @@ public class ListWarpCommand extends Command {
                 str = "No warps are availeble.";
             else
                 str = str.substring(0, str.length() - 2);
-            sender.sendMessage("List of available warps " + (!Config.WARPS_DEFAULT_GROUP_NAME.equals(group) ? " in group " + group : "" ) + ":");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "List of available warps " + (!Config.WARPS_DEFAULT_GROUP_NAME.equals(group) ? " in group " + group : "" ) + ":");
             sender.sendMessage(str);
         }
         return true;

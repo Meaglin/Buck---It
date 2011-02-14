@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.buckit.Config;
 import org.buckit.datasource.type.WarpsDataSource;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,41 +30,41 @@ public class SetWarpCommand extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if(!(sender instanceof Player))
             return false;
-        if(args.length < 2){
-            sender.sendMessage(ChatColor.RED + "No warp name specified.");
-            sender.sendMessage(ChatColor.RED + getUsage());
+        if(args.length < 1){
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp name specified.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
             return true;
         }
         String group = Config.WARPS_DEFAULT_GROUP_NAME;
-        String name = args[1].toLowerCase();
+        String name = args[0].toLowerCase();
         int accesslevel = Config.DEFAULT_ACCESS_LEVEL;
-        if(args.length > 2){
+        if(args.length > 1){
             if(Config.WARPS_GROUPS_ENABLED){
-                group = args[2].toLowerCase();
+                group = args[1].toLowerCase();
             }else{
                 try{
-                    accesslevel = Integer.parseInt(args[2]);
+                    accesslevel = Integer.parseInt(args[1]);
                 }catch(NumberFormatException e){
-                    sender.sendMessage(ChatColor.RED + "Invalid accesslevel.");
-                    sender.sendMessage(ChatColor.RED + getUsage());
+                    sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid accesslevel.");
+                    sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
                     return true;
                 }
             }
         }
-        if(args.length > 3 && Config.WARPS_GROUPS_ENABLED){
+        if(args.length > 2 && Config.WARPS_GROUPS_ENABLED){
             try{
                 accesslevel = Integer.parseInt(args[2]);
             }catch(NumberFormatException e){
-                sender.sendMessage(ChatColor.RED + "Invalid accesslevel.");
-                sender.sendMessage(ChatColor.RED + getUsage());
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid accesslevel.");
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
                 return true;
             }
         }
         
         if(datasource.addWarp(group, name, ((Player)sender).getLocation(), accesslevel)){
-            sender.sendMessage(ChatColor.GREEN + "Succesfully added warp '" + args[1] + "' "+(Config.WARPS_GROUPS_ENABLED ?  "in group '" + group + "'" : "" )+"  !");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Succesfully added warp '" + name + "' "+(Config.WARPS_GROUPS_ENABLED ?  "in group '" + group + "'" : "" )+"  !");
         } else {
-            sender.sendMessage(ChatColor.RED + "Error while setting warp, please report this to Buck - It(with the error message in the console).");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Error while setting warp, please report this to Buck - It(with the error message in the console).");
         }
         
         return true;

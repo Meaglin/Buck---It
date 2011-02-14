@@ -57,6 +57,7 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -83,6 +84,7 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
             st.execute();
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -127,6 +129,7 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
                 addWarp(warp);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {

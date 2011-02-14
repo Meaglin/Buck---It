@@ -30,31 +30,32 @@ public class WarpCommand extends Command{
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if(!(sender instanceof Player))
             return false;
-        if(args.length < 2){
-            sender.sendMessage(ChatColor.RED + "No warp name specified.");
-            sender.sendMessage(ChatColor.RED + getUsage());
-        } else if(args.length == 2) {
-            Warp warp = datasource.getWarp(Config.WARPS_DEFAULT_GROUP_NAME, args[1].toLowerCase());
+        if(args.length < 1){
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp name specified.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
+        } else if(args.length == 1) {
+            Warp warp = datasource.getWarp(Config.WARPS_DEFAULT_GROUP_NAME, args[0].toLowerCase());
             if(warp == null)
-                sender.sendMessage(ChatColor.RED + "No warp found with name " + args[1].toLowerCase() + ".");
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp found with name " + args[0].toLowerCase() + ".");
             else {
                 sender.sendMessage(ChatColor.AQUA + "Woosh!");
                 ((Player)sender).teleportTo(warp.getLocation());
             }
-        } else if(args.length == 3) {
+        } else if(args.length == 2) {
             if(Config.WARPS_GROUPS_ENABLED){
-                Warp warp = datasource.getWarp(args[2].toLowerCase(), args[1].toLowerCase());
+                Warp warp = datasource.getWarp(args[1].toLowerCase(), args[0].toLowerCase());
                 if(warp == null)
-                    sender.sendMessage(ChatColor.RED + "No warp found with name '" + args[1].toLowerCase() + "' in group '" + args[2].toLowerCase() + "'.");
+                    sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp found with name '" + args[0].toLowerCase() + "' in group '" + args[1].toLowerCase() + "'.");
                 else {
                     sender.sendMessage(ChatColor.AQUA + "Woosh!");
                     ((Player)sender).teleportTo(warp.getLocation());
+                    
                 }
             } else {
-                sender.sendMessage(ChatColor.RED + getUsage());
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
             }
         } else {
-            sender.sendMessage(ChatColor.RED + getUsage());
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
         }
         
         return true;

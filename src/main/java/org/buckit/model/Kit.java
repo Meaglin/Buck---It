@@ -25,6 +25,18 @@ public class Kit {
         return items;
     }
 
+    public String itemsToString() {
+        String rt = "";
+        for(int i = 0;i < items.length;i++){
+            for(int k = 0;k < 3;k++){
+                rt += items[i][k] + ",";
+            }
+            rt = rt.substring(0,rt.length()-1);
+            rt += ";";
+        }
+        
+        return rt;
+    }
     public ItemStack[] getItems() {
         ItemStack[] rt = new ItemStack[items.length];
         for (int i = 0; i < items.length; i++) {

@@ -83,6 +83,7 @@ public class MysqlAccessDataSource implements AccessDataSource {
                 accesslevelsint.put(access.getId(), access);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {

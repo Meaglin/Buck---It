@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.buckit.Config;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,29 +32,29 @@ public class RemoveWarpCommand extends Command {
         if(!(sender instanceof Player))
             return false;
         
-        if(args.length < 2){
-            sender.sendMessage(ChatColor.RED + "No warp name specified.");
-            sender.sendMessage(ChatColor.RED + getUsage());
+        if(args.length < 1){
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp name specified.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
             return true;
         }
         
-        String name = args[1].toLowerCase();
+        String name = args[0].toLowerCase();
         String group = Config.WARPS_DEFAULT_GROUP_NAME;
         
-        if(args.length > 2){
-            group = args[2].toLowerCase();
+        if(args.length > 1){
+            group = args[1].toLowerCase();
         }
         
         Warp warp = datasource.getWarp(group, name);
         if(warp == null){
-            sender.sendMessage(ChatColor.RED + "No warp found with name '" + name + "' " + (Config.WARPS_GROUPS_ENABLED ? "in group '" + group + "'" : "") + " !");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp found with name '" + name + "' " + (Config.WARPS_GROUPS_ENABLED ? "in group '" + group + "'" : "") + " !");
             return true;
         }
         
         if(datasource.removeWarp(warp)){
-            sender.sendMessage(ChatColor.GREEN + "Succefully removed warp '" + name + "' " + (Config.WARPS_GROUPS_ENABLED ? "from group '" + group + "'" : "") + " !");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Succefully removed warp '" + name + "' " + (Config.WARPS_GROUPS_ENABLED ? "from group '" + group + "'" : "") + " !");
         } else {
-            sender.sendMessage(ChatColor.RED + "Unable to remove warp, please report the error in the console to Buck - It!");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Unable to remove warp, please report the error in the console to Buck - It!");
         }
         
         return true;

@@ -3,6 +3,7 @@ package org.buckit.datasource.mysql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +17,9 @@ public class MysqlKitsDataSource implements KitsDataSource {
 
     private Map<String, Kit> kits;
 
-    private static String    SELECT_KITS = "SELECT id,name,items,minaccesslevel,delay FROM " + Config.DATABASE_KITS_TABLE;
-
+    private static String       SELECT_KITS = "SELECT id,name,items,minaccesslevel,delay FROM " + Config.DATABASE_KITS_TABLE;
+    private static String       INSERT_KIT = "REPLACE INTO " + Config.DATABASE_KITS_TABLE + " (name,items,minaccesslevel,delay) VALUES (?,?,?,?)";
+    
     private DataSource datasource;
     public MysqlKitsDataSource(DataSource dataSource) {
         datasource = dataSource;
@@ -53,6 +55,7 @@ public class MysqlKitsDataSource implements KitsDataSource {
                 kits.put(kit.getName(), kit);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -69,7 +72,7 @@ public class MysqlKitsDataSource implements KitsDataSource {
         return true;
     }
 
-    private int[][] getItemArray(String str) {
+    private static int[][] getItemArray(String str) {
         String[] split = str.split(Config.DATABASE_SEPERATOR);
         int[][] rt = new int[split.length][3];
         String[] parts;
@@ -92,8 +95,37 @@ public class MysqlKitsDataSource implements KitsDataSource {
     }
     @Override
     public boolean setKit(Kit kit) {
-        // TODO Auto-generated method stub
-        return false;
+        Connection conn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            conn = DatabaseFactory.getInstance().getConnection();
+            st = conn.prepareStatement(INSERT_KIT, Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, kit.getName());
+            st.setString(2, kit.itemsToString());
+            st.setInt(3, kit.getMinaccesslevel());
+            st.setInt(4, kit.getDelay());
+            st.execute();
+            rs = st.getGeneratedKeys();
+            if (rs.next()) {
+                kits.put(kit.getName(), new Kit(rs.getInt("id"), kit.getName(), kit.getItemsArray(), kit.getMinaccesslevel(), kit.getDelay()));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (conn != null)
+                    conn.close();
+                if (st != null)
+                    st.close();
+                if (rs != null)
+                    rs.close();
+            } catch (Exception e) {
+            }
+        }
+        return true;
     }
 
 }

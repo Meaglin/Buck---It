@@ -67,6 +67,7 @@ public class MysqlUserDataSource implements UserDataSource {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -94,6 +95,7 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setInt(2, holder.getId());
             st.execute();
         } catch (Exception e) {
+            e.printStackTrace();
 
         } finally {
             try {
@@ -118,6 +120,7 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setInt(2, holder.getId());
             st.execute();
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -143,6 +146,7 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setInt(2, holder.getId());
             st.execute();
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
@@ -188,6 +192,7 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setInt(12, holder.getId());
             st.execute();
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         } finally {
             try {
