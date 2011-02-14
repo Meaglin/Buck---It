@@ -7,23 +7,22 @@ import org.buckit.access.AccessLevel;
 import org.buckit.datasource.type.AccessDataSource;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Modify extends Command {
+public class ModifyCommand extends Command {
 	
 	private final Server server;
 	private final UserDataSource userData;
 	private final AccessDataSource accessData;
 
-	public Modify(String name, Server server) {
+	public ModifyCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Modifies.";
+        this.tooltip = "Modifies a player's properties.";
         this.usageMessage = "Usage: /modify <player> <key1>:<value1> <key2>:<value2> <keyN>:<valueN>";
-        this.accessname = "buckit.modify";
+        this.accessname = "buckit.admin.modify";
         
         this.server = server;
         this.userData = server.getDataSource().getUserDataSource();
@@ -42,6 +41,7 @@ public class Modify extends Command {
 		}
 		
 		List<Player> players = server.matchPlayer(args[0].toLowerCase());
+		userData.getUserData(args[0].toLowerCase());
 		
 		if (players.size() == 0) {
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found to modify");
@@ -131,9 +131,7 @@ public class Modify extends Command {
 			names = names.substring(2);
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found: "+names);
 			return true;
-		}		
-		
-		return false;
+		}
 	}
 
 }

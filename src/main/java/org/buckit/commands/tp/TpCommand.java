@@ -36,7 +36,7 @@ public class TpCommand extends Command {
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + this.getUsage());
 			return true;
 		} else {
-			receivers = server.matchPlayer(args[1]);
+			receivers = server.matchPlayer(args[0]);
 		}
 		
 		if (receivers.size() == 0) {
