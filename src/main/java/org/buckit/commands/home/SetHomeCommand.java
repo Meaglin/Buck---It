@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.buckit.Config;
 import org.buckit.datasource.type.HomesDataSource;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,15 +33,15 @@ public class SetHomeCommand extends Command {
         
         String name = "default";
         
-        if(Config.HOMES_MULTI_ENABLED && args.length > 1)
-            name = args[1].toLowerCase();
+        if(Config.HOMES_MULTI_ENABLED && args.length > 0)
+            name = args[0].toLowerCase();
         
         Player player = (Player)sender;
         
         if(datasource.setHome(player.getPlayerId(), player.getName(), name, player.getLocation()))
-            sender.sendMessage(ChatColor.RED + "Succesfully set home"+(!name.equals("default") ? " with name '" + name + "' " : "" )+".");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Succesfully set home"+(!name.equals("default") ? " with name '" + name + "' " : "" )+".");
         else
-            sender.sendMessage(ChatColor.RED + "Error while setting home, please report this to Buck - It!");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Error while setting home, please report this to Buck - It!");
         
         return true;
     }

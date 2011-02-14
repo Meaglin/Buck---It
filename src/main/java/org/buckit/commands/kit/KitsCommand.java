@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
+import org.buckit.Config;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,7 +48,7 @@ public class KitsCommand extends Command {
         }else
             str = str.substring(0,str.length()-2);
         
-        sender.sendMessage(ChatColor.GREEN + "List of availeble kits:");
+        sender.sendMessage(Config.DEFAULT_INFO_COLOR + "List of availeble kits:");
         sender.sendMessage(str);
         
         return true;

@@ -165,15 +165,24 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private UserDataHolder dataholder;
     private void loadBuckItData(){
         dataholder = server.getDataSource().getUserDataSource().getUserData(getName());
+        
+        String format = "";
+        if(dataholder.getUsernameformat() != null)
+            format = dataholder.getUsernameformat();
+        else
+            format = getAccessLevel().getUsernameformat();
+        
+        setDisplayName(format.replace("{$username}", getName()).replace("{$group}", getAccessLevel().getName()).replace("^", "\u00A7"));
+        
     }
     @Override
     public boolean canBuild() {
-        return dataholder.getAccesslevel().canBuild();
+        return getAccessLevel().canBuild();
     }
 
     @Override
     public boolean canUseCommand(String command) {
-        if(dataholder.getAccesslevel().canUseCommand(command))
+        if(dataholder.getAccessLevel().canUseCommand(command))
             return true;
         
         String[] split = command.split(".");
@@ -183,7 +192,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 for(int x = 1;x <= i;x++)
                     t += "." + split[x];
                 t += ".*";
-                if(dataholder.getAccesslevel().canUseCommand(t))
+                if(dataholder.getAccessLevel().canUseCommand(t))
                     return true;
             }
         }
@@ -193,16 +202,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isAdmin() {
-        return dataholder.getAccesslevel().isAdmin();
+        return getAccessLevel().isAdmin();
     }
     
     @Override
     public AccessLevel getAccessLevel() {
-        return dataholder.getAccesslevel();
+        return dataholder.getAccessLevel();
     }
     
     @Override
     public int getPlayerId() {
         return dataholder.getId();
+    }
+    
+    @Override
+    public UserDataHolder getUserDataHolder() {
+        return dataholder;
     }
 }

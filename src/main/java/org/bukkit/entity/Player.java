@@ -4,6 +4,7 @@ package org.bukkit.entity;
 import java.net.InetSocketAddress;
 
 import org.buckit.access.AccessLevel;
+import org.buckit.model.UserDataHolder;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
@@ -103,4 +104,11 @@ public interface Player extends HumanEntity, CommandSender {
      * @return player id
      */
     public int getPlayerId();
+    
+    /**
+     * Buck - It function.
+     * 
+     * @return userdataholder
+     */
+    public UserDataHolder getUserDataHolder();
 }

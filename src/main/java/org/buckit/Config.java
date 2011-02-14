@@ -24,6 +24,7 @@ public class Config {
 
     public static DataType     DATA_SOURCE_TYPE;
 
+    public static boolean      TP_REQUEST_COMMANDS_ENABLED;
     public static boolean      KITS_ENABLED;
     public static boolean      HOMES_ENABLED;
     public static boolean      HOMES_MULTI_ENABLED;
@@ -34,6 +35,9 @@ public class Config {
     public static String       DEFAULT_USER_FORMAT;
     public static int          DEFAULT_ACCESS_LEVEL;
     
+	public static String	   DEFAULT_ERROR_COLOR;
+	public static String       DEFAULT_INFO_COLOR;
+	
     public static boolean      TRACK_USER_ONLINE_TIME;
     public static String       NOT_ENOUGH_ACCESS_MESSAGE;
 
