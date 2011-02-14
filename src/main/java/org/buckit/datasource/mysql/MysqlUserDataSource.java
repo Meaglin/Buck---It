@@ -188,7 +188,7 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setString(8, holder.getCommands());
             st.setBoolean(9, holder.canbuild());
             st.setBoolean(10, holder.isAdmin());
-            st.setInt(11, holder.getAccesslevel().getId());
+            st.setInt(11, holder.getAccessLevel().getId());
             st.setInt(12, holder.getId());
             st.execute();
         } catch (Exception e) {

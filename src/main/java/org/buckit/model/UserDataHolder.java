@@ -104,7 +104,7 @@ public class UserDataHolder {
     /**
      * @return the accesslevel
      */
-    public AccessLevel getAccesslevel() {
+    public AccessLevel getAccessLevel() {
         return accesslevel;
     }
 
