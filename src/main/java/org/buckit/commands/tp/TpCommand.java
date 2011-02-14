@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class TpCommand extends Command {
 
-	Server server;
+	private final Server server;
 	
 	public TpCommand(String name, Server server) {
 		super(name);
@@ -49,12 +49,15 @@ public class TpCommand extends Command {
 			Location target = this.getLandingLocation(receiver.getLocation());
 			
 			((Player) sender).teleportTo(target);
+			
+			sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Whoosh, you teleported to " + receiver.getDisplayName());
+			receiver.sendMessage(((Player) sender).getDisplayName() + Config.DEFAULT_INFO_COLOR + " teleported to you.");
 			return true;
 		}
 		else {
 			String names = "";
 			for (int i=0; i<receivers.size(); i++)
-				names += ", "+receivers.get(i).getDisplayName();
+				names += ", " + receivers.get(i).getDisplayName() + Config.DEFAULT_ERROR_COLOR;
 			
 			names = names.substring(2);
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found: "+names);
