@@ -2,6 +2,8 @@
 package org.bukkit.entity;
 
 import java.net.InetSocketAddress;
+
+import org.buckit.access.AccessLevel;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
@@ -64,4 +66,41 @@ public interface Player extends HumanEntity, CommandSender {
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String command);
+    
+    
+    /**
+     * Buck - It function.
+     * 
+     * @param command
+     * @return true if the user can use the command
+     */
+    public boolean canUseCommand(String command);
+    
+    /**
+     * Buck - It function.
+     * 
+     * @return true if the user is admin
+     */
+    public boolean isAdmin();
+
+    /**
+     * Buck - It function.
+     * 
+     * @return true if the user is allowed to build.
+     */
+    public boolean canBuild();
+    
+    /**
+     * Buck - It function.
+     * 
+     * @return players accesslevel
+     */
+    public AccessLevel getAccessLevel();
+    
+    /**
+     * Buck - It function.
+     * 
+     * @return player id
+     */
+    public int getPlayerId();
 }

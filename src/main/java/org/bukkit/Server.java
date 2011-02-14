@@ -1,6 +1,7 @@
 
 package org.bukkit;
 
+import org.buckit.datasource.DataSource;
 import org.bukkit.entity.Player;
 import java.util.List;
 
@@ -113,4 +114,7 @@ public interface Server {
      * Reloads the server, refreshing settings and plugin information
      */
     public void reload();
+    
+    //Buck - It
+    public DataSource getDataSource();
 }

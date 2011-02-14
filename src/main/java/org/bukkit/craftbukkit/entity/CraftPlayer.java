@@ -11,6 +11,9 @@ import net.minecraft.server.Packet6SpawnPosition;
 import net.minecraft.server.Packet9Respawn;
 import net.minecraft.server.ServerConfigurationManager;
 import net.minecraft.server.WorldServer;
+
+import org.buckit.access.AccessLevel;
+import org.buckit.model.UserDataHolder;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -24,6 +27,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         super(server, entity);
         this.name = getName();
         this.entity = entity;
+        
+        //Buck - It
+        loadBuckItData();
     }
 
     public boolean isOp() {
@@ -149,5 +155,54 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         } else {
             entity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
+    }
+
+    
+    /*
+     * Buck - It functions
+     * 
+     */
+    private UserDataHolder dataholder;
+    private void loadBuckItData(){
+        dataholder = server.getDataSource().getUserDataSource().getUserData(getName());
+    }
+    @Override
+    public boolean canBuild() {
+        return dataholder.getAccesslevel().canBuild();
+    }
+
+    @Override
+    public boolean canUseCommand(String command) {
+        if(dataholder.getAccesslevel().canUseCommand(command))
+            return true;
+        
+        String[] split = command.split(".");
+        if(split.length > 1){
+            for(int i = 0;i < split.length;i++){
+                String t = split[0];
+                for(int x = 1;x <= i;x++)
+                    t += "." + split[x];
+                t += ".*";
+                if(dataholder.getAccesslevel().canUseCommand(t))
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return dataholder.getAccesslevel().isAdmin();
+    }
+    
+    @Override
+    public AccessLevel getAccessLevel() {
+        return dataholder.getAccesslevel();
+    }
+    
+    @Override
+    public int getPlayerId() {
+        return dataholder.getId();
     }
 }

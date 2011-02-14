@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 // CraftBukkit start
 import java.net.UnknownHostException;
 import joptsimple.OptionSet;
+
+import org.buckit.Config;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
@@ -555,6 +557,7 @@ public class MinecraftServer implements ICommandListener, Runnable {
     // Craftbukkit start - replaces main(String args[])
     public static void main(final OptionSet options) {
         try {
+            Config.load();//Buck - It
             MinecraftServer minecraftserver = new MinecraftServer(options);
 
             // CraftBukkit - remove gui

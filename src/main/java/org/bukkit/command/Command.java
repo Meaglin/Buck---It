@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public abstract class Command {
+    protected String accessname;
     private final String name;
     private List<String> aliases;
     protected String tooltip = "";
@@ -33,6 +34,10 @@ public abstract class Command {
 
     public String getUsage() {
         return usageMessage;
+    }
+    
+    public String getAccessName() { 
+        return accessname;
     }
 
     public Command setAliases(List<String> aliases) {

@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit;
 
+import org.buckit.datasource.DataSource;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import java.io.File;
@@ -259,5 +260,11 @@ public final class CraftServer implements Server {
         worlds.put(world.getName().toLowerCase(), world);
 
         pluginManager.callEvent(new WorldEvent(Type.WORLD_LOADED, world));
+    }
+
+    private final DataSource datasource = new DataSource(this);
+    @Override
+    public DataSource getDataSource() {
+        return datasource;
     }
 }

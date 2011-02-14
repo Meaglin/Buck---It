@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.buckit.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 
@@ -74,7 +76,22 @@ public final class SimpleCommandMap implements CommandMap {
         Command target = knownCommands.get(sentCommandLabel);
         boolean isRegisteredCommand = (target != null);
         if (isRegisteredCommand) {
-            target.execute(sender, sentCommandLabel, args);
+            // Buck - It start
+            if(sender instanceof Player){
+                Player player = (Player)sender;
+                if(target.getAccessName() != null){
+                    if(player.canUseCommand(target.getAccessName()))
+                        target.execute(sender, sentCommandLabel, args);
+                    else
+                        player.sendMessage(Config.NOT_ENOUGH_ACCESS_MESSAGE);
+                }else{
+                    if(player.canUseCommand(target.getName()))
+                        target.execute(sender, sentCommandLabel, args);
+                    else
+                        player.sendMessage(Config.NOT_ENOUGH_ACCESS_MESSAGE);
+                }
+            }
+            // Buck - It end
         }
         return isRegisteredCommand;
     }
@@ -94,6 +111,7 @@ public final class SimpleCommandMap implements CommandMap {
             this.server = server;
             this.tooltip = "Gets the version of this server including any plugins in use";
             this.usageMessage = "/version [plugin name]";
+            this.accessname = "bukkit.info.version"; // Buck - It
             this.setAliases(Arrays.asList("ver", "about"));
         }
 
@@ -175,17 +193,14 @@ public final class SimpleCommandMap implements CommandMap {
             this.server = server;
             this.tooltip = "Reloads the server configuration and plugins";
             this.usageMessage = "/reload";
+            this.accessname = "bukkit.admin.reload"; // Buck - It
             this.setAliases(Arrays.asList("rl"));
         }
 
         @Override
         public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-            if (sender.isOp()) {
-                server.reload();
-                sender.sendMessage(ChatColor.GREEN + "Reload complete.");
-            } else {
-                sender.sendMessage(ChatColor.RED + "You do not have sufficient access" + " to reload this server.");
-            }
+            server.reload();
+            sender.sendMessage(ChatColor.GREEN + "Reload complete.");
             return true;
         }
     }
@@ -199,6 +214,7 @@ public final class SimpleCommandMap implements CommandMap {
             this.server = server;
             this.tooltip = "Gets a list of plugins running on the server";
             this.usageMessage = "/plugins";
+            this.accessname = "bukkit.info.plugins"; // Buck - It
             this.setAliases(Arrays.asList("pl"));
         }
         
