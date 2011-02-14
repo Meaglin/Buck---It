@@ -6,7 +6,7 @@ ban
 unban
 mute
 unmute
-kick
+kick - pjm
 item
 cloth
 dye
