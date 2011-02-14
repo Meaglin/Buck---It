@@ -1,16 +1,16 @@
 help
-playerlist
+playerlist - pjm
 banip
 unbanip
-ban
-unban
-mute
-unmute
+ban - meag
+unban - meag
+mute - meag
+unmute - meag
 kick - pjm
 item
 cloth
 dye
-setspawn
+setspawn - [uitgesteld]
 getpos
 time
 motd
@@ -19,6 +19,6 @@ reservelist
 enableplugin
 disableplugin
 reloadplugin
-spawn
+spawn - pjm
 clearinventory
 spawnmob

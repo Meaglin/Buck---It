@@ -47,10 +47,15 @@ public class TpCommand extends Command {
 			Player receiver = receivers.get(0);
 			Location target = this.getLandingLocation(receiver.getLocation());
 			
-			((Player) sender).teleportTo(target);
-			
-			sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Whoosh, you teleported to " + receiver.getDisplayName());
-			receiver.sendMessage(((Player) sender).getDisplayName() + Config.DEFAULT_INFO_COLOR + " teleported to you.");
+			if (((Player) sender).equals(receiver.getPlayerId())) {
+				sender.sendMessage(Config.DEFAULT_INFO_COLOR + "You're already here!");
+			}
+			else {
+				((Player) sender).teleportTo(target);
+				
+				sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Whoosh, you teleported to " + receiver.getDisplayName());
+				receiver.sendMessage(((Player) sender).getDisplayName() + Config.DEFAULT_INFO_COLOR + " teleported to you.");
+			}
 			return true;
 		}
 		else {

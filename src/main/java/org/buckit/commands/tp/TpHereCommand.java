@@ -47,10 +47,15 @@ public class TpHereCommand extends Command {
 			Player receiver = receivers.get(0);
 			Location target = this.getLandingLocation(((Player) sender).getLocation());
 			
-			((Player) receiver).teleportTo(target);
-			
-			receiver.sendMessage(Config.DEFAULT_INFO_COLOR + "Whoosh, you teleported to " + ((Player) sender).getDisplayName() + Config.DEFAULT_INFO_COLOR + ", because he wanted to.");
-			sender.sendMessage(receiver.getDisplayName() + Config.DEFAULT_INFO_COLOR + " teleported to you.");
+			if (((Player) sender).equals(receiver.getPlayerId())) {
+				sender.sendMessage(Config.DEFAULT_INFO_COLOR + "You're already here!");
+			}
+			else {
+				((Player) receiver).teleportTo(target);
+				
+				receiver.sendMessage(Config.DEFAULT_INFO_COLOR + "Whoosh, you teleported to " + ((Player) sender).getDisplayName() + Config.DEFAULT_INFO_COLOR + ", because he wanted to.");
+				sender.sendMessage(receiver.getDisplayName() + Config.DEFAULT_INFO_COLOR + " teleported to you.");
+			}
 			return true;
 		}
 		else {

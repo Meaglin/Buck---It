@@ -1,10 +1,9 @@
 package org.buckit.commands.rights;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.buckit.Config;
-import org.buckit.datasource.type.UserDataSource;
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,8 +15,8 @@ public class KickCommand extends Command {
 
 	public KickCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Modifies a player's properties.";
-        this.usageMessage = "Usage: /kick <player> <reason";
+        this.tooltip = "Kick a player.";
+        this.usageMessage = "Usage: /kick <player> <reason>";
         this.accessname = "buckit.admin.kick";
         
 		this.server = server;
@@ -29,7 +28,7 @@ public class KickCommand extends Command {
 			return false;
 		
 		if (args.length < 2) {
-			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified");
+			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified:");
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + this.getUsage());
 			return true;
 		}
@@ -37,12 +36,20 @@ public class KickCommand extends Command {
 		List<Player> receivers = server.matchPlayer(args[0]);
 	
 		if (receivers.size() == 0) {
-			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found to kick");
+			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found to kick.");
 			return true;
 		}
 		else if (receivers.size() == 1) {
 			
-			receivers.get(0).kickPlayer(args[1]);
+			String out = "";
+			for (int i=1; i<args.length; i++) {
+				out += args[i]+" ";
+			}
+			
+			receivers.get(0).kickPlayer(out);
+			
+			Logger log = Logger.getLogger(KickCommand.class.getName());
+			log.info("Player " + receivers.get(0).getDisplayName() + " has been kicked by " + ((Player) sender).getDisplayName() + " with reason: " + out);	
 			
 			return true;
 		}
@@ -52,7 +59,7 @@ public class KickCommand extends Command {
 				names += ", " + receivers.get(i).getDisplayName() + Config.DEFAULT_ERROR_COLOR;
 			
 			names = names.substring(2);
-			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found to kick: "+names);
+			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found to kick: "+names+".");
 			return true;
 		}
 	}
