@@ -2,7 +2,10 @@
 package org.bukkit;
 
 import org.buckit.datasource.DataSource;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.plugin.PluginManager;
@@ -117,4 +120,7 @@ public interface Server {
     
     //Buck - It
     public DataSource getDataSource();
+    
+    //Buck - It
+    public Collection<Command> getCommands();
 }

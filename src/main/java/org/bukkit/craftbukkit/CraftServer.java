@@ -5,6 +5,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -263,8 +264,14 @@ public final class CraftServer implements Server {
     }
 
     private final DataSource datasource = new DataSource(this);
+    
     @Override
     public DataSource getDataSource() {
         return datasource;
+    }
+    
+    @Override
+    public Collection<Command> getCommands() {
+        return commandMap.getCommands();
     }
 }

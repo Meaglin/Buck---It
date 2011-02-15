@@ -1,7 +1,7 @@
 package org.bukkit.command;
 
+import java.util.Collection;
 import java.util.List;
-import org.bukkit.entity.Player;
 
 public interface CommandMap {
     /**
@@ -25,6 +25,13 @@ public interface CommandMap {
      *   @return targetFound returns false if no target is found.
      */
     public boolean dispatch(CommandSender sender, String cmdLine);
+    
+    /**
+     * Buck - It function
+     * 
+     * @return Collection of all registered commands.
+     */
+    public Collection<Command> getCommands();
 
     /**
      * Clears all registered commands.

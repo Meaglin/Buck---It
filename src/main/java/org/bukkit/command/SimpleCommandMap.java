@@ -2,6 +2,7 @@ package org.bukkit.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,13 @@ public final class SimpleCommandMap implements CommandMap {
             // Buck - It end
         }
         return isRegisteredCommand;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Collection<Command> getCommands(){
+        return knownCommands.values();
     }
 
     public void clearCommands() {
