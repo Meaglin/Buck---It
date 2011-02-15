@@ -5,8 +5,8 @@ import org.buckit.datasource.DataSource;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -122,5 +122,5 @@ public interface Server {
     public DataSource getDataSource();
     
     //Buck - It
-    public Collection<Command> getCommands();
+    public Map<String, Command> getCommands();
 }

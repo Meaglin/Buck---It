@@ -1,7 +1,7 @@
 package org.bukkit.command;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface CommandMap {
     /**
@@ -31,7 +31,7 @@ public interface CommandMap {
      * 
      * @return Collection of all registered commands.
      */
-    public Collection<Command> getCommands();
+    public Map<String, Command> getCommands();
 
     /**
      * Clears all registered commands.

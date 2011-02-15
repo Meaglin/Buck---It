@@ -100,8 +100,8 @@ public final class SimpleCommandMap implements CommandMap {
     /**
      * {@inheritDoc}
      */
-    public Collection<Command> getCommands(){
-        return knownCommands.values();
+    public Map<String, Command> getCommands(){
+        return knownCommands;
     }
 
     public void clearCommands() {

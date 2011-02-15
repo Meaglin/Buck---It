@@ -271,7 +271,7 @@ public final class CraftServer implements Server {
     }
     
     @Override
-    public Collection<Command> getCommands() {
+    public Map<String, Command> getCommands() {
         return commandMap.getCommands();
     }
 }
