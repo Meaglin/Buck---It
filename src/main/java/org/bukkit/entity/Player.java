@@ -67,6 +67,27 @@ public interface Player extends HumanEntity, CommandSender {
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String command);
+
+    /**
+     * Returns if the player is in sneak mode
+     * @return true if player is in sneak mode
+     */
+    public boolean isSneaking();
+
+    /**
+     * Sets the sneak mode the player
+     * @param sneak true if player should appear sneaking
+     */
+    public void setSneaking(boolean sneak);
+
+    /**
+     * Forces an update of the player's entire inventory.
+     *
+     * @return
+     *
+     * @deprecated This method should not be relied upon as it is a temporary work-around for a larger, more complicated issue.
+     */
+    public void updateInventory();
     
     
     /**

@@ -194,6 +194,16 @@ public final class JavaPluginLoader implements PluginLoader {
                     ((PlayerListener)listener).onPlayerDropItem( (PlayerDropItemEvent)event );
                 }
             };
+        case PLAYER_PICKUP_ITEM:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((PlayerListener)listener).onPlayerPickupItem( (PlayerPickupItemEvent)event );
+                }
+            };
+        case PLAYER_TOGGLE_SNEAK:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((PlayerListener)listener).onPlayerToggleSneak( (PlayerToggleSneakEvent)event );
+                }
+            };
 
         // Block Events
         case BLOCK_PHYSICS:
@@ -234,6 +244,11 @@ public final class JavaPluginLoader implements PluginLoader {
         case LEAVES_DECAY:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
                     ((BlockListener)listener).onLeavesDecay( (LeavesDecayEvent)event );
+                }
+            };
+        case SIGN_CHANGE:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((BlockListener)listener).onSignChange( (SignChangeEvent)event );
                 }
             };
         case BLOCK_IGNITE:
@@ -286,6 +301,11 @@ public final class JavaPluginLoader implements PluginLoader {
                     ((WorldListener)listener).onChunkUnloaded( (ChunkUnloadEvent)event );
                 }
             };
+        case WORLD_SAVED:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((WorldListener)listener).onWorldSaved( (WorldEvent)event );
+                }
+            };
         case WORLD_LOADED:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
                     ((WorldListener)listener).onWorldLoaded( (WorldEvent)event );
@@ -326,6 +346,11 @@ public final class JavaPluginLoader implements PluginLoader {
         case ENTITY_EXPLODE:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
                     ((EntityListener)listener).onEntityExplode( (EntityExplodeEvent)event );
+                }
+            };
+        case EXPLOSION_PRIMED:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((EntityListener)listener).onExplosionPrimed( (ExplosionPrimedEvent)event );
                 }
             };
         case ENTITY_TARGET:
