@@ -50,7 +50,7 @@ public class ItemCommand extends Command {
             try {
                 amount = Integer.parseInt(args[1]);
             } catch (NumberFormatException e){
-                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid item amount '" + args[1] + "' !");
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid item amount '" + args[1] + "'!");
                 sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());
                 return true;
             }
