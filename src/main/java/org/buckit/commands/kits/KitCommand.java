@@ -1,4 +1,4 @@
-package org.buckit.commands.kit;
+package org.buckit.commands.kits;
 
 import java.util.Arrays;
 

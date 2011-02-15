@@ -1,4 +1,4 @@
-package org.buckit.commands.kit;
+package org.buckit.commands.kits;
 
 import java.util.Arrays;
 
@@ -20,7 +20,7 @@ public class CreateKitCommand extends Command {
         
         this.usageMessage = "Usage: /createkit [kit name] [min access level] [delay] [items...]";
         
-        this.accessname = "buckit.admin.createkit";
+        this.accessname = "buckit.kits.createkit";
         this.setAliases(Arrays.asList("setkit"));
     }
     

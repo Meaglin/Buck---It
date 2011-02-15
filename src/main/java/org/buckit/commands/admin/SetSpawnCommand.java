@@ -1,4 +1,4 @@
-package org.buckit.commands;
+package org.buckit.commands.admin;
 
 import org.buckit.Config;
 import org.bukkit.Server;
@@ -13,7 +13,7 @@ public class SetSpawnCommand extends Command {
 		super(name);
         this.tooltip = "Sets the spawn location.";
         this.usageMessage = "Usage: /setspawn";
-        this.accessname = "buckit.setspawn";
+        this.accessname = "buckit.admin.setspawn";
 	}
 
 	//TODO implement!

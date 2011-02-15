@@ -1,7 +1,6 @@
 package org.buckit.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.buckit.Config;
 import org.bukkit.Server;
@@ -19,9 +18,7 @@ public class PlayerlistCommand extends Command {
         this.usageMessage = "Usage: /playerlist";
         this.accessname = "buckit.playerlist";
         
-        List<String> aliases = new ArrayList<String>();
-        aliases.add("/who");
-        this.setAliases(aliases);
+        this.setAliases(Arrays.asList("who"));
         
 		this.server = server;
 	}

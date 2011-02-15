@@ -1,4 +1,4 @@
-package org.buckit.commands.util;
+package org.buckit.commands.admin;
 
 import net.minecraft.server.EntityChicken;
 import net.minecraft.server.EntityCow;
@@ -27,7 +27,7 @@ public class SpawnmobCommand extends Command {
         super(name);
         this.tooltip = "Spawns a mob on your location.";
         this.usageMessage = "Usage: /spawnmob [mob name] <count>";
-        this.accessname = "buckit.util.spawnmob";
+        this.accessname = "buckit.admin.spawnmob";
     }
     
     @Override

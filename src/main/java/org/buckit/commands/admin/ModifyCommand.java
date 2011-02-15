@@ -1,4 +1,4 @@
-package org.buckit.commands;
+package org.buckit.commands.admin;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.buckit.commands.rights;
+package org.buckit.commands.admin;
 
 import java.util.logging.Logger;
 
