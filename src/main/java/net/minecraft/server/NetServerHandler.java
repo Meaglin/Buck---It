@@ -17,13 +17,16 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockRightClickEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.Plugin;
 // CraftBukkit end
 
@@ -318,19 +321,25 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             CraftBlock block = (CraftBlock) player.getWorld().getBlockAt(i, j, k);
             int blockId = block.getTypeId();
             float damage = 0;
-            if(Block.byId[blockId] != null) {
+            if (Block.byId[blockId] != null) {
                 damage = Block.byId[blockId].a(player.getHandle()); //Get amount of damage going to block
             }
             // CraftBukkit end
 
             if (packet14blockdig.e == 0) {
-                if (j1 > 16 || flag) {
-                    // CraftBukkit start
-                    if(blockId > 0) {
+                // CraftBukkit start
+                if (j1 > this.d.spawnProtection || flag) {
+                    if (blockId > 0) {
                         BlockDamageEvent event;
                         // If the amount of damage that the player is going to do to the block
                         // is >= 1, then the block is going to break (eg, flowers, torches)
                         if (damage >= 1.0F) {
+                            // if we are destroying either a redstone wire with a current greater than 0 or
+                            // a redstone torch that is on, then we should notify plugins that this block has
+                            // returned to a current value of 0 (since it will once the redstone is destroyed)
+                            if ((blockId == Block.REDSTONE_WIRE.id && block.getData() > 0) || blockId == Block.REDSTONE_TORCH_ON.id) {
+                                server.getPluginManager().callEvent( new BlockRedstoneEvent(block, (blockId == Block.REDSTONE_WIRE.id ? block.getData() : 15), 0));
+                            }
                             event = new BlockDamageEvent(Type.BLOCK_DAMAGED, block, BlockDamageLevel.BROKEN, player);
                         } else {
                             event = new BlockDamageEvent(Type.BLOCK_DAMAGED, block, BlockDamageLevel.STARTED, player);
@@ -340,8 +349,8 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                             this.e.c.a(i, j, k);
                         }
                     }
-                    // CraftBukkit end
                 }
+                // CraftBukkit end
             } else if (packet14blockdig.e == 2) {
                 // CraftBukkit start - Get last block that the player hit
                 // Otherwise the block is a Bedrock @(0,0,0)
@@ -353,12 +362,18 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 }
                 // CraftBukkit end
             } else if (packet14blockdig.e == 1) {
-                if (j1 > 16 || flag) {
-                    // CraftBukkit start
+                // CraftBukkit start
+                if (j1 > this.d.spawnProtection || flag) {
                     BlockDamageEvent event;
                     // If the amount of damage going to the block plus the current amount
                     // of damage is greater than 1, the block is going to break.
                     if (e.c.d + damage  >= 1.0F) {
+                        // if we are destroying either a redstone wire with a current greater than 0 or
+                        // a redstone torch that is on, then we should notify plugins that this block has
+                        // returned to a current value of 0 (since it will once the redstone is destroyed)
+                        if ((blockId == Block.REDSTONE_WIRE.id && block.getData() > 0) || blockId == Block.REDSTONE_TORCH_ON.id) {
+                            server.getPluginManager().callEvent( new BlockRedstoneEvent(block, (blockId == Block.REDSTONE_WIRE.id ? block.getData() : 15), 0));
+                        }
                         event = new BlockDamageEvent(Type.BLOCK_DAMAGED, block, BlockDamageLevel.BROKEN, player);
                     } else {
                         event = new BlockDamageEvent(Type.BLOCK_DAMAGED, block, BlockDamageLevel.DIGGING, player);
@@ -369,8 +384,8 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                     } else {
                         e.c.d = 0; // Reset the amount of damage if stopping break.
                     }
-                    // CraftBukkit end
                 }
+                // CraftBukkit end
             } else if (packet14blockdig.e == 3) {
                 double d5 = this.e.locX - ((double) i + 0.5D);
                 double d6 = this.e.locY - ((double) j + 0.5D);
@@ -652,6 +667,17 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
     }
 
     public void a(Packet19EntityAction packet19entityaction) {
+        // CraftBukkit: Toggle Sneak
+        if (packet19entityaction.b == 1 || packet19entityaction.b == 2) {
+            Player player = getPlayer();
+            PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(Type.PLAYER_TOGGLE_SNEAK, player);
+            server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+        }
+        // CraftBukkit: Set Sneaking
+
         if (packet19entityaction.b == 1) {
             this.e.b(true);
         } else if (packet19entityaction.b == 2) {
@@ -767,8 +793,21 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 j = packet130updatesign.c;
                 TileEntitySign tileentitysign = (TileEntitySign) tileentity;
 
+                // CraftBukkit start - SIGN_CHANGE hook
+                Player player = server.getPlayer(this.e);
+                SignChangeEvent modifyEvent = new SignChangeEvent(org.bukkit.event.Event.Type.SIGN_CHANGE, (CraftBlock) player.getWorld().getBlockAt(i, k, j), server.getPlayer(this.e), packet130updatesign.d);
+                server.getPluginManager().callEvent(modifyEvent);
+                if (modifyEvent.isCancelled()) {
+                    // Normally we would return here, but we have to update the sign with blank text if it's been cancelled
+                    // Otherwise the client will have bad text on their sign (client shows text changes as they type)
+                    for(int l = 0; l < 4; ++l) {
+                        modifyEvent.setLine(l, "");
+                    }
+                }
+                // CraftBukkit end
+
                 for (int l = 0; l < 4; ++l) {
-                    tileentitysign.e[l] = packet130updatesign.d[l];
+                    tileentitysign.e[l] = modifyEvent.getLine(l); // CraftBukkit
                 }
 
                 tileentitysign.d();

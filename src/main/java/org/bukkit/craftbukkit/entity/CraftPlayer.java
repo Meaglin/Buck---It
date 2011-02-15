@@ -157,7 +157,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
+    public void setSneaking(boolean sneak) {
+        entity.b(sneak);
+    }
+
+    public boolean isSneaking() {
+        return entity.J();
+    }
     
+    public void updateInventory() {
+        entity.l();
+    }
+
     /*
      * Buck - It functions
      * 
