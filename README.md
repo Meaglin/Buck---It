@@ -1,7 +1,7 @@
-Bukket
+Buck-it
 ======
 
-A Minecraft Server API.
+A Minecraft Server API, based on bukkit
 
 That's all!
 
