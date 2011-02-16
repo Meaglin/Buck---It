@@ -20,7 +20,7 @@ public class MysqlUserDataSource implements UserDataSource {
     private static String UPDATE_USER_UPTIME    = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET onlinetime = ? WHERE id = ?";
     private static String UPDATE_USER_BANTIME   = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET bantime = ? WHERE id = ?";
     private static String UPDATE_USER_MUTETIME  = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET mutetime = ? WHERE id = ?";
-    private static String UPDATE_USER           = "UPDATE " + Config.DATABASE_USERS_TABLE + "SET username = ?, usernameformat = ?, firstlogin = ?,lastlogin = ?,onlinetime = ?,bantime = ?,mutetime = ?,commands = ?,canbuild = ?,isadmin = ?,accesslevel = ?,muted = ? WHERE id = ?";
+    private static String UPDATE_USER           = "UPDATE " + Config.DATABASE_USERS_TABLE + "SET username = ?, usernameformat = ?, firstlogin = ?,lastlogin = ?,onlinetime = ?,bantime = ?,mutetime = ?,commands = ?,canbuild = ?,isadmin = ?,accesslevel = ? WHERE id = ?";
 
     
     private DataSource datasource;
@@ -57,10 +57,10 @@ public class MysqlUserDataSource implements UserDataSource {
 
                 rs = st.getGeneratedKeys();
                 if (rs.next()) {
-                    rt = new UserDataHolder(rs.getInt(1), username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(0), false);
+                    rt = new UserDataHolder(rs.getInt(1), username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(0));
                 }
             } else {
-                rt = new UserDataHolder(rs.getInt("id"), username, rs.getString("usernameformat"), rs.getBoolean("isadmin"), rs.getBoolean("canbuild"), rs.getString("commands"), rs.getInt("firstlogin"), currentTime(), rs.getInt("uptime"), rs.getInt("bantime"), rs.getInt("mutetime"), getDataSource().getAccessDataSource().getAccessLevel(rs.getInt("accesslevel")),rs.getBoolean("muted"));
+                rt = new UserDataHolder(rs.getInt("id"), username, rs.getString("usernameformat"), rs.getBoolean("isadmin"), rs.getBoolean("canbuild"), rs.getString("commands"), rs.getInt("firstlogin"), currentTime(), rs.getInt("uptime"), rs.getInt("bantime"), rs.getInt("mutetime"), getDataSource().getAccessDataSource().getAccessLevel(rs.getInt("accesslevel")));
                 st.close();
                 st = conn.prepareStatement(UPDATE_USER_LASTLOGIN);
                 st.setInt(1, rt.getLastlogin());
@@ -192,7 +192,6 @@ public class MysqlUserDataSource implements UserDataSource {
             st.setBoolean(10, holder.isAdmin());
             st.setInt(11, holder.getAccessLevel().getId());
             st.setInt(12, holder.getId());
-            st.setBoolean(13, holder.getMuted());
             st.execute();
         } catch (Exception e) {
             e.printStackTrace();

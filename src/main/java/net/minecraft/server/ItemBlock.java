@@ -99,7 +99,7 @@ public class ItemBlock extends Item {
 
                     int distanceFromSpawn = (int) Math.max(Math.abs(i - world.spawnX), Math.abs(k - world.spawnZ));
 
-                    boolean canBuild = distanceFromSpawn > Config.SPAWN_RADIUS || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
+                    boolean canBuild = (distanceFromSpawn > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || thePlayer.canBuild())) || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
 
                     BlockPlaceEvent event = new BlockPlaceEvent(eventType, placedBlock, replacedBlockState, blockClicked, itemInHand, thePlayer, canBuild);
                     server.getPluginManager().callEvent(event);

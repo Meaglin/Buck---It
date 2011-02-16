@@ -9,12 +9,11 @@ import java.util.List;
 
 public class MotdReader {
     
-    static List<String> lines = new ArrayList<String>();
-    
-    public static List<String> getMotd() {
-        
+    private static List<String> lines = new ArrayList<String>();
+    private static boolean loaded = false;
+    public static void load() {
         try {
-            FileInputStream fstream = new FileInputStream("config/motd.txt");
+            FileInputStream fstream = new FileInputStream("./config/motd.txt");
             
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -25,10 +24,13 @@ public class MotdReader {
             }
             
             in.close();
-            
-            return lines;
+            loaded = true;
         } catch (Exception e) {
-            return null;
         }
+    }
+    
+    public static List<String> getMotd() {
+        if(!loaded) load();
+        return lines;
     }
 }

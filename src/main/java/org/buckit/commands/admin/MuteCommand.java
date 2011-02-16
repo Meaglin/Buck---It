@@ -76,8 +76,8 @@ public class MuteCommand extends Command {
         if(player != null)data = player.getUserDataHolder();
         
         if(time == 0){
-            data.setMuted(true);
-            server.getDataSource().getUserDataSource().updateUser(data);
+            data.setMutetime(-1);
+            server.getDataSource().getUserDataSource().updateUserMuteTime(data);
             if(player != null)player.kickPlayer("You have been permanently muted.");
             log.info("Player '" + playername + "' has been permanently muted by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
         } else {

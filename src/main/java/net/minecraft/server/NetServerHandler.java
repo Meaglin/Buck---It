@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 // CraftBukkit start
 import org.buckit.Config;
+import org.buckit.util.TimeFormat;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.Location;
@@ -364,7 +365,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 // CraftBukkit end
             } else if (packet14blockdig.e == 1) {
                 // CraftBukkit start
-                if (j1 > Config.SPAWN_RADIUS || flag) {
+                if ((j1 > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || player.canBuild())) || flag) {
                     BlockDamageEvent event;
                     // If the amount of damage going to the block plus the current amount
                     // of damage is greater than 1, the block is going to break.
@@ -598,7 +599,13 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                     return;
                 }
                 // CraftBukkit end
-
+                // Buck - It start
+                if(player.getUserDataHolder().isMuted()){
+                    int time = player.getUserDataHolder().getMutetime() - ((int)(System.currentTimeMillis()/1000));
+                    player.sendMessage(Config.DEFAULT_ERROR_COLOR + "You are muted" + (time > 0 ? " for another " + TimeFormat.formatRemaining(time) : "") + "!");
+                    return;
+                }
+                // Buck - It end
                 a.info(s);
                 this.d.f.a((Packet) (new Packet3Chat(s)));
             }
@@ -624,6 +631,13 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         // CraftBukkit stop
 
         if (s.toLowerCase().startsWith("/me ")) {
+            // Buck - It start
+            if(player.getUserDataHolder().isMuted()){
+                int time = player.getUserDataHolder().getMutetime() - ((int)(System.currentTimeMillis()/1000));
+                player.sendMessage(Config.DEFAULT_ERROR_COLOR + "You are muted" + (time > 0 ? " for another " + TimeFormat.formatRemaining(time) : "") + "!");
+                return;
+            }
+            // Buck - It end
             s = "* " + player.getDisplayName() + " " + s.substring(s.indexOf(" ")).trim();
             a.info(s);
             this.d.f.a((Packet) (new Packet3Chat(s)));

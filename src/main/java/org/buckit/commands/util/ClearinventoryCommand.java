@@ -6,9 +6,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ClearinventoryCommand extends Command {
+public class ClearInventoryCommand extends Command {
 
-    public ClearinventoryCommand(String name, Server server) {
+    public ClearInventoryCommand(String name, Server server) {
         super(name);
         this.tooltip = "Clears your inventory.";
         this.usageMessage = "Usage: /clearinventory";

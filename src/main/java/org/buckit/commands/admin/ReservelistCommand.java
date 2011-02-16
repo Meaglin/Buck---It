@@ -50,7 +50,7 @@ public class ReservelistCommand extends Command {
             return true;
         }
 
-        ReserveListDataSource reservelist = server.getDataSource().getReservelistDataSource();        
+        ReserveListDataSource reservelist = server.getDataSource().getReserveListDataSource();        
         Player player = matches.get(0);
         
         boolean before = reservelist.isReserveListed(player.getPlayerId());

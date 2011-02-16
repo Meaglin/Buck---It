@@ -8,11 +8,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PlayerlistCommand extends Command {
+public class PlayerListCommand extends Command {
 	
 	private final Server server;
 
-	public PlayerlistCommand(String name, Server server) {
+	public PlayerListCommand(String name, Server server) {
 		super(name);
         this.tooltip = "Display al the online players.";
         this.usageMessage = "Usage: /playerlist";

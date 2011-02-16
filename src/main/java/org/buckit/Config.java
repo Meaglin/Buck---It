@@ -43,6 +43,8 @@ public class Config {
     public static boolean      WHITELIST_ENABLED;
     public static boolean      RESERVELIST_ENABLED;
     
+    public static String       WHITELIST_MESSAGE;
+    public static String       RESERVELIST_MESSAGE;
     
     public static String       DEFAULT_USER_FORMAT;
     public static int          DEFAULT_ACCESS_LEVEL;
@@ -52,8 +54,8 @@ public class Config {
 	
     public static boolean      TRACK_USER_ONLINE_TIME;
     public static String       NOT_ENOUGH_ACCESS_MESSAGE;
-    
-
+    public static boolean      LIMIT_BUILD_BY_BUILD_FLAG;
+    public static boolean      SEND_MOTD_ON_LOGIN;
     // --------------------------------------------------
     // Expert Properties
     // --------------------------------------------------

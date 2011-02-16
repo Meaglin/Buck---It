@@ -1,12 +1,10 @@
 package org.buckit.datasource;
 
 import org.buckit.Config;
-import org.buckit.datasource.mysql.MysqlAccessDataSource;
-import org.buckit.datasource.mysql.MysqlHomesDataSource;
-import org.buckit.datasource.mysql.MysqlKitsDataSource;
-import org.buckit.datasource.mysql.MysqlUserDataSource;
-import org.buckit.datasource.mysql.MysqlWarpsDataSource;
+import org.buckit.datasource.mysql.*;
+import org.buckit.datasource.flatfile.*;
 import org.buckit.datasource.type.*;
+import org.buckit.datasource.yaml.*;
 import org.bukkit.Server;
 
 public class DataSource {
@@ -34,12 +32,26 @@ public class DataSource {
                 kitsdatasource = new MysqlKitsDataSource(this);
                 homesdatasource = new MysqlHomesDataSource(this);
                 warpsdatasource = new MysqlWarpsDataSource(this);
+                whitelistdatasource = new MysqlWhiteListDataSource(this);
+                reservelistdatasource = new MysqlReserveListDataSource(this);
                 break;
             case FLATFILE:
-
+                userdatasource = new FlatFileUserDataSource(this);
+                accessdatasource = new FlatFileAccessDataSource(this);
+                kitsdatasource = new FlatFileKitsDataSource(this);
+                homesdatasource = new FlatFileHomesDataSource(this);
+                warpsdatasource = new FlatFileWarpsDataSource(this);
+                whitelistdatasource = new FlatFileWhiteListDataSource(this);
+                reservelistdatasource = new FlatFileReserveListDataSource(this);
                 break;
             case YAML:
-
+                userdatasource = new YamlUserDataSource(this);
+                accessdatasource = new YamlAccessDataSource(this);
+                kitsdatasource = new YamlKitsDataSource(this);
+                homesdatasource = new YamlHomesDataSource(this);
+                warpsdatasource = new YamlWarpsDataSource(this);
+                whitelistdatasource = new YamlWhiteListDataSource(this);
+                reservelistdatasource = new YamlReserveListDataSource(this);
                 break;
         }
         
@@ -51,6 +63,10 @@ public class DataSource {
             getHomesDataSource().load();
         if (Config.KITS_ENABLED)
             getKitsDataSource().load();
+        if  (Config.WHITELIST_ENABLED)
+            getWhiteListDataSource().load();
+        if  (Config.RESERVELIST_ENABLED)
+            getReserveListDataSource().load();
     }
 
     public DataType getType() {
@@ -83,14 +99,14 @@ public class DataSource {
     /**
      * @return the whitelistdatasource
      */
-    public WhiteListDataSource getWhitelistDataSource() {
+    public WhiteListDataSource getWhiteListDataSource() {
         return whitelistdatasource;
     }
 
     /**
      * @return the reservelistdatasource
      */
-    public ReserveListDataSource getReservelistDataSource() {
+    public ReserveListDataSource getReserveListDataSource() {
         return reservelistdatasource;
     }
 

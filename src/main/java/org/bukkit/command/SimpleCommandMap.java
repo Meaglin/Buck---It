@@ -9,6 +9,13 @@ import java.util.Map;
 import org.buckit.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.buckit.commands.*;
+import org.buckit.commands.admin.*;
+import org.buckit.commands.homes.*;
+import org.buckit.commands.kits.*;
+import org.buckit.commands.tp.*;
+import org.buckit.commands.util.*;
+import org.buckit.commands.warp.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +34,60 @@ public final class SimpleCommandMap implements CommandMap {
         register("bukkit", new VersionCommand("version", server));
         register("bukkit", new ReloadCommand("reload", server));
         register("bukkit", new PluginsCommand("plugins",server));
+        
+        register("buckit", new HelpCommand("help",server));
+        register("buckit", new MotdCommand("motd",server));
+        register("buckit", new PlayerListCommand("playerlist",server));
+        register("buckit", new SpawnCommand("spawn",server));
+        
+        register("buckit", new BanCommand("ban",server));
+        register("buckit", new UnbanCommand("unban",server));
+        register("buckit", new MuteCommand("mute",server));
+        register("buckit", new UnmuteCommand("unmute",server));
+        register("buckit", new KickCommand("kick",server));
+        register("buckit", new ModifyCommand("modify",server));
+        register("buckit", new ReloadPluginCommand("reloadplugin",server));
+        register("buckit", new DisablePluginCommand("disableplugin",server));
+        register("buckit", new ReservelistCommand("reservelist",server));
+        register("buckit", new WhitelistCommand("whitelist",server));
+        register("buckit", new TimeCommand("time",server));
+        register("buckit", new SetSpawnCommand("setspawn",server));
+        register("buckit", new SpawnMobCommand("spawnmob",server));
+        register("buckit", new ItemCommand("item",server));
+        
+        if(Config.HOMES_ENABLED) {
+            register("buckit", new HomeCommand("home",server));
+            register("buckit", new SetHomeCommand("sethome",server));
+            if(Config.HOMES_MULTI_ENABLED) {
+                register("buckit", new HomesCommand("homes",server));                
+            }
+        }
+        
+        if(Config.KITS_ENABLED) {
+            register("buckit", new KitCommand("kit",server));                
+            register("buckit", new KitsCommand("kits",server));                
+            register("buckit", new CreateKitCommand("createkit",server));
+        }
+        
+        register("buckit", new TpCommand("tp",server));
+        register("buckit", new TpHereCommand("tphere",server));
+        
+        if(Config.TP_REQUEST_COMMANDS_ENABLED) {
+            register("buckit", new TpcCommand("tpc",server));
+            register("buckit", new TpcHereCommand("tpchere",server));
+        }
+        
+        register("buckit", new ClearInventoryCommand("clearinventory",server));
+        register("buckit", new LocCommand("loc",server));
+        register("buckit", new StackCommand("stack",server));
+        
+        if(Config.WARPS_ENABLED) {
+            register("buckit", new WarpCommand("warp",server));
+            register("buckit", new ListWarpsCommand("listwarps",server));
+            register("buckit", new RemoveWarpCommand("removewarp",server));
+            register("buckit", new SetWarpCommand("setwarp",server));
+            
+        }
     }
 
     /**

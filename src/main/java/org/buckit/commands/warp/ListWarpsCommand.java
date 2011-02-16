@@ -11,10 +11,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ListWarpCommand extends Command {
+public class ListWarpsCommand extends Command {
 
     private final WarpsDataSource datasource;
-    public ListWarpCommand(String name, Server server){
+    public ListWarpsCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getWarpsDataSource();
         this.tooltip = "Gives a list of all the warps.";

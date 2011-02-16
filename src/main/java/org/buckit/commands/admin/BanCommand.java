@@ -76,8 +76,8 @@ public class BanCommand extends Command {
         
         
         if(time == 0){
-            data.setAccesslevel(server.getDataSource().getAccessDataSource().getAccessLevel(-100));
-            server.getDataSource().getUserDataSource().updateUser(data);
+            data.setBantime(-1);
+            server.getDataSource().getUserDataSource().updateUserBanTime(data);
             if(player != null)player.kickPlayer("You have been permabanned.");
             log.info("Player '" + playername + "' has been permabanned by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
 

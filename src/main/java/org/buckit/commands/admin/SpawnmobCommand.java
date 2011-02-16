@@ -21,9 +21,9 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Player;
 
-public class SpawnmobCommand extends Command {
+public class SpawnMobCommand extends Command {
 
-    public SpawnmobCommand(String name, Server server) {
+    public SpawnMobCommand(String name, Server server) {
         super(name);
         this.tooltip = "Spawns a mob on your location.";
         this.usageMessage = "Usage: /spawnmob [mob name] <count>";

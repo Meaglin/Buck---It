@@ -49,6 +49,10 @@ public class KitCommand extends Command {
         } else {
             ItemStack[] items = kit.getItems();
             player.getInventory().addItem(items);
+            
+            if(kit.getDelay() != 0)
+                datasource.setLastUsed(player.getPlayerId(), kit.getName(), kit.getDelay() + (int) (System.currentTimeMillis()/1000));
+            
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "There you go " + player.getName() + ".");
         }
         return true;

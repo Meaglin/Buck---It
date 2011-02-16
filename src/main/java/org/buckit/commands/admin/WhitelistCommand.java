@@ -50,7 +50,7 @@ public class WhitelistCommand extends Command {
             return true;
         }
 
-        WhiteListDataSource whitelist = server.getDataSource().getWhitelistDataSource();        
+        WhiteListDataSource whitelist = server.getDataSource().getWhiteListDataSource();        
         Player player = matches.get(0);
         
         boolean before = whitelist.isWhiteListed(player.getPlayerId());

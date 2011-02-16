@@ -89,16 +89,19 @@ public class MysqlKitsDataSource implements KitsDataSource {
         return rt;
     }
     
+    @Override
     public boolean setLastUsed(int userId, String kitname, int time) {
-        return false;
+        // TODO: Implement.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     
     @Override
     public int lastUsed(int userId, String kitname) {
-        // TODO Auto-generated method stub
-        return 0;
+        // TODO: Implement.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+    
     @Override
     public boolean setKit(Kit kit) {
         Connection conn = null;

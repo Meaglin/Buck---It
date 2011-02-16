@@ -52,9 +52,8 @@ public class UnmuteCommand extends Command {
             return true;
         }
         
-        data.setMuted(false);
         data.setMutetime(0);
-        server.getDataSource().getUserDataSource().updateUser(data);
+        server.getDataSource().getUserDataSource().updateUserMuteTime(data);
         
         sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Player '" + playername + "' is now unmuted.");
         if(player != null)player.sendMessage(Config.DEFAULT_INFO_COLOR + "You have been unmuted.");

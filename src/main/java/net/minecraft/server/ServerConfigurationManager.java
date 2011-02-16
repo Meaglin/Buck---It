@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 // CraftBukkit start
 import org.buckit.Config;
 import org.buckit.model.UserDataHolder;
+import org.buckit.util.MotdReader;
+import org.buckit.util.TimeFormat;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
@@ -86,18 +88,21 @@ public class ServerConfigurationManager {
         }
 
         entityplayer.world.a(entityplayer);
-
-        // Buck - It start
-        // TODO: optimize.
-        UserDataHolder holder = server.getPlayer(entityplayer).getUserDataHolder();
-        holder.setLastlogin((int) (System.currentTimeMillis()/1000));
-        server.getDataSource().getUserDataSource().updateUser(holder);
-        // Buck - It end
         
         server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_JOIN, server.getPlayer(entityplayer)));
 
         ((WorldServer)entityplayer.world).manager.a(entityplayer);
         // Craftbukkit end
+        
+        // Buck - It start
+        Player p = server.getPlayer(entityplayer);
+        if(Config.SEND_MOTD_ON_LOGIN) {
+            List<String> lines = MotdReader.getMotd();
+            for (String line : lines) {
+                p.sendMessage(line);
+            }
+        }
+        // Buck - It end
     }
 
     public void b(EntityPlayer entityplayer) {
@@ -135,14 +140,26 @@ public class ServerConfigurationManager {
         s2 = s2.substring(s2.indexOf("/") + 1);
         s2 = s2.substring(0, s2.indexOf(":"));
 
+        UserDataHolder holder = player.getUserDataHolder(); //Buck - It
         if (this.f.contains(s.trim().toLowerCase())) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server!");
         } else if (this.g.contains(s2)) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Your IP address is banned from this server!");
-        } else if (this.b.size() >= this.e) {
+        // Buck - It start
+        } else if (this.b.size() >= this.e && ((Config.RESERVELIST_ENABLED && !server.getDataSource().getReserveListDataSource().isReserveListed(holder.getId())) || !Config.RESERVELIST_ENABLED)) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full!");
-        }
-
+        } else if(holder.isBanned()) {
+            int time = holder.getBantime() - ((int)(System.currentTimeMillis()/1000));
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server" + (time > 0 ? " for another " + TimeFormat.formatRemaining(time) : "") + "!");
+        } else if(Config.WHITELIST_ENABLED && !server.getDataSource().getWhiteListDataSource().isWhiteListed(holder.getId())) {
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, Config.WHITELIST_MESSAGE);
+        }      
+        // TODO: optimize.
+        
+        holder.setLastlogin((int) (System.currentTimeMillis()/1000));
+        server.getDataSource().getUserDataSource().updateUser(holder);
+        // Buck - It end
+        
         server.getPluginManager().callEvent(event);
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
             netloginhandler.a(event.getKickMessage());
