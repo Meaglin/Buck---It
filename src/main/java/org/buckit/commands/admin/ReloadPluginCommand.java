@@ -27,7 +27,6 @@ public class ReloadPluginCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         
-        
         if(args.length == 0) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified.");
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + getUsage());

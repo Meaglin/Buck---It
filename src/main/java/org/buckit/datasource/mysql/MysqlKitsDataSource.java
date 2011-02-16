@@ -88,6 +88,12 @@ public class MysqlKitsDataSource implements KitsDataSource {
         }
         return rt;
     }
+    
+    public boolean setLastUsed(int userId, String kitname, int time) {
+        return false;
+    }
+    
+    
     @Override
     public int lastUsed(int userId, String kitname) {
         // TODO Auto-generated method stub

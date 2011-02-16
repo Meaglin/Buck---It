@@ -13,6 +13,7 @@ public interface KitsDataSource {
     public Kit getKit(String name);
     public boolean setKit(Kit kit);
     
+    public boolean setLastUsed(int userId, String kitname, int time);
     public int lastUsed(int userId, String kitname);
     
     public Collection<Kit> getKits();

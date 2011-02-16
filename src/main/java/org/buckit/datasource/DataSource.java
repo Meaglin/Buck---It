@@ -6,11 +6,7 @@ import org.buckit.datasource.mysql.MysqlHomesDataSource;
 import org.buckit.datasource.mysql.MysqlKitsDataSource;
 import org.buckit.datasource.mysql.MysqlUserDataSource;
 import org.buckit.datasource.mysql.MysqlWarpsDataSource;
-import org.buckit.datasource.type.AccessDataSource;
-import org.buckit.datasource.type.HomesDataSource;
-import org.buckit.datasource.type.KitsDataSource;
-import org.buckit.datasource.type.UserDataSource;
-import org.buckit.datasource.type.WarpsDataSource;
+import org.buckit.datasource.type.*;
 import org.bukkit.Server;
 
 public class DataSource {
@@ -20,6 +16,8 @@ public class DataSource {
     private KitsDataSource    kitsdatasource;
     private HomesDataSource   homesdatasource;
     private AccessDataSource  accessdatasource;
+    private WhiteListDataSource whitelistdatasource;
+    private ReserveListDataSource reservelistdatasource;
 
     private Server server;
     public DataSource(Server server) {
@@ -82,6 +80,20 @@ public class DataSource {
     public AccessDataSource getAccessDataSource() {
         return accessdatasource;
     }
+    /**
+     * @return the whitelistdatasource
+     */
+    public WhiteListDataSource getWhitelistDataSource() {
+        return whitelistdatasource;
+    }
+
+    /**
+     * @return the reservelistdatasource
+     */
+    public ReserveListDataSource getReservelistDataSource() {
+        return reservelistdatasource;
+    }
+
     public Server getServer(){
         return server;
     }
