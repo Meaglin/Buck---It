@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 // CraftBukkit start
+import org.buckit.Config;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.Location;
@@ -277,7 +278,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         if (packet14blockdig.e == 4) {
             this.e.O();
         } else {
-            boolean flag = ((WorldServer)this.e.world).B = this.d.f.g(this.e.name); // Craftbukkit
+            boolean flag = ((WorldServer)this.e.world).B = this.d.f.g(this.e.name) || getPlayer().isAdmin(); // Craftbukkit
             boolean flag1 = false;
 
             if (packet14blockdig.e == 0) {
@@ -328,7 +329,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
 
             if (packet14blockdig.e == 0) {
                 // CraftBukkit start
-                if (j1 > this.d.spawnProtection || flag) {
+                if (j1 > Config.SPAWN_RADIUS || flag) {
                     if (blockId > 0) {
                         BlockDamageEvent event;
                         // If the amount of damage that the player is going to do to the block
@@ -363,7 +364,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 // CraftBukkit end
             } else if (packet14blockdig.e == 1) {
                 // CraftBukkit start
-                if (j1 > this.d.spawnProtection || flag) {
+                if (j1 > Config.SPAWN_RADIUS || flag) {
                     BlockDamageEvent event;
                     // If the amount of damage going to the block plus the current amount
                     // of damage is greater than 1, the block is going to break.
@@ -623,7 +624,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         // CraftBukkit stop
 
         if (s.toLowerCase().startsWith("/me ")) {
-            s = "* " + this.e.name + " " + s.substring(s.indexOf(" ")).trim();
+            s = "* " + player.getDisplayName() + " " + s.substring(s.indexOf(" ")).trim();
             a.info(s);
             this.d.f.a((Packet) (new Packet3Chat(s)));
         } else if (s.toLowerCase().startsWith("/kill")) {

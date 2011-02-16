@@ -2,6 +2,8 @@ package net.minecraft.server;
 
 import java.util.Random;
 
+import org.buckit.Config;
+
 public class ChunkProviderGenerate implements IChunkProvider {
 
     private Random j;
@@ -347,74 +349,74 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         int j2;
 
-        for (k1 = 0; k1 < 8; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_DUNGEONS_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16) + 8;
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16) + 8;
             (new WorldGenDungeons()).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 10; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_CLAY_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16);
             (new WorldGenClay(32)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 20; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_DIRT_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.DIRT.id, 32)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.DIRT.id, Config.WORLD_DIRT_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 10; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_GRAVEL_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.GRAVEL.id, 32)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.GRAVEL.id, Config.WORLD_GRAVEL_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 20; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_COAL_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.COAL_ORE.id, 16)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.COAL_ORE.id, Config.WORLD_ORE_COAL_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 20; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_IRON_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(64);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.IRON_ORE.id, 8)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.IRON_ORE.id, Config.WORLD_ORE_IRON_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 2; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_GOLD_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(32);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.GOLD_ORE.id, 8)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.GOLD_ORE.id, Config.WORLD_ORE_GOLD_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 8; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_REDSTONE_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(16);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.REDSTONE_ORE.id, 7)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.REDSTONE_ORE.id, Config.WORLD_ORE_REDSTONE_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 1; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_DIAMOND_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(16);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.DIAMOND_ORE.id, 7)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.DIAMOND_ORE.id, Config.WORLD_ORE_DIAMOND_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
-        for (k1 = 0; k1 < 1; ++k1) {
+        for (k1 = 0; k1 < Config.WORLD_ORE_LAPISLAZULI_OCCURENCE; ++k1) {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(16) + this.j.nextInt(16);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenMinable(Block.LAPIS_ORE.id, 6)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenMinable(Block.LAPIS_ORE.id, Config.WORLD_ORE_LAPISLAZULI_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
         d0 = 0.5D;
@@ -465,42 +467,42 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         int l2;
 
-        for (i2 = 0; i2 < 2; ++i2) {
+        for (i2 = 0; i2 < Config.WORLD_YELLOW_FLOWER_OCCURENCE; ++i2) {
             j2 = k + this.j.nextInt(16) + 8;
             k2 = this.j.nextInt(128);
             l2 = l + this.j.nextInt(16) + 8;
             (new WorldGenFlowers(Block.YELLOW_FLOWER.id)).a(this.p, this.j, j2, k2, l2);
         }
 
-        if (this.j.nextInt(2) == 0) {
+        if (this.j.nextInt(2) == Config.WORLD_RED_FLOWER_OCCURENCE) {
             i2 = k + this.j.nextInt(16) + 8;
             j2 = this.j.nextInt(128);
             k2 = l + this.j.nextInt(16) + 8;
             (new WorldGenFlowers(Block.RED_ROSE.id)).a(this.p, this.j, i2, j2, k2);
         }
 
-        if (this.j.nextInt(4) == 0) {
+        if (this.j.nextInt(4) == Config.WORLD_BROWN_MUSHROOM_OCCURENCE) {
             i2 = k + this.j.nextInt(16) + 8;
             j2 = this.j.nextInt(128);
             k2 = l + this.j.nextInt(16) + 8;
             (new WorldGenFlowers(Block.BROWN_MUSHROOM.id)).a(this.p, this.j, i2, j2, k2);
         }
 
-        if (this.j.nextInt(8) == 0) {
+        if (this.j.nextInt(8) == Config.WORLD_RED_MUSHROOM_OCCURENCE) {
             i2 = k + this.j.nextInt(16) + 8;
             j2 = this.j.nextInt(128);
             k2 = l + this.j.nextInt(16) + 8;
             (new WorldGenFlowers(Block.RED_MUSHROOM.id)).a(this.p, this.j, i2, j2, k2);
         }
 
-        for (i2 = 0; i2 < 10; ++i2) {
+        for (i2 = 0; i2 < Config.WORLD_REED_OCCURENCE; ++i2) {
             j2 = k + this.j.nextInt(16) + 8;
             k2 = this.j.nextInt(128);
             l2 = l + this.j.nextInt(16) + 8;
             (new WorldGenReed()).a(this.p, this.j, j2, k2, l2);
         }
 
-        if (this.j.nextInt(32) == 0) {
+        if (this.j.nextInt(32) == Config.WORLD_PUMPKIN_OCCURENCE) {
             i2 = k + this.j.nextInt(16) + 8;
             j2 = this.j.nextInt(128);
             k2 = l + this.j.nextInt(16) + 8;
@@ -509,7 +511,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         i2 = 0;
         if (biomebase == BiomeBase.DESERT) {
-            i2 += 10;
+            i2 += Config.WORLD_CACTUS_OCCURENCE;
         }
 
         int i3;

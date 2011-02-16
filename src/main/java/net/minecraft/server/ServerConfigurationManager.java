@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 // CraftBukkit start
+import org.buckit.Config;
+import org.buckit.model.UserDataHolder;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
@@ -85,6 +87,13 @@ public class ServerConfigurationManager {
 
         entityplayer.world.a(entityplayer);
 
+        // Buck - It start
+        // TODO: optimize.
+        UserDataHolder holder = server.getPlayer(entityplayer).getUserDataHolder();
+        holder.setLastlogin((int) (System.currentTimeMillis()/1000));
+        server.getDataSource().getUserDataSource().updateUser(holder);
+        // Buck - It end
+        
         server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_JOIN, server.getPlayer(entityplayer)));
 
         ((WorldServer)entityplayer.world).manager.a(entityplayer);
@@ -100,6 +109,12 @@ public class ServerConfigurationManager {
         entityplayer.world.d(entityplayer); // Craftbukkit
         this.b.remove(entityplayer);
 
+        // Buck - It start
+        if(Config.TRACK_USER_ONLINE_TIME) {
+            server.getDataSource().getUserDataSource().updateUserDataOnDisconnect(server.getPlayer(entityplayer).getUserDataHolder());
+        }
+        // Buck - It end
+        
         // CraftBukkit start
         ((WorldServer)entityplayer.world).manager.b(entityplayer);
         server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_QUIT, server.getPlayer(entityplayer))); // CraftBukkit

@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 // CraftBukkit start
+import org.buckit.Config;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -98,7 +99,7 @@ public class ItemBlock extends Item {
 
                     int distanceFromSpawn = (int) Math.max(Math.abs(i - world.spawnX), Math.abs(k - world.spawnZ));
 
-                    boolean canBuild = distanceFromSpawn > ((WorldServer) world).D.spawnProtection || thePlayer.isOp(); // CraftBukkit Configurable spawn protection start
+                    boolean canBuild = distanceFromSpawn > Config.SPAWN_RADIUS || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
 
                     BlockPlaceEvent event = new BlockPlaceEvent(eventType, placedBlock, replacedBlockState, blockClicked, itemInHand, thePlayer, canBuild);
                     server.getPluginManager().callEvent(event);

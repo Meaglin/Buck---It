@@ -19,8 +19,17 @@ public class Config {
     // --------------------------------------------------
     // General Properties
     // --------------------------------------------------
-    public static int          SPAWN_SIZE;
-    public static int          SPAWN_RESPAWN_AREA_SIZE;
+    
+    public static int          PLAYER_LIMIT;
+    public static boolean      ONLINE_MODE_ENABLED;
+    public static boolean      ANIMALS_ENABLED;
+    public static boolean      MONSTERS_ENABLED;
+    public static boolean      PVP_ENABLED;
+    public static String       SERVER_IP;
+    public static int          SERVER_PORT;
+    
+    public static int          SPAWN_RADIUS;
+    public static int          SPAWN_RESPAWN_AREA_RADIUS;
 
     public static DataType     DATA_SOURCE_TYPE;
 
@@ -31,6 +40,9 @@ public class Config {
     public static boolean      WARPS_ENABLED;
     public static boolean      WARPS_GROUPS_ENABLED;
     public static String       WARPS_DEFAULT_GROUP_NAME;
+    public static boolean      WHITELIST_ENABLED;
+    public static boolean      RESERVELIST_ENABLED;
+    
     
     public static String       DEFAULT_USER_FORMAT;
     public static int          DEFAULT_ACCESS_LEVEL;
@@ -40,6 +52,7 @@ public class Config {
 	
     public static boolean      TRACK_USER_ONLINE_TIME;
     public static String       NOT_ENOUGH_ACCESS_MESSAGE;
+    
 
     // --------------------------------------------------
     // Expert Properties
@@ -62,8 +75,11 @@ public class Config {
     public static String       DATABASE_WARPS_TABLE;
     public static String       DATABASE_HOMES_TABLE;
     public static String       DATABASE_KITS_TABLE;
+    public static String       DATABASE_KITS_DELAY_TABLE;
     public static String       DATABASE_ACCESS_TABLE;
     public static String       DATABASE_ACCESSGROUPS_TABLE;
+    public static String       DATABASE_WHITELIST_TABLE;
+    public static String       DATABASE_RESERVELIST_TABLE;
 
     
 
@@ -75,8 +91,11 @@ public class Config {
     public static String FLATFILE_WARPS_FILE;
     public static String FLATFILE_HOMES_FILE;
     public static String FLATFILE_KITS_FILE;
+    public static String FLATFILE_KITS_DELAY_FILE;
     public static String FLATFILE_ACCESS_FILE;
     public static String FLATFILE_ACCESSGROUPS_FILE;
+    public static String FLATFILE_WHITELIST_FILE;
+    public static String FLATFILE_RESERVERLIST_FILE;
     
     
     // --------------------------------------------------
@@ -141,8 +160,8 @@ public class Config {
     private static void loadGeneralProperties() {
         try {
             Properties gp = new Properties(GENERAL_CONFIG_FILE);
-            SPAWN_SIZE = gp.getInt("SpawnSize", "16");
-            SPAWN_RESPAWN_AREA_SIZE = gp.getInt("RespawnAreaSize", "10");
+            SPAWN_RADIUS = gp.getInt("SpawnRadius", "16");
+            SPAWN_RESPAWN_AREA_RADIUS = gp.getInt("RespawnAreaRadius", "10");
 
             String datasource = gp.getProperty("DataSource", "flatfile");
             if(datasource.equalsIgnoreCase("flatfile"))DATA_SOURCE_TYPE = DataType.FLATFILE;

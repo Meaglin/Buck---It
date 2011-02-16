@@ -71,19 +71,19 @@ public class MinecraftServer implements ICommandListener, Runnable {
 
         a.info("Loading properties");
         this.d = new PropertyManager(new File("server.properties"));
-        String s = this.d.a("server-ip", "");
+        String s = Config.SERVER_IP;
 
-        this.l = this.d.a("online-mode", true);
-        this.m = this.d.a("spawn-animals", true);
-        this.n = this.d.a("pvp", true);
-        this.spawnProtection = this.d.a("spawn-protection", 16); // CraftBukkit Configurable spawn protection start
+        this.l = Config.ONLINE_MODE_ENABLED;
+        this.m = Config.ANIMALS_ENABLED;
+        this.n = Config.PVP_ENABLED;
+        //this.spawnProtection = this.d.a("spawn-protection", 16); // CraftBukkit Configurable spawn protection start
         InetAddress inetaddress = null;
 
         if (s.length() > 0) {
             inetaddress = InetAddress.getByName(s);
         }
 
-        int i = this.d.a("server-port", 25565);
+        int i = Config.SERVER_PORT;
 
         a.info("Starting Minecraft server on " + (s.length() == 0 ? "*" : s) + ":" + i);
 
@@ -120,8 +120,8 @@ public class MinecraftServer implements ICommandListener, Runnable {
         // Craftbukkit start
         WorldServer world = new WorldServer(this, new File("."), s, this.d.a("hellworld", false) ? -1 : 0);
         world.a(new WorldManager(this, world));
-        world.k = this.d.a("spawn-monsters", true) ? 1 : 0;
-        world.a(this.d.a("spawn-monsters", true), this.m);
+        world.k =   Config.MONSTERS_ENABLED ? 1 : 0;
+        world.a(Config.MONSTERS_ENABLED, this.m);
         this.f.a(world);
         worlds.add(world);
         // Craftbukkit end

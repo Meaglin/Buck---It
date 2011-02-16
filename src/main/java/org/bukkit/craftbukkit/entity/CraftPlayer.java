@@ -192,6 +192,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    // TODO: optimize
     public boolean canUseCommand(String command) {
         if(dataholder.getAccessLevel().canUseCommand(command))
             return true;

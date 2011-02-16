@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import org.buckit.Config;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -36,9 +38,9 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         int k = world.spawnY;
 
         if (!world.q.e) {
-            i += this.random.nextInt(20) - 10;
+            i += this.random.nextInt(Config.SPAWN_RESPAWN_AREA_RADIUS*2 + 1) - Config.SPAWN_RESPAWN_AREA_RADIUS;
             k = world.e(i, j);
-            j += this.random.nextInt(20) - 10;
+            j += this.random.nextInt(Config.SPAWN_RESPAWN_AREA_RADIUS*2 + 1) - Config.SPAWN_RESPAWN_AREA_RADIUS;
         }
 
         this.c((double) i + 0.5D, (double) k, (double) j + 0.5D, 0.0F, 0.0F);
