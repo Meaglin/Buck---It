@@ -1,31 +1,54 @@
 package org.buckit.datasource.flatfile;
 
+import java.util.List;
+
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.type.ReserveListDataSource;
 
+//USERID:LISTED
 public class FlatFileReserveListDataSource implements ReserveListDataSource {
 
     public FlatFileReserveListDataSource(DataSource dataSource) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean isReserveListed(int userid) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        boolean ret = false;
+        List<String> lines = FileHandler.getLines("reservelist");
+        
+        for (int i=0; i<lines.size(); i++) {
+            String[] entry = lines.get(i).split(FileHandler.sep1);
+            
+            int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+            boolean isR;  try { isR = Boolean.parseBoolean(entry[1]); } catch (Exception e) { return false; }
+            
+            if (userid==useridR)
+                ret = isR;
+        }
+        
+        return ret;
     }
 
     @Override
     public boolean load() {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
     public boolean setReserveListed(int userid, boolean reservelist) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<String> lines = FileHandler.getLines("reservelist");
+        
+        for (int i=0; i<lines.size(); i++) {
+            String[] entry = lines.get(i).split(FileHandler.sep1);
+            
+            int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+            
+            if (userid==useridR) {
+                lines.set(i, useridR + FileHandler.sep1 + reservelist);
+            }
+        }
+        
+        return FileHandler.writeFile("reservelist", lines);
     }
 
 }
