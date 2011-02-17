@@ -89,6 +89,7 @@ public class Config {
     // FlatFile Properties
     // --------------------------------------------------
     
+    public static String FLATFILE_USERS_DIRECTORY;
     public static String FLATFILE_USERS_FILE;
     public static String FLATFILE_WARPS_FILE;
     public static String FLATFILE_HOMES_FILE;
@@ -97,7 +98,7 @@ public class Config {
     public static String FLATFILE_ACCESS_FILE;
     public static String FLATFILE_ACCESSGROUPS_FILE;
     public static String FLATFILE_WHITELIST_FILE;
-    public static String FLATFILE_RESERVERLIST_FILE;
+    public static String FLATFILE_RESERVELIST_FILE;
     
     
     // --------------------------------------------------
@@ -162,7 +163,16 @@ public class Config {
     private static void loadGeneralProperties() {
         try {
             Properties gp = new Properties(GENERAL_CONFIG_FILE);
-            SPAWN_RADIUS = gp.getInt("SpawnRadius", "16");
+            
+            PLAYER_LIMIT = gp.getInt("PlayerLimit", 20, 0);
+            ONLINE_MODE_ENABLED = gp.getBool("OnlineMode", true);
+            ANIMALS_ENABLED = gp.getBool("SpawnAnimals", true);
+            MONSTERS_ENABLED = gp.getBool("SpawnMonsters", true);
+            PVP_ENABLED = gp.getBool("PvpEnabled", true);
+            SERVER_IP = gp.getProperty("ServerIP", "");
+            SERVER_PORT = gp.getInt("ServerPort", 25565,1,65535);
+            
+            SPAWN_RADIUS = gp.getInt("SpawnRadius", 16);
             SPAWN_RESPAWN_AREA_RADIUS = gp.getInt("RespawnAreaRadius", "10");
 
             String datasource = gp.getProperty("DataSource", "flatfile");
@@ -177,10 +187,28 @@ public class Config {
 
             WARPS_ENABLED = gp.getBool("WarpsEnabled", "true");
             WARPS_GROUPS_ENABLED = gp.getBool("WarpsGroupsEnabled", "false");
+            WARPS_DEFAULT_GROUP_NAME = gp.getProperty("WarpsDefaultGroup","default");
+            
+            WHITELIST_ENABLED = gp.getBool("WhiteListEnabled", false);
+            RESERVELIST_ENABLED = gp.getBool("ReserveListEnabled", false);
+            
+            WHITELIST_MESSAGE = gp.getProperty("WhiteListMessage","Not on whitelist.");
+            RESERVELIST_MESSAGE = gp.getProperty("ReservelistMessage","The server is full!");
+            
+            TP_REQUEST_COMMANDS_ENABLED = gp.getBool("TpRequestEnabled", false);
             
             DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","^0{$username}");
+            DEFAULT_ACCESS_LEVEL = gp.getInt("DefaultAccessLevel", 0);
+            
+            DEFAULT_ERROR_COLOR = gp.getProperty("DefaultErrorColor","^C").replace("^", "\u00A7");
+            DEFAULT_INFO_COLOR = gp.getProperty("DefaultErrorColor","^A").replace("^", "\u00A7");
+            
             TRACK_USER_ONLINE_TIME = gp.getBool("TrackUserOnlineTime", "true");
             NOT_ENOUGH_ACCESS_MESSAGE = gp.getProperty("AccessMessage", "Your are not allowed to use this command.");
+            
+            LIMIT_BUILD_BY_BUILD_FLAG = gp.getBool("LimitBuildByFlag", true);
+            SEND_MOTD_ON_LOGIN = gp.getBool("MotdOnLogin", true);
+            
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,42 +220,42 @@ public class Config {
         try {
             Properties wp = new Properties(WORLD_CONFIG_FILE);
 
-            WORLD_GRAVEL_OCCURENCE = wp.getInt("GravelOccurence", "10",0,100);
-            WORLD_DIRT_OCCURENCE = wp.getInt("DirtOccurence", "10",0,100);
+            WORLD_GRAVEL_OCCURENCE = wp.getInt("GravelOccurence", 10,0,100);
+            WORLD_DIRT_OCCURENCE = wp.getInt("DirtOccurence", 10,0,100);
             
-            WORLD_ORE_COAL_OCCURENCE = wp.getInt("CoalOccurence", "20",0,100);
-            WORLD_ORE_IRON_OCCURENCE = wp.getInt("IronOccurence", "20",0,100);
-            WORLD_ORE_GOLD_OCCURENCE = wp.getInt("GoldOccurence", "2",0,100);
-            WORLD_ORE_DIAMOND_OCCURENCE = wp.getInt("DiamondOccurence", "1",0,100);
-            WORLD_ORE_REDSTONE_OCCURENCE = wp.getInt("RedstoneOccurence", "8",0,100);
-            WORLD_ORE_LAPISLAZULI_OCCURENCE = wp.getInt("LapisLazuliOccurence", "1",0,100);
+            WORLD_ORE_COAL_OCCURENCE = wp.getInt("CoalOccurence", 20,0,100);
+            WORLD_ORE_IRON_OCCURENCE = wp.getInt("IronOccurence", 20,0,100);
+            WORLD_ORE_GOLD_OCCURENCE = wp.getInt("GoldOccurence", 2,0,100);
+            WORLD_ORE_DIAMOND_OCCURENCE = wp.getInt("DiamondOccurence", 1,0,100);
+            WORLD_ORE_REDSTONE_OCCURENCE = wp.getInt("RedstoneOccurence", 8,0,100);
+            WORLD_ORE_LAPISLAZULI_OCCURENCE = wp.getInt("LapisLazuliOccurence", 1,0,100);
             
-            WORLD_GRAVEL_SIZE = wp.getInt("GravelSize", "33",0,100)-1;
-            WORLD_DIRT_SIZE = wp.getInt("DirtSize", "33",0,100)-1;
+            WORLD_GRAVEL_SIZE = wp.getInt("GravelSize", 33,0,100)-1;
+            WORLD_DIRT_SIZE = wp.getInt("DirtSize", 33,0,100)-1;
             
-            WORLD_ORE_COAL_SIZE = wp.getInt("CoalSize", "17",0,100)-1;
-            WORLD_ORE_IRON_SIZE = wp.getInt("IronSize", "9",0,100)-1;
-            WORLD_ORE_GOLD_SIZE = wp.getInt("GoldSize", "9",0,100)-1;
-            WORLD_ORE_DIAMOND_SIZE = wp.getInt("DiamondSize", "8",0,100)-1;
-            WORLD_ORE_REDSTONE_SIZE = wp.getInt("RedstoneSize", "8",0,100)-1;
-            WORLD_ORE_LAPISLAZULI_SIZE = wp.getInt("LapisLazuliSize", "7",0,100)-1;
+            WORLD_ORE_COAL_SIZE = wp.getInt("CoalSize", 17,0,100)-1;
+            WORLD_ORE_IRON_SIZE = wp.getInt("IronSize", 9,0,100)-1;
+            WORLD_ORE_GOLD_SIZE = wp.getInt("GoldSize", 9,0,100)-1;
+            WORLD_ORE_DIAMOND_SIZE = wp.getInt("DiamondSize", 8,0,100)-1;
+            WORLD_ORE_REDSTONE_SIZE = wp.getInt("RedstoneSize", 8,0,100)-1;
+            WORLD_ORE_LAPISLAZULI_SIZE = wp.getInt("LapisLazuliSize", 7,0,100)-1;
             
-            WORLD_DUNGEONS_OCCURENCE = wp.getInt("DungeonOccurence", "8",0,20);
+            WORLD_DUNGEONS_OCCURENCE = wp.getInt("DungeonOccurence", 8,0,20);
             
-            WORLD_CLAY_OCCURENCE = wp.getInt("ClayOccurence", "10",0,100);
-            WORLD_CLAY_SIZE = wp.getInt("ClaySize", "32",0,100);
+            WORLD_CLAY_OCCURENCE = wp.getInt("ClayOccurence", 10,0,100);
+            WORLD_CLAY_SIZE = wp.getInt("ClaySize", 32,0,100);
             
-            WORLD_CACTUS_OCCURENCE = wp.getInt("CactusOccurence", "10",0,100);
+            WORLD_CACTUS_OCCURENCE = wp.getInt("CactusOccurence", 10,0,100);
             
-            WORLD_PUMPKIN_OCCURENCE = wp.getInt("PumpkinOccurence", "1",0,32);
+            WORLD_PUMPKIN_OCCURENCE = wp.getInt("PumpkinOccurence", 1,0,32);
             
-            WORLD_REED_OCCURENCE = wp.getInt("ReedOccurence", "10",0,100);
+            WORLD_REED_OCCURENCE = wp.getInt("ReedOccurence", 10,0,100);
             
-            WORLD_YELLOW_FLOWER_OCCURENCE = wp.getInt("YellowFlowerOccurence", "2",0,100);
-            WORLD_RED_FLOWER_OCCURENCE = wp.getInt("RedFlowerOccurence", "1",0,2);
+            WORLD_YELLOW_FLOWER_OCCURENCE = wp.getInt("YellowFlowerOccurence", 2,0,100);
+            WORLD_RED_FLOWER_OCCURENCE = wp.getInt("RedFlowerOccurence", 1,0,2);
             
-            WORLD_BROWN_MUSHROOM_OCCURENCE = wp.getInt("BrownMushroomOccurence", "1",0,4);
-            WORLD_RED_MUSHROOM_OCCURENCE = wp.getInt("RedMushroomOccurence", "1",0,8);
+            WORLD_BROWN_MUSHROOM_OCCURENCE = wp.getInt("BrownMushroomOccurence", 1,0,4);
+            WORLD_RED_MUSHROOM_OCCURENCE = wp.getInt("RedMushroomOccurence", 1,0,8);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,8 +265,8 @@ public class Config {
     private static void loadDatabaseProperties() {
         try {
             Properties dp = new Properties(DATABASE_CONFIG_FILE);
-            DATABASE_MAX_CONNECTIONS = dp.getInt("MaximumDbConnections", "100");
-            DATABASE_MAX_IDLE_TIME = dp.getInt("MaximumDbIdleTime", "0");
+            DATABASE_MAX_CONNECTIONS = dp.getInt("MaximumDbConnections", 100);
+            DATABASE_MAX_IDLE_TIME = dp.getInt("MaximumDbIdleTime", 0);
             DATABASE_DRIVER = dp.getProperty("Driver", "com.mysql.jdbc.Driver");
             DATABASE_URL = dp.getProperty("URL", "jdbc:mysql://localhost/Minecraft");
             DATABASE_LOGIN = dp.getProperty("Login", "root");
@@ -248,8 +276,11 @@ public class Config {
             DATABASE_WARPS_TABLE = dp.getProperty("WarpsTable", "warps");
             DATABASE_HOMES_TABLE = dp.getProperty("HomesTable", "homes");
             DATABASE_KITS_TABLE = dp.getProperty("KitsTable", "kits");
+            DATABASE_KITS_DELAY_TABLE = dp.getProperty("KitsDelayTable","kits_delay");
             DATABASE_ACCESS_TABLE = dp.getProperty("AccessTable", "accesslevels");
             DATABASE_ACCESSGROUPS_TABLE = dp.getProperty("AccessGroupsTable", "accessgroups");
+            DATABASE_RESERVELIST_TABLE = dp.getProperty("ReserveListTable","reservelist");
+            DATABASE_WHITELIST_TABLE = dp.getProperty("WhiteListTable","whitelist");
         } catch (Exception e) {
             e.printStackTrace();
             log.warning("Config: Error loading Database properties file.");
@@ -258,12 +289,15 @@ public class Config {
     private static void loadFlatFileProperties() {
         try{
             Properties fp = new Properties(FLATFILE_CONFIG_FILE);
-            FLATFILE_USERS_FILE = fp.getProperty("UsersFile", "./flatfile/user.txt");
+            FLATFILE_USERS_FILE = fp.getProperty("UsersFile", "./flatfile/users.txt");
             FLATFILE_WARPS_FILE = fp.getProperty("WarpsFile", "./flatfile/warps.txt");
             FLATFILE_HOMES_FILE = fp.getProperty("HomesFile", "./flatfile/homes.txt");
             FLATFILE_KITS_FILE = fp.getProperty("KitsFile", "./flatfile/kits.txt");
+            FLATFILE_KITS_DELAY_FILE = fp.getProperty("KitsDelayFile","./flatfile/kits_delay.txt");
             FLATFILE_ACCESS_FILE = fp.getProperty("AccessFile", "./flatfile/accesslevels.txt");
             FLATFILE_ACCESSGROUPS_FILE = fp.getProperty("AccessGroupsFile", "./flatfile/accessgroups.txt");
+            FLATFILE_WHITELIST_FILE = fp.getProperty("WhiteListFile","./flatfile/whitelist.txt");
+            FLATFILE_RESERVELIST_FILE = fp.getProperty("ReserveListFile","./flatfile/reservelist.txt");
         } catch (Exception e) {
             e.printStackTrace();
             log.warning("Config: Error loading World properties file.");

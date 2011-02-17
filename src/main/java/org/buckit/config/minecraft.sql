@@ -7,7 +7,8 @@ CREATE TABLE `accessgroups` (
    `id` int(11) not null,
    `name` varchar(50),
    `commands` longtext,
-   PRIMARY KEY (`id`)
+   PRIMARY KEY (`id`),
+   UNIQUE KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
@@ -33,7 +34,8 @@ CREATE TABLE `homes` (
    `z` double not null,
    `rotX` float not null,
    `rotY` float not null,
-   PRIMARY KEY (`id`)
+   PRIMARY KEY (`id`),
+   UNIQUE KEY (`name`,`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=3;
 
 
@@ -43,7 +45,8 @@ CREATE TABLE `kits` (
    `items` longtext not null,
    `minaccesslevel` int(11) default '0',
    `delay` int(11) default '0',
-   PRIMARY KEY (`id`)
+   PRIMARY KEY (`id`),
+   UNIQUE KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
@@ -61,7 +64,6 @@ CREATE TABLE `users` (
    `commands` longtext ,
    `canbuild` tinyint(1) not null default '0',
    `isadmin` tinyint(1) not null default '0',
-   `muted` tinyint(1) not null default '0',
    `accesslevel` int(11) not null default '0',
    PRIMARY KEY (`id`),
    UNIQUE KEY (`username`)

@@ -93,16 +93,74 @@ public final class Properties extends java.util.Properties {
         return Boolean.parseBoolean(getProperty(key,defaultvalue));
     }
     
+    public boolean getBool(String key,boolean defaultvalue) {
+        String val = getProperty(key);
+        return (val == null ? defaultvalue : Boolean.parseBoolean(val));
+    }
+    
     public int getInt(String key,String defaultvalue){
         return Integer.parseInt(getProperty(key,defaultvalue));
     }
     
+    public int getInt(String key,int defaultvalue) {
+        String val = getProperty(key);
+        return (val == null ? defaultvalue : Integer.parseInt(val));
+    }
+    
+    public int getInt(String key,String defaultvalue,int min) {
+        return limit(getInt(key,defaultvalue),min);
+    }
+    
     public int getInt(String key,String defaultvalue,int min,int max){
-        int rt = getInt(key,defaultvalue);
-        
-        if(rt > max)rt = max;
-        else if(rt < min)rt = min;
-        
-        return rt;
+        return limit(getInt(key,defaultvalue),min,max);
+    }
+
+    public int getInt(String key,int defaultvalue,int min) {
+        return limit(getInt(key,defaultvalue),min);
+    }
+    
+    public int getInt(String key,int defaultvalue,int min,int max) {
+        return limit(getInt(key,defaultvalue),min,max);
+    }
+    
+    private static int limit(int val, int min) {
+        return (val < min ? min : val);
+    }
+    
+    private static int limit(int val, int min, int max) {
+        return (val > max ? max : (val < min ?  min : val));
+    }
+    
+    private static float limit(float val,float min,float max) {
+        return (val > max ? max : (val < min ?  min : val));
+    }
+    
+    private static float limit(float val, float min) {
+        return (val < min ? min : val);
+    }
+    
+    public float getFloat(String key,String defaultvalue){
+        return Float.parseFloat(getProperty(key,defaultvalue));
+    }
+    
+    public float getFloat(String key,float defaultvalue) {
+        String val = getProperty(key);
+        return (val == null ? defaultvalue : Float.parseFloat(val));
+    }
+    
+    public float getFloat(String key,String defaultvalue,float min) {
+        return limit(getFloat(key,defaultvalue),min);
+    }
+    
+    public float getFloat(String key,String defaultvalue,float min,float max){
+        return limit(getFloat(key,defaultvalue),min,max);
+    }
+
+    public float getFloat(String key,float defaultvalue,float min) {
+        return limit(getFloat(key,defaultvalue),min);
+    }
+    
+    public float getFloat(String key,float defaultvalue,float min,float max) {
+        return limit(getFloat(key,defaultvalue),min,max);
     }
 }
