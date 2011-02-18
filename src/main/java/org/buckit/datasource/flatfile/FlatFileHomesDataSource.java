@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.buckit.Config;
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
@@ -26,7 +27,7 @@ public class FlatFileHomesDataSource implements HomesDataSource {
     
     @Override
     public boolean deleteHome(int userId, String name) {
-        List<String> lines = FileHandler.readFile(new File("./config/homes/"+userId+".txt"));
+        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
@@ -52,7 +53,7 @@ public class FlatFileHomesDataSource implements HomesDataSource {
     public Home getHome(int userId, String name) {
         Home home = null;
 
-        List<String> lines = FileHandler.readFile(new File("./config/homes/"+userId+".txt"));
+        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
@@ -79,7 +80,7 @@ public class FlatFileHomesDataSource implements HomesDataSource {
     public List<Home> getHomes(int userId) {
         List<Home> home = new ArrayList<Home>();
 
-        List<String> lines = FileHandler.readFile(new File("./config/homes/"+userId+".txt"));
+        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
@@ -108,7 +109,7 @@ public class FlatFileHomesDataSource implements HomesDataSource {
     @Override
     public boolean setHome(int userId, String username, String name, Location home) {
 
-        List<String> lines = FileHandler.readFile(new File("./config/homes/"+userId+".txt"));
+        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
@@ -132,7 +133,7 @@ public class FlatFileHomesDataSource implements HomesDataSource {
             }
         }
 
-        return FileHandler.writeFile(new File("./config/homes/"+userId+".txt"), lines);
+        return FileHandler.writeFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"), lines);
     }
 
 }

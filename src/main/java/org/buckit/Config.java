@@ -89,10 +89,9 @@ public class Config {
     // FlatFile Properties
     // --------------------------------------------------
     
-    public static String FLATFILE_USERS_DIRECTORY;
     public static String FLATFILE_USERS_FILE;
     public static String FLATFILE_WARPS_FILE;
-    public static String FLATFILE_HOMES_FILE;
+    public static String FLATFILE_HOMES_DIRECTORY;
     public static String FLATFILE_KITS_FILE;
     public static String FLATFILE_KITS_DELAY_FILE;
     public static String FLATFILE_ACCESS_FILE;
@@ -291,7 +290,7 @@ public class Config {
             Properties fp = new Properties(FLATFILE_CONFIG_FILE);
             FLATFILE_USERS_FILE = fp.getProperty("UsersFile", "./flatfile/users.txt");
             FLATFILE_WARPS_FILE = fp.getProperty("WarpsFile", "./flatfile/warps.txt");
-            FLATFILE_HOMES_FILE = fp.getProperty("HomesFile", "./flatfile/homes.txt");
+            FLATFILE_HOMES_DIRECTORY = fp.getProperty("HomesDirectory", "./flatfile/homes/");
             FLATFILE_KITS_FILE = fp.getProperty("KitsFile", "./flatfile/kits.txt");
             FLATFILE_KITS_DELAY_FILE = fp.getProperty("KitsDelayFile","./flatfile/kits_delay.txt");
             FLATFILE_ACCESS_FILE = fp.getProperty("AccessFile", "./flatfile/accesslevels.txt");

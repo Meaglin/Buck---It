@@ -36,7 +36,7 @@ public class FlatFileWhiteListDataSource implements WhiteListDataSource {
 
     @Override
     public boolean setWhiteListed(int userid, boolean whitelisted) {
-        List<String> lines = FileHandler.getLines("whitelsit");
+        List<String> lines = FileHandler.getLines("whitelist");
         
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);

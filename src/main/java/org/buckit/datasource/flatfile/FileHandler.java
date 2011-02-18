@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.buckit.Config;
+
 public class FileHandler {
     
     private static Map<String, String> filenames = new HashMap<String, String>();
@@ -91,14 +93,14 @@ public class FileHandler {
 
     private static void load() {
         //TODO insert filenames
-        filenames.put("groups", "groups.txt");
-        filenames.put("accesslevels", "accesslevels.txt");
-        filenames.put("kits", "kits.txt");
-        filenames.put("kitslast", "kitslast.txt");
-        filenames.put("reservelist", "reservelist.txt");
-        filenames.put("user", "users.txt");
-        filenames.put("warps", "warps.txt");
-        filenames.put("whitelist", "whitelist.txt");
+        filenames.put("groups", Config.FLATFILE_ACCESSGROUPS_FILE);
+        filenames.put("accesslevels", Config.FLATFILE_ACCESS_FILE);
+        filenames.put("kits", Config.FLATFILE_KITS_FILE);
+        filenames.put("kitslast", Config.FLATFILE_KITS_DELAY_FILE);
+        filenames.put("reservelist", Config.FLATFILE_RESERVELIST_FILE);
+        filenames.put("user", Config.FLATFILE_USERS_FILE);
+        filenames.put("warps", Config.FLATFILE_WARPS_FILE);
+        filenames.put("whitelist", Config.FLATFILE_WHITELIST_FILE);
         
         Collection<String> files = filenames.values();
         for (String f : files) {
