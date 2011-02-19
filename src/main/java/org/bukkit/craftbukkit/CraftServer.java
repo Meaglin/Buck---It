@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit;
 
+import org.buckit.Config;
 import org.buckit.datasource.DataSource;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -173,6 +174,7 @@ public final class CraftServer implements Server {
     }
 
     public void reload() {
+        Config.load();
         PropertyManager config = new PropertyManager(console.options);
 
         console.d = config;

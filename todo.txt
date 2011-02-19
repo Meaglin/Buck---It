@@ -1,24 +1,16 @@
-help
-playerlist - pjm
-banip
-unbanip
-ban - meag
-unban - meag
-mute - meag
-unmute - meag
-kick - pjm
-item
-cloth
-dye
-setspawn - [uitgesteld]
-getpos
-time
-motd
+---
+Todo
+---
+
+Mysql:
 whitelist
 reservelist
-enableplugin
-disableplugin
-reloadplugin
-spawn - pjm
-clearinventory
-spawnmob
+
+Yaml:
+whitelist
+reservelist
+access
+userdata
+homes
+kits
+warps

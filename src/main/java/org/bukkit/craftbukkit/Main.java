@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecraft.server.MinecraftServer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        FileCheck.checkAllFiles();
         // Todo: Installation script
         OptionParser parser = new OptionParser() {
             {
@@ -78,7 +80,9 @@ public class Main {
             }
         }
     }
-
+    
+    
+    
     private static List<String> asList(String... params) {
         return Arrays.asList(params);
     }

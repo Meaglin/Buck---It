@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Buck - It Full Package Compiler" default="dist" basedir=".">
+	<description>
+		This script will build the Buck - It jarfile and zip appropriate files.
+	</description>
+
+	<property name="src" location="src" />
+	<property name="lib" location="lib" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+
+
+	<path id="classpath">
+		<fileset dir="libs">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="verifyRequirements" description="Checks if the necessary requirements for building Handler are fulfilled">
+		<available classname="javax.script.ScriptContext" property="JDK6.present" />
+		<fail unless="JDK6.present" message="JDK 6 or greater is required." />
+	</target>
+
+	<target name="init" depends="clean, verifyRequirements" description="Create the output directories.">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/classes" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/licenses" />
+		<mkdir dir="${dist}/libs" />
+		<mkdir dir="${dist}/libs/rules" />
+		<mkdir dir="${dist}/plugins" />
+		<mkdir dir="${dist}/config" />
+	</target>
+
+	<target name="compile" depends="init" description="Compile the source.">
+		<javac destdir="${build}/classes" optimize="on" debug="on" debuglevel="lines,vars,source" source="1.6" target="1.6" nowarn="off">
+			<src path="${src}" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Create the jar file">
+		<jar destfile="${dist}/BuckIt.jar">
+			<fileset dir="${build}/classes" />
+			<zipfileset dir="${src}/main/java/org/buckit/config/" prefix="org/buckit/config/" >
+				<include name="*.properties" />
+				<include name="*.txt" />
+			</zipfileset >
+			<manifest>
+				<attribute name="Main-Class" value="org.bukkit.craftbukkit.Main" />
+				<attribute name="Class-Path" value="minecraft_servero.jar" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="dist" depends="jar" >
+		<copy todir="${dist}/licenses">
+			<fileset dir="libs">
+				<include name="mysql-connector-java_LICENSE.txt" />
+				<include name="javolution_LICENSE.txt" />
+				<include name="c3p0_LICENSE.txt" />
+				<include name="trove_LICENSE.txt" />
+			</fileset>
+			<fileset dir="licenses">
+				<include name="LGPL.txt" />
+				<include name="GPL.txt" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}/libs/rules">
+			<fileset dir="rules">
+				<include name="*.rules" />
+				<include name="*.rgs" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="files">
+				<include name="*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}/libs">
+			<fileset dir="libs">
+				<include name="c3p0-0.9.2-pre1.jar" />
+				<include name="jopt-simple-3.2.jar" />
+				<include name="json_simple-1.1.jar" />
+				<include name="snakeyaml-1.7.jar" />
+				<include name="trove-2.1.0.jar" />
+				<include name="javolution-5.5.1.jar" />
+				<include name="mysql-connector-java-5.1.13-bin.jar" />
+				<include name="jarjar.jar" />
+				<include name="retroguard.jar" />
+			</fileset>
+		</copy>
+		<zip destfile="${dist}/BuckIt_Server_Mod.zip" basedir="${dist}" />
+	</target>
+
+	<target name="clean" description="Remove the output directories">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+</project>

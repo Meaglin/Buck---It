@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.mysql.Field.Type;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
@@ -91,15 +92,13 @@ public class MysqlKitsDataSource implements KitsDataSource {
     
     @Override
     public boolean setLastUsed(int userId, String kitname, int time) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        return DatabaseFactory.insertQueryExecutor(Config.DATABASE_KITS_DELAY_TABLE, new Field[] {new Field("userid",userId) , new Field("name",kitname) , new Field("time", time) }, true);
     }
     
     
     @Override
     public int lastUsed(int userId, String kitname) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        return DatabaseFactory.simpleSelectQueryExecutor(Config.DATABASE_KITS_DELAY_TABLE, new Field[] {new Field("time",Type.INTEGER) }, new Field[] {new Field("userid",userId) , new Field("name",kitname) },1)[0].getInteger("time");
     }
     
     @Override

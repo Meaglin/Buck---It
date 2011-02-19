@@ -15,6 +15,8 @@
 package org.buckit.datasource.mysql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.buckit.Config;
+import org.buckit.util.StatsSet;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -268,4 +271,255 @@ public class DatabaseFactory {
     public final ProviderType getProviderType() {
         return providerType;
     }
+    
+    public static boolean insertQueryExecutor(String tablename,Field[] fields, boolean replace) {
+        if(fields.length == 0)
+            return false;
+        
+        String sql = "";
+        if(replace)
+            sql = "REPLACE INTO " + tablename + " (";
+        else
+            sql = "INSERT INTO " + tablename + " (";
+        
+        for(Field f : fields)
+            sql += f.getName() + ",";
+        
+        sql = sql.substring(0,sql.length()-1);
+        
+        sql += ") VALUES (";
+        
+        for(int i = 0;i < fields.length;i++)
+            sql += "?,";
+        
+        sql = sql.substring(0,sql.length()-1);
+        
+        sql += ")";
+        Connection conn = null;
+        PreparedStatement st = null;
+        boolean rt = false;
+        try {
+            conn = getInstance().getConnection();
+            st = conn.prepareStatement(sql);
+            for(int i = 1;i <= fields.length;i++) {
+                Field f = fields[i-1];
+                switch(f.getType()){
+                    case BOOLEAN:
+                        st.setBoolean(i, f.getBool());
+                        break;
+                    case BYTE:
+                        st.setByte(i, f.getByte());
+                        break;
+                    case SHORT:
+                        st.setShort(i, f.getShort());
+                        break;
+                    case INTEGER:
+                        st.setInt(i, f.getInt());
+                        break;
+                    case LONG:
+                        st.setLong(i, f.getLong());
+                        break;
+                    case STRING:
+                        st.setString(i, f.getString());
+                        break;
+                }
+            }
+            rt = st.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try{
+                if(conn != null)conn.close();
+                if(st != null)st.close();
+            } catch(Exception e){} // we don't give a damn if this goes wrong ;)
+        }
+        
+        return rt;
+    }
+    
+    public static boolean updateQueryExecutor(String tablename,Field[] fields,Field[] arguments) {
+        if(fields.length == 0)
+            return false;
+        
+        String sql = "UPDATE " + tablename + " SET ";
+        
+        for(Field f : fields)
+            sql += f.getName() + " = ?,";
+        
+        sql = sql.substring(0,sql.length()-1);
+        
+        if(arguments.length != 0) {
+            sql += " WHERE ";
+            for(Field f : fields)
+                sql += f.getName() + " = ? AND ";
+            
+            sql = sql.substring(0,sql.length() - 4);
+        }
+        
+        
+        Connection conn = null;
+        PreparedStatement st = null;
+        boolean rt = false;
+        try {
+            conn = getInstance().getConnection();
+            st = conn.prepareStatement(sql);
+            for(int i = 1;i <= fields.length;i++) {
+                Field f = fields[i-1];
+                switch(f.getType()){
+                    case BOOLEAN:
+                        st.setBoolean(i, f.getBool());
+                        break;
+                    case BYTE:
+                        st.setByte(i, f.getByte());
+                        break;
+                    case SHORT:
+                        st.setShort(i, f.getShort());
+                        break;
+                    case INTEGER:
+                        st.setInt(i, f.getInt());
+                        break;
+                    case LONG:
+                        st.setLong(i, f.getLong());
+                        break;
+                    case STRING:
+                        st.setString(i, f.getString());
+                        break;
+                }
+            }
+            for(int i = 1;i <= arguments.length;i++) {
+                Field f = arguments[i-1];
+                switch(f.getType()){
+                    case BOOLEAN:
+                        st.setBoolean(i + fields.length, f.getBool());
+                        break;
+                    case BYTE:
+                        st.setByte(i + fields.length, f.getByte());
+                        break;
+                    case SHORT:
+                        st.setShort(i + fields.length, f.getShort());
+                        break;
+                    case INTEGER:
+                        st.setInt(i + fields.length, f.getInt());
+                        break;
+                    case LONG:
+                        st.setLong(i + fields.length, f.getLong());
+                        break;
+                    case STRING:
+                        st.setString(i + fields.length, f.getString());
+                        break;
+                }
+            }
+            rt = st.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try{
+                if(conn != null)conn.close();
+                if(st != null)st.close();
+            } catch(Exception e){} // we don't give a damn if this goes wrong ;)
+        }
+        
+        return rt;
+    }
+    public static StatsSet[] simpleSelectQueryExecutor(String tablename,Field[] fields,Field[] arguments) {
+        return simpleSelectQueryExecutor(tablename,fields,arguments,0);
+    }
+    public static StatsSet[] simpleSelectQueryExecutor(String tablename,Field[] fields,Field[] arguments, int limit ) {
+        if(fields.length == 0)
+            return null;
+        
+        String sql = "SELECT ";
+        
+        for(Field f : fields)
+            sql += f.getName() + ",";
+        
+        sql = sql.substring(0,sql.length()-1);
+        
+        sql += " FROM " + tablename;
+        
+        if(arguments.length != 0) {
+            sql += " WHERE ";
+            for(Field f : fields)
+                sql += f.getName() + " = ? AND ";
+            
+            sql = sql.substring(0,sql.length() - 5);
+        }
+        if(limit > 0) {
+            sql += " LIMIT " + limit;
+        }
+        
+        Connection conn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        StatsSet[] rt = null;
+        try {
+            conn = getInstance().getConnection();
+            st = conn.prepareStatement(sql);
+            for(int i = 1;i <= arguments.length;i++) {
+                Field f = arguments[i-1];
+                switch(f.getType()){
+                    case BOOLEAN:
+                        st.setBoolean(i, f.getBool());
+                        break;
+                    case BYTE:
+                        st.setByte(i, f.getByte());
+                        break;
+                    case SHORT:
+                        st.setShort(i, f.getShort());
+                        break;
+                    case INTEGER:
+                        st.setInt(i, f.getInt());
+                        break;
+                    case LONG:
+                        st.setLong(i, f.getLong());
+                        break;
+                    case STRING:
+                        st.setString(i, f.getString());
+                        break;
+                }
+            }
+            rs = st.executeQuery();
+            rt = new StatsSet[rs.getFetchSize()];
+            while(rs.next()){
+                rt[rs.getRow()-1] = new StatsSet();
+                for(Field f : fields) {
+                    switch(f.getType()){
+                        case BOOLEAN:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getBoolean(f.getName()));
+                            break;
+                        case BYTE:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getByte(f.getName()));
+                            break;
+                        case SHORT:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getShort(f.getName()));
+                            break;
+                        case INTEGER:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getInt(f.getName()));
+                            break;
+                        case LONG:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getLong(f.getName()));
+                            break;
+                        case STRING:
+                            rt[rs.getRow()-1].set(f.getName(), rs.getString(f.getName()));
+                            break;
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try{
+                if(conn != null)conn.close();
+                if(st != null)st.close();
+                if(rs != null)rs.close();
+            } catch(Exception e){} // we don't give a damn if this goes wrong ;)
+        }
+        
+        return rt;
+    }
+    
 }

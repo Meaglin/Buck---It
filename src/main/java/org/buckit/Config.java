@@ -1,5 +1,6 @@
 package org.buckit;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.buckit.datasource.DataType;
@@ -161,7 +162,7 @@ public class Config {
 
     private static void loadGeneralProperties() {
         try {
-            Properties gp = new Properties(GENERAL_CONFIG_FILE);
+            Properties gp = new Properties(new File(GENERAL_CONFIG_FILE));
             
             PLAYER_LIMIT = gp.getInt("PlayerLimit", 20, 0);
             ONLINE_MODE_ENABLED = gp.getBool("OnlineMode", true);
@@ -217,7 +218,7 @@ public class Config {
 
     private static void loadWorldProperties() {
         try {
-            Properties wp = new Properties(WORLD_CONFIG_FILE);
+            Properties wp = new Properties(new File(WORLD_CONFIG_FILE));
 
             WORLD_GRAVEL_OCCURENCE = wp.getInt("GravelOccurence", 10,0,100);
             WORLD_DIRT_OCCURENCE = wp.getInt("DirtOccurence", 10,0,100);
@@ -263,7 +264,7 @@ public class Config {
     }
     private static void loadDatabaseProperties() {
         try {
-            Properties dp = new Properties(DATABASE_CONFIG_FILE);
+            Properties dp = new Properties(new File(DATABASE_CONFIG_FILE));
             DATABASE_MAX_CONNECTIONS = dp.getInt("MaximumDbConnections", 100);
             DATABASE_MAX_IDLE_TIME = dp.getInt("MaximumDbIdleTime", 0);
             DATABASE_DRIVER = dp.getProperty("Driver", "com.mysql.jdbc.Driver");
@@ -287,7 +288,8 @@ public class Config {
     }
     private static void loadFlatFileProperties() {
         try{
-            Properties fp = new Properties(FLATFILE_CONFIG_FILE);
+            Properties fp = new Properties(new File(FLATFILE_CONFIG_FILE));
+            FLATFILE_USERS_DIRECTORY = fp.getProperty("UsersDirectory", "./flatfile/players/");
             FLATFILE_USERS_FILE = fp.getProperty("UsersFile", "./flatfile/users.txt");
             FLATFILE_WARPS_FILE = fp.getProperty("WarpsFile", "./flatfile/warps.txt");
             FLATFILE_HOMES_DIRECTORY = fp.getProperty("HomesDirectory", "./flatfile/homes/");
@@ -305,7 +307,7 @@ public class Config {
 
     private static void loadExpertProperties() {
         try {
-            Properties ep = new Properties(EXPERT_CONFIG_FILE);
+            Properties ep = new Properties(new File(EXPERT_CONFIG_FILE));
             DATABASE_DELIMITER = ep.getProperty("DatabaseDelimiter", ",");
             DATABASE_SEPERATOR = ep.getProperty("DatabaseSeperator", ";");
             FULL_ACCESS_STRING = ep.getProperty("FullAccessString", "*");
