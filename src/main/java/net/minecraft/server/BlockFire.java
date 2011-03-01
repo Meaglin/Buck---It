@@ -54,14 +54,15 @@ public class BlockFire extends Block {
 
         if (l < 15) {
             world.c(i, j, k, l + 1);
-            world.i(i, j, k, this.id);
+            world.c(i, j, k, this.id, this.b());
         }
 
         if (!flag && !this.g(world, i, j, k)) {
             if (!world.d(i, j - 1, k) || l > 3) {
                 world.e(i, j, k, 0);
             }
-        } else if (!flag && !this.b((IBlockAccess)world, i, j - 1, k) && l == 15 && random.nextInt(4) == 0) { // CraftBukkit - Cast to IBlockAccess
+        // CraftBukkit - Cast to IBlockAccess
+        } else if (!flag && !this.b((IBlockAccess) world, i, j - 1, k) && l == 15 && random.nextInt(4) == 0) {
             world.e(i, j, k, 0);
         } else {
             if (l % 2 == 0 && l > 2) {
@@ -73,8 +74,8 @@ public class BlockFire extends Block {
                 this.a(world, i, j, k + 1, 300, random);
 
                 // CraftBukkit start - Call to stop spread of fire.
-                Server server = ((WorldServer)world).getServer();
-                CraftWorld cworld = ((WorldServer)world).getWorld();
+                Server server = ((WorldServer) world).getServer();
+                CraftWorld cworld = ((WorldServer) world).getWorld();
 
                 IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.SPREAD;
                 Player thePlayer = null;
@@ -94,9 +95,9 @@ public class BlockFire extends Block {
 
                                 if (i2 > 0 && random.nextInt(l1) <= i2) {
                                     // CraftBukkit start - Call to stop spread of fire.
-                                    org.bukkit.block.Block theBlock = (cworld.getBlockAt(i1, k1, j1));
+                                    org.bukkit.block.Block theBlock = cworld.getBlockAt(i1, k1, j1);
 
-                                    if (theBlock.getTypeId() != Block.FIRE.id){
+                                    if (theBlock.getTypeId() != Block.FIRE.id) {
                                         BlockIgniteEvent event = new BlockIgniteEvent(theBlock, igniteCause, thePlayer);
                                         server.getPluginManager().callEvent(event);
                                         if (event.isCancelled()) {
@@ -112,18 +113,16 @@ public class BlockFire extends Block {
                     }
                 }
             }
-        }
 
-        // Craftbukkit start - won't be needed next port hopefully
-        if(l == 15) {
-            this.a(world, i + 1, j, k, 1, random);
-            this.a(world, i - 1, j, k, 1, random);
-            this.a(world, i, j - 1, k, 1, random);
-            this.a(world, i, j + 1, k, 1, random);
-            this.a(world, i, j, k - 1, 1, random);
-            this.a(world, i, j, k + 1, 1, random);
+            if (l == 15) {
+                this.a(world, i + 1, j, k, 1, random);
+                this.a(world, i - 1, j, k, 1, random);
+                this.a(world, i, j - 1, k, 1, random);
+                this.a(world, i, j + 1, k, 1, random);
+                this.a(world, i, j, k - 1, 1, random);
+                this.a(world, i, j, k + 1, 1, random);
+            }
         }
-        // Craftbukkit end
     }
 
     private void a(World world, int i, int j, int k, int l, Random random) {
@@ -132,23 +131,25 @@ public class BlockFire extends Block {
         if (random.nextInt(l) < i1) {
             boolean flag = world.getTypeId(i, j, k) == Block.TNT.id;
             // CraftBukkit start
-            Server server = ((WorldServer)world).getServer();
-            CraftWorld cworld = ((WorldServer)world).getWorld();
-            org.bukkit.block.Block theBlock = (cworld.getBlockAt(i, j, k));
+            Server server = ((WorldServer) world).getServer();
+            CraftWorld cworld = ((WorldServer) world).getWorld();
+            org.bukkit.block.Block theBlock = cworld.getBlockAt(i, j, k);
             BlockBurnEvent event = new BlockBurnEvent(theBlock);
             server.getPluginManager().callEvent(event);
-            if(!event.isCancelled()) {
-                if (random.nextInt(2) == 0) {
-                    world.e(i, j, k, this.id);
-                } else {
-                    world.e(i, j, k, 0);
-                }
-
-                if (flag) {
-                    Block.TNT.a(world, i, j, k, 0);
-                }
+            if (event.isCancelled()) {
+                return;
             }
             // CraftBukkit end
+
+            if (random.nextInt(2) == 0) {
+                world.e(i, j, k, this.id);
+            } else {
+                world.e(i, j, k, 0);
+            }
+
+            if (flag) {
+                Block.TNT.b(world, i, j, k, 0);
+            }
         }
     }
 
@@ -165,13 +166,13 @@ public class BlockFire extends Block {
         if (!world.isEmpty(i, j, k)) {
             return 0;
         } else {
-            int l = this.f(world, i + 1, j, k, b0);
+            int l = this.g(world, i + 1, j, k, b0);
 
-            l = this.f(world, i - 1, j, k, l);
-            l = this.f(world, i, j - 1, k, l);
-            l = this.f(world, i, j + 1, k, l);
-            l = this.f(world, i, j, k - 1, l);
-            l = this.f(world, i, j, k + 1, l);
+            l = this.g(world, i - 1, j, k, l);
+            l = this.g(world, i, j - 1, k, l);
+            l = this.g(world, i, j + 1, k, l);
+            l = this.g(world, i, j, k - 1, l);
+            l = this.g(world, i, j, k + 1, l);
             return l;
         }
     }
@@ -184,7 +185,7 @@ public class BlockFire extends Block {
         return this.a[iblockaccess.getTypeId(i, j, k)] > 0;
     }
 
-    public int f(World world, int i, int j, int k, int l) {
+    public int g(World world, int i, int j, int k, int l) {
         int i1 = this.a[world.getTypeId(i, j, k)];
 
         return i1 > l ? i1 : l;
@@ -194,18 +195,18 @@ public class BlockFire extends Block {
         return world.d(i, j - 1, k) || this.g(world, i, j, k);
     }
 
-    public void b(World world, int i, int j, int k, int l) {
+    public void a(World world, int i, int j, int k, int l) {
         if (!world.d(i, j - 1, k) && !this.g(world, i, j, k)) {
             world.e(i, j, k, 0);
         }
     }
 
     public void e(World world, int i, int j, int k) {
-        if (world.getTypeId(i, j - 1, k) != Block.OBSIDIAN.id || !Block.PORTAL.b_(world, i, j, k)) {
+        if (world.getTypeId(i, j - 1, k) != Block.OBSIDIAN.id || !Block.PORTAL.a_(world, i, j, k)) {
             if (!world.d(i, j - 1, k) && !this.g(world, i, j, k)) {
                 world.e(i, j, k, 0);
             } else {
-                world.i(i, j, k, this.id);
+                world.c(i, j, k, this.id, this.b());
             }
         }
     }

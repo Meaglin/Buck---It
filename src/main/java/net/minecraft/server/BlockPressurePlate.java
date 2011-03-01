@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Random;
 
 // CraftBukkit start
-import org.bukkit.block.BlockFace;import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockInteractEvent;
@@ -46,7 +44,7 @@ public class BlockPressurePlate extends Block {
 
     public void e(World world, int i, int j, int k) {}
 
-    public void b(World world, int i, int j, int k, int l) {
+    public void a(World world, int i, int j, int k, int l) {
         boolean flag = false;
 
         if (!world.d(i, j - 1, k)) {
@@ -54,7 +52,7 @@ public class BlockPressurePlate extends Block {
         }
 
         if (flag) {
-            this.a_(world, i, j, k, world.getData(i, j, k));
+            this.b_(world, i, j, k, world.getData(i, j, k));
             world.e(i, j, k, 0);
         }
     }
@@ -115,6 +113,15 @@ public class BlockPressurePlate extends Block {
             flag1 = true;
         }
 
+        // CraftBukkit start
+        CraftWorld craftWorld = ((WorldServer) world).getWorld();
+        CraftServer server = ((WorldServer) world).getServer();
+        CraftBlock block = (CraftBlock) craftWorld.getBlockAt(i, j, k);
+        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 1 : 0, flag1 ? 1 : 0);
+        server.getPluginManager().callEvent(eventRedstone);
+        flag1 = eventRedstone.getNewCurrent() > 0;
+        // CraftBukkit end
+
         if (flag1 && !flag) {
             world.c(i, j, k, 1);
             world.h(i, j, k, this.id);
@@ -132,7 +139,7 @@ public class BlockPressurePlate extends Block {
         }
 
         if (flag1) {
-            world.i(i, j, k, this.id);
+            world.c(i, j, k, this.id, this.b());
         }
     }
 
@@ -162,7 +169,7 @@ public class BlockPressurePlate extends Block {
         return iblockaccess.getData(i, j, k) > 0;
     }
 
-    public boolean d(World world, int i, int j, int k, int l) {
+    public boolean c(World world, int i, int j, int k, int l) {
         return world.getData(i, j, k) == 0 ? false : l == 1;
     }
 

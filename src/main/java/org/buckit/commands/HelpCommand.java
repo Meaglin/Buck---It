@@ -17,7 +17,7 @@ public class HelpCommand extends Command {
 
     public HelpCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Gives information about the available commands.";
+        this.description = "Gives information about the available commands.";
         this.usageMessage = "Usage: /help <page> or /help <command>";
         this.accessname = "buckit.help";
         

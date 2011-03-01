@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.scheduler;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Iterator;
 
 import org.bukkit.plugin.Plugin;
@@ -31,7 +30,7 @@ public class CraftThreadManager {
         }
     }
 
-    void interruptTask(Plugin owner) {
+    void interruptTasks(Plugin owner) {
         synchronized (workers) {
             Iterator<CraftWorker> itr = workers.iterator();
             while (itr.hasNext()) {
@@ -50,6 +49,20 @@ public class CraftThreadManager {
                 CraftWorker craftWorker = itr.next();
                 craftWorker.interrupt();
             }
+        }
+    }
+
+    boolean isAlive(int taskId) {
+        synchronized (workers) {
+            Iterator<CraftWorker> itr = workers.iterator();
+            while (itr.hasNext()) {
+                CraftWorker craftWorker = itr.next();
+                if (craftWorker.getTaskId() == taskId) {
+                    return craftWorker.isAlive();
+                }
+            }
+            // didn't find it, so it must have been removed
+            return false;
         }
     }
 }

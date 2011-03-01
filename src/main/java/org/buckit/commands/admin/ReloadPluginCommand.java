@@ -17,7 +17,7 @@ public class ReloadPluginCommand extends Command {
 
     public ReloadPluginCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Reloads specified plugin.";
+        this.description = "Reloads specified plugin.";
         this.usageMessage = "Usage: /reloadplugin [plugin name]";
         this.accessname = "buckit.admin.reloadplugin";
         this.setAliases(Arrays.asList("enableplugin"));

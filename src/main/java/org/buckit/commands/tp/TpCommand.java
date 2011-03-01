@@ -17,7 +17,7 @@ public class TpCommand extends Command {
 	
 	public TpCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Teleports you to another online player.";
+        this.description = "Teleports you to another online player.";
         this.usageMessage = "Usage: /tp <playername>";
         this.accessname = "buckit.tp.tp";
         

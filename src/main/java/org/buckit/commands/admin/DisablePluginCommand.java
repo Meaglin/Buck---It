@@ -13,7 +13,7 @@ public class DisablePluginCommand extends Command {
 
     public DisablePluginCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Disables specified plugin.";
+        this.description = "Disables specified plugin.";
         this.usageMessage = "Usage: /disableplugin [plugin name]";
         this.accessname = "buckit.admin.disableplugin";
         this.server = server;

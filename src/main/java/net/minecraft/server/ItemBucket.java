@@ -4,7 +4,6 @@ package net.minecraft.server;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
@@ -122,8 +121,8 @@ public class ItemBucket extends Item {
                     }
 
                     if (world.isEmpty(i, j, k) || !world.getMaterial(i, j, k).isBuildable()) {
-                        if (world.q.d && this.a == Block.WATER.id) {
-                            world.a(d0 + 0.5D, d1 + 0.5D, d2 + 0.5D, "random.fizz", 0.5F, 2.6F + (world.l.nextFloat() - world.l.nextFloat()) * 0.8F);
+                        if (world.m.d && this.a == Block.WATER.id) {
+                            world.a(d0 + 0.5D, d1 + 0.5D, d2 + 0.5D, "random.fizz", 0.5F, 2.6F + (world.k.nextFloat() - world.k.nextFloat()) * 0.8F);
 
                             for (int l = 0; l < 8; ++l) {
                                 world.a("largesmoke", (double) i + Math.random(), (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);

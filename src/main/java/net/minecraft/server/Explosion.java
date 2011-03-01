@@ -29,9 +29,8 @@ public class Explosion {
     public Entity e;
     public float f;
     public Set g = new HashSet();
-    // Craftbukkit start
-    public boolean wasCanceled = false;
-    // Craftbukkit end
+
+    public boolean wasCanceled = false; // CraftBukkit
 
     public Explosion(World world, Entity entity, double d0, double d1, double d2, float f) {
         this.i = world;
@@ -65,7 +64,7 @@ public class Explosion {
                         d3 /= d6;
                         d4 /= d6;
                         d5 /= d6;
-                        float f1 = this.f * (0.7F + this.i.l.nextFloat() * 0.6F);
+                        float f1 = this.f * (0.7F + this.i.k.nextFloat() * 0.6F);
 
                         d0 = this.b;
                         d1 = this.c;
@@ -126,14 +125,16 @@ public class Explosion {
                 DamageCause damageType;
                 int damageDone = (int) ((d10 * d10 + d10) / 2.0D * 8.0D * (double) this.f + 1.0D);
 
-                if(damagee == null) {
+                if (damagee == null) {
                     // nothing was hurt
                 } else if (e == null) { // Block explosion
                     // TODO: get the x/y/z of the tnt block?
                     // does this even get called ever? @see EntityTNTPrimed - not BlockTNT or whatever
                     damageType = EntityDamageEvent.DamageCause.BLOCK_EXPLOSION;
+
                     EntityDamageByBlockEvent event = new EntityDamageByBlockEvent(null, damagee, damageType, damageDone);
                     server.getPluginManager().callEvent(event);
+
                     if (!event.isCancelled()) {
                         entity.a(this.e, event.getDamage());
                         entity.motX += d0 * d10;
@@ -180,7 +181,7 @@ public class Explosion {
     }
 
     public void b() {
-        this.i.a(this.b, this.c, this.d, "random.explode", 4.0F, (1.0F + (this.i.l.nextFloat() - this.i.l.nextFloat()) * 0.2F) * 0.7F);
+        this.i.a(this.b, this.c, this.d, "random.explode", 4.0F, (1.0F + (this.i.k.nextFloat() - this.i.k.nextFloat()) * 0.2F) * 0.7F);
         ArrayList arraylist = new ArrayList();
 
         arraylist.addAll(this.g);
@@ -188,20 +189,20 @@ public class Explosion {
         // CraftBukkit start
         Server server = ((WorldServer) this.i).getServer();
         CraftWorld world = ((WorldServer) this.i).getWorld();
-        org.bukkit.entity.Entity splode = (this.e == null) ? null : this.e.getBukkitEntity();
+        org.bukkit.entity.Entity explode = (this.e == null) ? null : this.e.getBukkitEntity();
         Location location = new Location(world, this.b, this.c, this.d);
 
-        List<org.bukkit.block.Block> blocklist = new ArrayList<org.bukkit.block.Block>();
+        List<org.bukkit.block.Block> blockList = new ArrayList<org.bukkit.block.Block>();
         for (int j = arraylist.size() - 1; j >= 0; j--) {
             ChunkPosition cpos = (ChunkPosition) arraylist.get(j);
-            org.bukkit.block.Block blox = world.getBlockAt(cpos.a, cpos.b, cpos.c);
-            if (!blox.getType().equals(org.bukkit.Material.AIR)) {
-                blocklist.add(blox);
+            org.bukkit.block.Block block = world.getBlockAt(cpos.a, cpos.b, cpos.c);
+            if (!block.getType().equals(org.bukkit.Material.AIR)) {
+                blockList.add(block);
             }
         }
 
         org.bukkit.event.Event.Type eventType = EntityExplodeEvent.Type.ENTITY_EXPLODE;
-        EntityExplodeEvent event = new EntityExplodeEvent(eventType, splode, location, blocklist);
+        EntityExplodeEvent event = new EntityExplodeEvent(eventType, explode, location, blockList);
         server.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
@@ -218,9 +219,9 @@ public class Explosion {
             int i1 = this.i.getTypeId(j, k, l);
 
             for (int j1 = 0; j1 < 1; ++j1) {
-                double d0 = (double) ((float) j + this.i.l.nextFloat());
-                double d1 = (double) ((float) k + this.i.l.nextFloat());
-                double d2 = (double) ((float) l + this.i.l.nextFloat());
+                double d0 = (double) ((float) j + this.i.k.nextFloat());
+                double d1 = (double) ((float) k + this.i.k.nextFloat());
+                double d2 = (double) ((float) l + this.i.k.nextFloat());
                 double d3 = d0 - this.b;
                 double d4 = d1 - this.c;
                 double d5 = d2 - this.d;
@@ -231,7 +232,7 @@ public class Explosion {
                 d5 /= d6;
                 double d7 = 0.5D / (d6 / (double) this.f + 0.1D);
 
-                d7 *= (double) (this.i.l.nextFloat() * this.i.l.nextFloat() + 0.3F);
+                d7 *= (double) (this.i.k.nextFloat() * this.i.k.nextFloat() + 0.3F);
                 d3 *= d7;
                 d4 *= d7;
                 d5 *= d7;
@@ -240,9 +241,10 @@ public class Explosion {
             }
 
             if (i1 > 0) {
-                Block.byId[i1].a(this.i, j, k, l, this.i.getData(j, k, l), 0.3F);
+                // CraftBukkit
+                Block.byId[i1].a(this.i, j, k, l, this.i.getData(j, k, l), event.getYield());
                 this.i.e(j, k, l, 0);
-                Block.byId[i1].a_(this.i, j, k, l);
+                Block.byId[i1].c(this.i, j, k, l);
             }
         }
     }

@@ -17,6 +17,7 @@ import org.buckit.commands.tp.*;
 import org.buckit.commands.util.*;
 import org.buckit.commands.warp.*;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -152,6 +153,8 @@ public final class SimpleCommandMap implements CommandMap {
                     else
                         player.sendMessage(Config.NOT_ENOUGH_ACCESS_MESSAGE);
                 }
+            } else {
+                target.execute(sender, sentCommandLabel, args);
             }
             // Buck - It end
         }

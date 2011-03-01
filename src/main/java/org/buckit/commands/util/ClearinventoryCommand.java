@@ -13,7 +13,7 @@ public class ClearInventoryCommand extends Command {
     private final Server server;
     public ClearInventoryCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Clears your inventory.";
+        this.description = "Clears your inventory.";
         this.usageMessage = "Usage: /clearinventory";
         this.accessname = "buckit.util.clearinventory";
         this.server = server;

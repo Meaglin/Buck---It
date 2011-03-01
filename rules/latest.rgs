@@ -13,8 +13,6 @@
 
 # Blocks
 
-!field net/minecraft/server/Block/bh *
-!field net/minecraft/server/Block/bi *
 !field net/minecraft/server/Block/bj *
 !field net/minecraft/server/Block/bk *
 !field net/minecraft/server/Block/bl *
@@ -24,25 +22,27 @@
 !field net/minecraft/server/Block/bp *
 !field net/minecraft/server/Block/bq *
 !field net/minecraft/server/Block/br *
+!field net/minecraft/server/Block/bs *
 !field net/minecraft/server/Block/bt *
-!field net/minecraft/server/Block/bu *
+!field net/minecraft/server/Block/bv *
+!field net/minecraft/server/Block/bw *
 !field net/minecraft/server/Block/a *
 !field net/minecraft/server/Block/m *
 
+.field_map net/minecraft/server/Block/bj textureId
+.field_map net/minecraft/server/Block/bk id
+.field_map net/minecraft/server/Block/bl strength
+.field_map net/minecraft/server/Block/bm durability
+.field_map net/minecraft/server/Block/bn minX
+.field_map net/minecraft/server/Block/bo minY
+.field_map net/minecraft/server/Block/bp minZ
+.field_map net/minecraft/server/Block/bq maxX
+.field_map net/minecraft/server/Block/br maxY
+.field_map net/minecraft/server/Block/bs maxZ
+.field_map net/minecraft/server/Block/bt stepSound
+.field_map net/minecraft/server/Block/bv material
+.field_map net/minecraft/server/Block/bw frictionFactor
 .field_map net/minecraft/server/Block/a name
-.field_map net/minecraft/server/Block/bh textureId
-.field_map net/minecraft/server/Block/bi id
-.field_map net/minecraft/server/Block/bj strength
-.field_map net/minecraft/server/Block/bk durability
-.field_map net/minecraft/server/Block/bl minX
-.field_map net/minecraft/server/Block/bm minY
-.field_map net/minecraft/server/Block/bn minZ
-.field_map net/minecraft/server/Block/bo maxX
-.field_map net/minecraft/server/Block/bp maxY
-.field_map net/minecraft/server/Block/bq maxZ
-.field_map net/minecraft/server/Block/br stepSound
-.field_map net/minecraft/server/Block/bt material
-.field_map net/minecraft/server/Block/bu frictionFactor
 .field_map net/minecraft/server/Block/m byId
 
 # Block data
@@ -72,6 +72,7 @@
 !field net/minecraft/server/Block/P *
 !field net/minecraft/server/Block/Q *
 !field net/minecraft/server/Block/R *
+!field net/minecraft/server/Block/S *
 !field net/minecraft/server/Block/ab *
 !field net/minecraft/server/Block/ad *
 !field net/minecraft/server/Block/ae *
@@ -129,6 +130,8 @@
 !field net/minecraft/server/Block/be *
 !field net/minecraft/server/Block/bf *
 !field net/minecraft/server/Block/bg *
+!field net/minecraft/server/Block/bh *
+!field net/minecraft/server/Block/bi *
 
 .field_map net/minecraft/server/Block/t STONE
 .field_map net/minecraft/server/Block/u GRASS
@@ -155,6 +158,7 @@
 .field_map net/minecraft/server/Block/P DISPENSER
 .field_map net/minecraft/server/Block/Q SANDSTONE
 .field_map net/minecraft/server/Block/R NOTE_BLOCK
+.field_map net/minecraft/server/Block/S BED
 .field_map net/minecraft/server/Block/ab WOOL
 .field_map net/minecraft/server/Block/ad YELLOW_FLOWER
 .field_map net/minecraft/server/Block/ae RED_ROSE
@@ -212,24 +216,26 @@
 .field_map net/minecraft/server/Block/be PORTAL
 .field_map net/minecraft/server/Block/bf JACK_O_LANTERN
 .field_map net/minecraft/server/Block/bg CAKE_BLOCK
+.field_map net/minecraft/server/Block/bh DIODE_OFF
+.field_map net/minecraft/server/Block/bi DIODE_ON
 
 # Items
 
 !field net/minecraft/server/Item/c *
-!field net/minecraft/server/Item/ba *
-!field net/minecraft/server/Item/bb *
 !field net/minecraft/server/Item/bc *
 !field net/minecraft/server/Item/bd *
+!field net/minecraft/server/Item/be *
+!field net/minecraft/server/Item/bf *
 !field net/minecraft/server/Item/a *
-!field net/minecraft/server/Item/bg *
+!field net/minecraft/server/Item/bi *
 
 .field_map net/minecraft/server/Item/c byId
-.field_map net/minecraft/server/Item/ba id
-.field_map net/minecraft/server/Item/bb maxStackSize
-.field_map net/minecraft/server/Item/bc durability
-.field_map net/minecraft/server/Item/bd textureId
+.field_map net/minecraft/server/Item/bc id
+.field_map net/minecraft/server/Item/bd maxStackSize
+.field_map net/minecraft/server/Item/be durability
+.field_map net/minecraft/server/Item/bf textureId
 .field_map net/minecraft/server/Item/a craftingResult
-.field_map net/minecraft/server/Item/bg name
+.field_map net/minecraft/server/Item/bi name
 
 # Item data
 
@@ -334,6 +340,8 @@
 !field net/minecraft/server/Item/aX *
 !field net/minecraft/server/Item/aY *
 !field net/minecraft/server/Item/aZ *
+!field net/minecraft/server/Item/ba *
+!field net/minecraft/server/Item/bb *
 
 .field_map net/minecraft/server/Item/d IRON_SPADE
 .field_map net/minecraft/server/Item/e IRON_PICKAXE
@@ -434,8 +442,10 @@
 .field_map net/minecraft/server/Item/aV BONE
 .field_map net/minecraft/server/Item/aW SUGAR
 .field_map net/minecraft/server/Item/aX CAKE
-.field_map net/minecraft/server/Item/aY GOLD_RECORD
-.field_map net/minecraft/server/Item/aZ GREEN_RECORD
+.field_map net/minecraft/server/Item/aY BED
+.field_map net/minecraft/server/Item/aZ DIODE
+.field_map net/minecraft/server/Item/ba GOLD_RECORD
+.field_map net/minecraft/server/Item/bb GREEN_RECORD
 
 # Biomes
 
@@ -571,81 +581,81 @@
 
 # Entity
 
+!field net/minecraft/server/Entity/ba *
+!field net/minecraft/server/Entity/bb *
+!field net/minecraft/server/Entity/bc *
+!field net/minecraft/server/Entity/bd *
+!field net/minecraft/server/Entity/bh *
+!field net/minecraft/server/Entity/bq *
+!field net/minecraft/server/Entity/br *
+!field net/minecraft/server/Entity/bs *
+!field net/minecraft/server/Entity/bt *
 !field net/minecraft/server/Entity/a *
-!field net/minecraft/server/Entity/g *
-!field net/minecraft/server/Entity/j *
-!field net/minecraft/server/Entity/k *
-!field net/minecraft/server/Entity/l *
-!field net/minecraft/server/Entity/m *
-!field net/minecraft/server/Entity/n *
-!field net/minecraft/server/Entity/o *
-!field net/minecraft/server/Entity/p *
-!field net/minecraft/server/Entity/q *
-!field net/minecraft/server/Entity/r *
-!field net/minecraft/server/Entity/s *
-!field net/minecraft/server/Entity/t *
-!field net/minecraft/server/Entity/u *
-!field net/minecraft/server/Entity/v *
-!field net/minecraft/server/Entity/w *
-!field net/minecraft/server/Entity/x *
-!field net/minecraft/server/Entity/y *
-!field net/minecraft/server/Entity/z *
-!field net/minecraft/server/Entity/A *
-!field net/minecraft/server/Entity/G *
-!field net/minecraft/server/Entity/H *
-!field net/minecraft/server/Entity/N *
-!field net/minecraft/server/Entity/W *
-!field net/minecraft/server/Entity/X *
-!field net/minecraft/server/Entity/Y *
-!field net/minecraft/server/Entity/Z *
-!field net/minecraft/server/Entity/aa *
-!field net/minecraft/server/Entity/ac *
-!field net/minecraft/server/Entity/ad *
-!field net/minecraft/server/Entity/af *
-!field net/minecraft/server/Entity/ah *
-!field net/minecraft/server/Entity/aj *
+!field net/minecraft/server/Entity/aA *
+!field net/minecraft/server/Entity/aD *
+!field net/minecraft/server/Entity/aE *
+!field net/minecraft/server/Entity/aF *
+!field net/minecraft/server/Entity/aG *
+!field net/minecraft/server/Entity/aH *
+!field net/minecraft/server/Entity/aI *
+!field net/minecraft/server/Entity/aJ *
+!field net/minecraft/server/Entity/aK *
+!field net/minecraft/server/Entity/aL *
+!field net/minecraft/server/Entity/aM *
+!field net/minecraft/server/Entity/aN *
+!field net/minecraft/server/Entity/aO *
+!field net/minecraft/server/Entity/aP *
+!field net/minecraft/server/Entity/aQ *
+!field net/minecraft/server/Entity/aR *
+!field net/minecraft/server/Entity/aS *
+!field net/minecraft/server/Entity/aT *
+!field net/minecraft/server/Entity/aU *
+!field net/minecraft/server/Entity/bu *
+!field net/minecraft/server/Entity/bw *
+!field net/minecraft/server/Entity/bx *
+!field net/minecraft/server/Entity/bz *
+!field net/minecraft/server/Entity/bB *
+!field net/minecraft/server/Entity/bD *
 !field net/minecraft/server/Entity/c *
 !field net/minecraft/server/Entity/ea *
-!field net/minecraft/server/Entity/I *
-!field net/minecraft/server/Entity/J *
 
+.field_map net/minecraft/server/Entity/ba dead
+.field_map net/minecraft/server/Entity/bb height
+.field_map net/minecraft/server/Entity/bc length
+.field_map net/minecraft/server/Entity/bd width
+.field_map net/minecraft/server/Entity/bh fallDistance
+.field_map net/minecraft/server/Entity/bq random
+.field_map net/minecraft/server/Entity/br ticksLived
+.field_map net/minecraft/server/Entity/bs maxFireTicks
+.field_map net/minecraft/server/Entity/bt fireTicks
 .field_map net/minecraft/server/Entity/a entityCount
-.field_map net/minecraft/server/Entity/g id
-.field_map net/minecraft/server/Entity/j passenger
-.field_map net/minecraft/server/Entity/k vehicle
-.field_map net/minecraft/server/Entity/l world
-.field_map net/minecraft/server/Entity/m lastX
-.field_map net/minecraft/server/Entity/n lastY
-.field_map net/minecraft/server/Entity/o lastZ
-.field_map net/minecraft/server/Entity/p locX
-.field_map net/minecraft/server/Entity/q locY
-.field_map net/minecraft/server/Entity/r locZ
-.field_map net/minecraft/server/Entity/s motX
-.field_map net/minecraft/server/Entity/t motY
-.field_map net/minecraft/server/Entity/u motZ
-.field_map net/minecraft/server/Entity/v yaw
-.field_map net/minecraft/server/Entity/w pitch
-.field_map net/minecraft/server/Entity/x lastYaw
-.field_map net/minecraft/server/Entity/y lastPitch
-.field_map net/minecraft/server/Entity/z boundingBox
-.field_map net/minecraft/server/Entity/A onGround
-.field_map net/minecraft/server/Entity/G dead
-.field_map net/minecraft/server/Entity/N fallDistance
-.field_map net/minecraft/server/Entity/W random
-.field_map net/minecraft/server/Entity/X ticksLived
-.field_map net/minecraft/server/Entity/Y maxFireTicks
-.field_map net/minecraft/server/Entity/Z fireTicks
-.field_map net/minecraft/server/Entity/aa maxAirTicks
-.field_map net/minecraft/server/Entity/ac noDamageTicks
-.field_map net/minecraft/server/Entity/ad airTicks
-.field_map net/minecraft/server/Entity/af datawatcher
-.field_map net/minecraft/server/Entity/ah chunkX
-.field_map net/minecraft/server/Entity/aj chunkZ
+.field_map net/minecraft/server/Entity/aA id
+.field_map net/minecraft/server/Entity/aD passenger
+.field_map net/minecraft/server/Entity/aE vehicle
+.field_map net/minecraft/server/Entity/aF world
+.field_map net/minecraft/server/Entity/aG lastX
+.field_map net/minecraft/server/Entity/aH lastY
+.field_map net/minecraft/server/Entity/aI lastZ
+.field_map net/minecraft/server/Entity/aJ locX
+.field_map net/minecraft/server/Entity/aK locY
+.field_map net/minecraft/server/Entity/aL locZ
+.field_map net/minecraft/server/Entity/aM motX
+.field_map net/minecraft/server/Entity/aN motY
+.field_map net/minecraft/server/Entity/aO motZ
+.field_map net/minecraft/server/Entity/aP yaw
+.field_map net/minecraft/server/Entity/aQ pitch
+.field_map net/minecraft/server/Entity/aR lastYaw
+.field_map net/minecraft/server/Entity/aS lastPitch
+.field_map net/minecraft/server/Entity/aT boundingBox
+.field_map net/minecraft/server/Entity/aU onGround
+.field_map net/minecraft/server/Entity/bu maxAirTicks
+.field_map net/minecraft/server/Entity/bw noDamageTicks
+.field_map net/minecraft/server/Entity/bx airTicks
+.field_map net/minecraft/server/Entity/bz datawatcher
+.field_map net/minecraft/server/Entity/bB chunkX
+.field_map net/minecraft/server/Entity/bD chunkZ
 .field_map net/minecraft/server/Entity/c justCreated
 .field_map net/minecraft/server/Entity/ea fireImmune
-.field_map net/minecraft/server/Entity/H height
-.field_map net/minecraft/server/Entity/I length
-.field_map net/minecraft/server/Entity/J width
 
 # ItemStack
 
@@ -659,37 +669,41 @@
 
 # EntityHuman
 
-!field net/minecraft/server/EntityHuman/an *
-!field net/minecraft/server/EntityHuman/ao *
-!field net/minecraft/server/EntityHuman/ap *
-!field net/minecraft/server/EntityHuman/aw *
-!field net/minecraft/server/EntityHuman/ax *
-!field net/minecraft/server/EntityHuman/aE *
+!field net/minecraft/server/EntityHuman/a *
+!field net/minecraft/server/EntityHuman/c *
+!field net/minecraft/server/EntityHuman/i *
+!field net/minecraft/server/EntityHuman/j *
+!field net/minecraft/server/EntityHuman/k *
+!field net/minecraft/server/EntityHuman/r *
+!field net/minecraft/server/EntityHuman/s *
+!field net/minecraft/server/EntityHuman/B *
 
-.field_map net/minecraft/server/EntityHuman/an inventory
-.field_map net/minecraft/server/EntityHuman/ao defaultContainer
-.field_map net/minecraft/server/EntityHuman/ap activeContainer
-.field_map net/minecraft/server/EntityHuman/aw name
-.field_map net/minecraft/server/EntityHuman/ax dimension
-.field_map net/minecraft/server/EntityHuman/aE hookedFish
+.field_map net/minecraft/server/EntityHuman/a sleeping
+.field_map net/minecraft/server/EntityHuman/c sleepTicks
+.field_map net/minecraft/server/EntityHuman/i inventory
+.field_map net/minecraft/server/EntityHuman/j defaultContainer
+.field_map net/minecraft/server/EntityHuman/k activeContainer
+.field_map net/minecraft/server/EntityHuman/r name
+.field_map net/minecraft/server/EntityHuman/s dimension
+.field_map net/minecraft/server/EntityHuman/B hookedFish
 
 # EntityLiving
 
-!field net/minecraft/server/EntityLiving/aF *
-!field net/minecraft/server/EntityLiving/aP *
-!field net/minecraft/server/EntityLiving/aZ *
-!field net/minecraft/server/EntityLiving/bb *
-!field net/minecraft/server/EntityLiving/be *
-!field net/minecraft/server/EntityLiving/bf *
-!field net/minecraft/server/EntityLiving/bv *
+!field net/minecraft/server/EntityLiving/C *
+!field net/minecraft/server/EntityLiving/M *
+!field net/minecraft/server/EntityLiving/W *
+!field net/minecraft/server/EntityLiving/Y *
+!field net/minecraft/server/EntityLiving/ab *
+!field net/minecraft/server/EntityLiving/ac *
+!field net/minecraft/server/EntityLiving/as *
 
-.field_map net/minecraft/server/EntityLiving/aF maxNoDamageTicks
-.field_map net/minecraft/server/EntityLiving/aP texture
-.field_map net/minecraft/server/EntityLiving/aZ health
-.field_map net/minecraft/server/EntityLiving/bb hurtTicks
-.field_map net/minecraft/server/EntityLiving/be deathTicks
-.field_map net/minecraft/server/EntityLiving/bf attackTicks
-.field_map net/minecraft/server/EntityLiving/bv lastDamage
+.field_map net/minecraft/server/EntityLiving/C maxNoDamageTicks
+.field_map net/minecraft/server/EntityLiving/M texture
+.field_map net/minecraft/server/EntityLiving/W health
+.field_map net/minecraft/server/EntityLiving/Y hurtTicks
+.field_map net/minecraft/server/EntityLiving/ab deathTicks
+.field_map net/minecraft/server/EntityLiving/ac attackTicks
+.field_map net/minecraft/server/EntityLiving/as lastDamage
 
 # Material
 
@@ -781,15 +795,9 @@
 
 # World
 
-!field net/minecraft/server/World/m *
-!field net/minecraft/server/World/n *
-!field net/minecraft/server/World/o *
-!field net/minecraft/server/World/z *
+!field net/minecraft/server/World/t *
 
-.field_map net/minecraft/server/World/m spawnX
-.field_map net/minecraft/server/World/n spawnY
-.field_map net/minecraft/server/World/o spawnZ
-.field_map net/minecraft/server/World/z isStatic
+.field_map net/minecraft/server/World/t isStatic
 
 !method net/minecraft/server/World/a (IIIII)Z
 !method net/minecraft/server/World/b (IIII)Z
@@ -828,3 +836,11 @@
 .method_map net/minecraft/server/World/c (III)Lnet/minecraft/server/Material; getMaterial
 .method_map net/minecraft/server/WorldServer/b (III)I getData
 .method_map net/minecraft/server/WorldServer/c (III)Lnet/minecraft/server/Material; getMaterial
+
+# Comparable fixes
+!method net/minecraft/server/ChunkCoordinates/a (Lnet/minecraft/server/ChunkCoordinates;)I
+.method_map net/minecraft/server/ChunkCoordinates/a (Lnet/minecraft/server/ChunkCoordinates;)I compareTo
+!method net/minecraft/server/NextTickListEntry/a (Lnet/minecraft/server/NextTickListEntry;)I
+.method_map net/minecraft/server/NextTickListEntry/a (Lnet/minecraft/server/NextTickListEntry;)I compareTo
+!method net/minecraft/server/ChunkFile/a (Lnet/minecraft/server/ChunkFile;)I
+.method_map net/minecraft/server/ChunkFile/a (Lnet/minecraft/server/ChunkFile;)I compareTo

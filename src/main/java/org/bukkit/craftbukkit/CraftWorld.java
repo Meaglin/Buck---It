@@ -7,14 +7,13 @@ import org.bukkit.entity.Entity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import net.minecraft.server.*;
+
 import org.bukkit.entity.Arrow;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Boat;
 import org.bukkit.Chunk;
-import org.bukkit.entity.ItemDrop;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.bukkit.BlockChangeDelegate;
@@ -27,21 +26,30 @@ public class CraftWorld implements World {
     private final Environment environment;
     private final CraftServer server;
     private final ChunkProviderServer provider;
+    private HashMap<Integer,CraftChunk> unloadedChunks = new HashMap<Integer, CraftChunk>();
 
     private static final Random rand = new Random();
 
     public CraftWorld(WorldServer world) {
         this.world = world;
         this.server = world.getServer();
-        this.provider = world.A;
+        this.provider = world.u;
 
-        if (world.q instanceof WorldProviderHell) {
+        if (world.m instanceof WorldProviderHell) {
             environment = Environment.NETHER;
         } else {
             environment = Environment.NORMAL;
         }
 
         server.addWorld(this);
+    }
+
+    public void preserveChunk( CraftChunk chunk ) {
+        unloadedChunks.put( (chunk.getX() << 16) + chunk.getZ(), chunk );
+    }
+
+    public CraftChunk popPreservedChunk( int x, int z ) {
+        return unloadedChunks.remove( (x << 16) + z );
     }
 
     public Block getBlockAt(int x, int y, int z) {
@@ -57,9 +65,19 @@ public class CraftWorld implements World {
     }
 
     public Location getSpawnLocation() {
-        return new Location(this, world.spawnX, world.e(world.spawnX, world.spawnZ), world.spawnZ);
+        ChunkCoordinates spawn = world.l();
+        return new Location(this, spawn.a, world.e(spawn.a, spawn.c), spawn.c);
     }
-
+    
+    public boolean setSpawnLocation(int x, int y, int z) {
+        try {
+            world.q.a(x, y, z);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
     public Chunk getChunkAt(int x, int z) {
         return this.provider.d(x,z).bukkitChunk;
     }
@@ -202,7 +220,7 @@ public class CraftWorld implements World {
         return world;
     }
 
-    public ItemDrop dropItem(Location loc, ItemStack item) {
+    public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
         net.minecraft.server.ItemStack stack = new net.minecraft.server.ItemStack(
             item.getTypeId(),
             item.getAmount(),
@@ -213,13 +231,13 @@ public class CraftWorld implements World {
         world.a(entity);
         //TODO this is inconsistent with how Entity.getBukkitEntity() works.
         // However, this entity is not at the moment backed by a server entity class so it may be left.
-        return new CraftItemDrop(world.getServer(), entity);
+        return new CraftItem(world.getServer(), entity);
     }
 
-    public ItemDrop dropItemNaturally(Location loc, ItemStack item) {
-        double xs = world.l.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
-        double ys = world.l.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
-        double zs = world.l.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
+    public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item) {
+        double xs = world.k.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
+        double ys = world.k.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
+        double zs = world.k.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
         loc = loc.clone();
         loc.setX(loc.getX() + xs);
         loc.setY(loc.getY() + ys);
@@ -277,6 +295,20 @@ public class CraftWorld implements World {
         return (Boat) boat.getBukkitEntity();
     }
 
+    public Creature spawnCreature(Location loc, CreatureType creatureType) {
+        Creature creature;
+        try {
+            EntityCreature entityCreature = (EntityCreature) EntityTypes.a(creatureType.getName(), world);
+            entityCreature.a(loc.getX(), loc.getY(), loc.getZ());
+            creature = (Creature) CraftEntity.getEntity(server, entityCreature);
+            world.a(entityCreature);
+        } catch (Exception e) {
+            // if we fail, for any reason, return null.
+            creature = null;
+        }
+        return creature;
+    }
+
     public boolean generateTree(Location loc, TreeType type) {
         return generateTree(loc, type, world);
     }
@@ -302,11 +334,11 @@ public class CraftWorld implements World {
     }
 
     public String getName() {
-        return world.w;
+        return world.q.j;
     }
 
     public long getId() {
-        return world.u;
+        return world.q.b();
     }
 
     @Override
@@ -327,15 +359,31 @@ public class CraftWorld implements World {
     }
 
     public long getFullTime() {
-        return world.e;
+        return world.k();
     }
 
     public void setFullTime(long time) {
-        world.e = time;
+        world.a(time);
     }
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public Block getBlockAt(Location location) {
+        return getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public int getBlockTypeIdAt(Location location) {
+        return getBlockTypeIdAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public int getHighestBlockYAt(Location location) {
+        return getHighestBlockYAt(location.getBlockX(), location.getBlockZ());
+    }
+
+    public Chunk getChunkAt(Location location) {
+        return getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
     }
 
     private final class ChunkCoordinate {
@@ -403,6 +451,23 @@ public class CraftWorld implements World {
                 // Assuming that bukkitEntity isn't null
                 if (bukkitEntity != null && bukkitEntity instanceof LivingEntity) {
                     list.add((LivingEntity)bukkitEntity);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public List<Player> getPlayers() {
+        List<Player> list = new ArrayList<Player>();
+
+        for (Object o : world.b) {
+            if (o instanceof net.minecraft.server.Entity) {
+                net.minecraft.server.Entity mcEnt = (net.minecraft.server.Entity)o;
+                Entity bukkitEntity = mcEnt.getBukkitEntity();
+                
+                if ((bukkitEntity != null) && (bukkitEntity instanceof Player)) {
+                    list.add((Player)bukkitEntity);
                 }
             }
         }

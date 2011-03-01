@@ -2,9 +2,8 @@ package net.minecraft.server;
 
 import java.util.Random;
 
-// CraftBukkit start
+// CraftBukkit
 import org.bukkit.BlockChangeDelegate;
-// CraftBukkit end
 
 public class WorldGenTrees extends WorldGenerator {
 
@@ -16,9 +15,9 @@ public class WorldGenTrees extends WorldGenerator {
         // BlockChangeDelegate and then we can implicitly cast World to
         // WorldServer (a safe cast, AFAIK) and no code will be broken. This
         // then allows plugins to catch manually-invoked generation events
-        return generate((BlockChangeDelegate)world, random, i, j, k);
+        return generate((BlockChangeDelegate) world, random, i, j, k);
     }
-    
+
     public boolean generate(BlockChangeDelegate world, Random random, int i, int j, int k) {
         // CraftBukkit end
         int l = random.nextInt(3) + 4;

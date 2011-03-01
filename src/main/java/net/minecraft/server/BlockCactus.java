@@ -55,9 +55,9 @@ public class BlockCactus extends Block {
         return !super.a(world, i, j, k) ? false : this.f(world, i, j, k);
     }
 
-    public void b(World world, int i, int j, int k, int l) {
+    public void a(World world, int i, int j, int k, int l) {
         if (!this.f(world, i, j, k)) {
-            this.a_(world, i, j, k, world.getData(i, j, k));
+            this.b_(world, i, j, k, world.getData(i, j, k));
             world.e(i, j, k, 0);
         }
     }
@@ -80,17 +80,17 @@ public class BlockCactus extends Block {
 
     public void a(World world, int i, int j, int k, Entity entity) {
         // CraftBukkit start - ENTITY_DAMAGEBY_BLOCK event
-        if(entity instanceof EntityLiving) {
+        if (entity instanceof EntityLiving) {
             CraftServer server = ((WorldServer) world).getServer();
             org.bukkit.block.Block damager = ((WorldServer) world).getWorld().getBlockAt(i, j, k);
-            org.bukkit.entity.Entity damagee = (entity == null)?null:entity.getBukkitEntity();
+            org.bukkit.entity.Entity damagee = (entity == null) ? null : entity.getBukkitEntity();
             DamageCause damageType = EntityDamageEvent.DamageCause.CONTACT;
             int damageDone = 1;
 
             EntityDamageByBlockEvent event = new EntityDamageByBlockEvent(damager, damagee, damageType, damageDone);
             server.getPluginManager().callEvent(event);
 
-            if (!event.isCancelled()){
+            if (!event.isCancelled()) {
                 entity.a((Entity) null, event.getDamage());
             }
             return;

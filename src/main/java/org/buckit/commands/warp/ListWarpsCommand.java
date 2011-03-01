@@ -17,7 +17,7 @@ public class ListWarpsCommand extends Command {
     public ListWarpsCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getWarpsDataSource();
-        this.tooltip = "Gives a list of all the warps.";
+        this.description = "Gives a list of all the warps.";
         
         if(Config.WARPS_GROUPS_ENABLED)
             this.usageMessage = "Usage: /listwarps <group name>";

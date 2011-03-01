@@ -16,7 +16,7 @@ public class ReservelistCommand extends Command {
 
     public ReservelistCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Add or remove a player from the reservelist.";
+        this.description = "Add or remove a player from the reservelist.";
         this.usageMessage = "Usage: /reservelist [add/a|remove/r|status/s] [player] ";
         this.accessname = "buckit.admin.reservelist";
         

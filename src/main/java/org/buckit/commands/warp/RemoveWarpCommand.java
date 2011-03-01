@@ -16,7 +16,7 @@ public class RemoveWarpCommand extends Command {
     public RemoveWarpCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getWarpsDataSource();
-        this.tooltip = "Removes an existing warp.";
+        this.description = "Removes an existing warp.";
         
         if(Config.WARPS_GROUPS_ENABLED)
             this.usageMessage = "Usage: /removewarp [warp name] <group name>";

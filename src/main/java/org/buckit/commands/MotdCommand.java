@@ -12,7 +12,7 @@ public class MotdCommand extends Command {
 
     public MotdCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Shows the Message of the Day.";
+        this.description = "Shows the Message of the Day.";
         this.usageMessage = "Usage: /motd";
         this.accessname = "buckit.motd";
     }

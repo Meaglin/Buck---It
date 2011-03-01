@@ -13,7 +13,7 @@ public class LocCommand extends Command {
     
     public LocCommand(String name, Server server){
         super(name);
-        this.tooltip = "Sends you your current location.";
+        this.description = "Sends you your current location.";
         this.usageMessage = "Usage: /loc";
         
         this.accessname = "buckit.util.loc";

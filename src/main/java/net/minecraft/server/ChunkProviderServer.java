@@ -9,23 +9,22 @@ import java.util.Map;
 import java.util.Set;
 
 // CraftBukkit start
-import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 // CraftBukkit end
 
 public class ChunkProviderServer implements IChunkProvider {
-
     public LongHashset a = new LongHashset(); // CraftBukkit
     private Chunk b;
     private IChunkProvider c;
     private IChunkLoader d;
     public LongHashtable<Chunk> e = new LongHashtable<Chunk>(); // CraftBukkit
-    public List f = new ArrayList(); // Craftbukkit
-    public WorldServer g; // Craftbukkit
+    public List f = new ArrayList(); // CraftBukkit
+    public WorldServer g; // CraftBukkit
 
     public ChunkProviderServer(WorldServer worldserver, IChunkLoader ichunkloader, IChunkProvider ichunkprovider) {
         this.b = new EmptyChunk(worldserver, new byte['\u8000'], 0, 0);
@@ -34,15 +33,14 @@ public class ChunkProviderServer implements IChunkProvider {
         this.c = ichunkprovider;
     }
 
-    // CraftBukkit start
     public boolean a(int i, int j) {
-        return this.e.containsKey(i, j);
+        return this.e.containsKey(i, j); // CraftBukkit
     }
-    // CraftBukkit end
-    
+
     public void c(int i, int j) {
-        int k = i * 16 + 8 - this.g.spawnX;
-        int l = j * 16 + 8 - this.g.spawnZ;
+        ChunkCoordinates chunkcoordinates = this.g.l();
+        int k = i * 16 + 8 - chunkcoordinates.a;
+        int l = j * 16 + 8 - chunkcoordinates.c;
         short short1 = 128;
 
         if (k < -short1 || k > short1 || l < -short1 || l > short1) {
@@ -108,10 +106,19 @@ public class ChunkProviderServer implements IChunkProvider {
     public Chunk b(int i, int j) {
         Chunk chunk = (Chunk) this.e.get(i, j); // CraftBukkit
 
-        return chunk == null ? (this.g.x ? this.d(i, j) : this.b) : chunk;
+        chunk = chunk == null ? (this.g.r ? this.d(i, j) : this.b) : chunk;
+        if(chunk == this.b) return chunk;
+        if(i != chunk.j || j != chunk.k) {
+            MinecraftServer.a.info("Chunk (" + chunk.j + ", " + chunk.k +") stored at  (" + i + ", " + j + ")");
+            MinecraftServer.a.info(chunk.getClass().getName());
+            Throwable x = new Throwable();
+            x.fillInStackTrace();
+            x.printStackTrace();
+        }
+        return chunk;
     }
 
-    public Chunk e(int i, int j) { // Craftbukkit - public
+    public Chunk e(int i, int j) { // CraftBukkit - private->public
         if (this.d == null) {
             return null;
         } else {
@@ -119,7 +126,7 @@ public class ChunkProviderServer implements IChunkProvider {
                 Chunk chunk = this.d.a(this.g, i, j);
 
                 if (chunk != null) {
-                    chunk.r = this.g.e;
+                    chunk.r = this.g.k();
                 }
 
                 return chunk;
@@ -130,7 +137,7 @@ public class ChunkProviderServer implements IChunkProvider {
         }
     }
 
-    public void a(Chunk chunk) { // Craftbukkit - public
+    public void a(Chunk chunk) { // CraftBukkit - private->public
         if (this.d != null) {
             try {
                 this.d.b(this.g, chunk);
@@ -140,10 +147,10 @@ public class ChunkProviderServer implements IChunkProvider {
         }
     }
 
-    public void b(Chunk chunk) { // Craftbukkit - public
+    public void b(Chunk chunk) { // CraftBukkit - private->public
         if (this.d != null) {
             try {
-                chunk.r = this.g.e;
+                chunk.r = this.g.k();
                 this.d.a(this.g, chunk);
             } catch (Exception ioexception) { // CraftBukkit - IOException -> Exception
                 ioexception.printStackTrace();
@@ -195,18 +202,25 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public boolean a() {
-        if (!this.g.C) {
+        if (!this.g.w) {
             // CraftBukkit start
+            Server server = g.getServer();
             while (!this.a.isEmpty()) {
                 long chunkcoordinates = this.a.popFirst();
                 Chunk chunk = e.get(chunkcoordinates);
                 if (chunk == null) continue;
-                chunk.e();
-                this.b(chunk);
-                this.a(chunk);
-                this.a.remove(chunkcoordinates);
-                this.e.remove(chunkcoordinates);
-                this.f.remove(chunk);
+
+                ChunkUnloadEvent event = new ChunkUnloadEvent(Type.CHUNK_UNLOADED, chunk.bukkitChunk);
+                server.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    g.getWorld().preserveChunk( (CraftChunk) chunk.bukkitChunk );
+
+                    chunk.e();
+                    this.b(chunk);
+                    this.a(chunk);
+                    this.e.remove(chunkcoordinates);
+                    this.f.remove(chunk);
+                }
             }
             // CraftBukkit end
 
@@ -219,6 +233,6 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public boolean b() {
-        return !this.g.C;
+        return !this.g.w;
     }
 }

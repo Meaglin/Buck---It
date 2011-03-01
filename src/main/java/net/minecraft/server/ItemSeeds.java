@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.player.PlayerItemEvent;
@@ -36,7 +35,7 @@ public class ItemSeeds extends Item {
                 Player who = (entityhuman == null) ? null : (Player) entityhuman.getBukkitEntity();
                 org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
                 org.bukkit.block.Block blockClicked = craftWorld.getBlockAt(i, j, k);
-                BlockFace blockface = CraftBlock.notchToBlockFace(1);
+                BlockFace blockface = CraftBlock.notchToBlockFace(l);
 
                 PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockface);
                 craftServer.getPluginManager().callEvent(event);

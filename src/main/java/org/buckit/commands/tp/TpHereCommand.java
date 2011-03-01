@@ -17,7 +17,7 @@ public class TpHereCommand extends Command {
 	
 	public TpHereCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Teleports another online player to you.";
+        this.description = "Teleports another online player to you.";
         this.usageMessage = "Usage: /tphere <playername>";
         this.accessname = "buckit.tp.tphere";
         

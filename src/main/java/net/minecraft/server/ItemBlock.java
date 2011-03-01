@@ -23,13 +23,11 @@ public class ItemBlock extends Item {
     }
 
     public boolean a(ItemStack itemstack, EntityHuman entityhuman, World world, int i, int j, int k, int l) {
-        // CraftBukkit start
-        // Bail if we have nothing of the item in hand
+        // CraftBukkit start -- Bail if we have nothing of the item in hand
         if (itemstack.count == 0) {
             return false;
         }
 
-        // CraftBukkit store info of the clicked block
         CraftBlock blockClicked = (CraftBlock) ((WorldServer) world).getWorld().getBlockAt(i, j, k);
         BlockFace faceClicked = CraftBlock.notchToBlockFace(l);
         // CraftBukkit end
@@ -69,12 +67,12 @@ public class ItemBlock extends Item {
             /* We store the old data so we can undo it. Snow(78) and half-steps(44) are special in that they replace the block itself,
              * rather than the block touching the face we clicked on.
              */
-            int typeId = blockClicked.getTypeId(); 
+            int typeId = blockClicked.getTypeId();
             org.bukkit.block.Block replacedBlock = blockClicked.getFace(faceClicked);
 
             if (typeId == Block.SNOW.id || (typeId == Block.STEP.id && itemstack.id == Block.STEP.id && faceClicked == BlockFace.UP))
                 replacedBlock = blockClicked;
-            
+
             final BlockState replacedBlockState = new CraftBlockState(replacedBlock);
             // CraftBukkit end
 
@@ -97,10 +95,13 @@ public class ItemBlock extends Item {
                     org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
                     Player thePlayer = (entityhuman ==null) ? null : (Player) entityhuman.getBukkitEntity();
 
-                    int distanceFromSpawn = (int) Math.max(Math.abs(i - world.spawnX), Math.abs(k - world.spawnZ));
+                    ChunkCoordinates chunkcoordinates = world.l();
+                    int spawnX = chunkcoordinates.a;
+                    int spawnZ = chunkcoordinates.c;
 
-                    boolean canBuild = (distanceFromSpawn > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || thePlayer.canBuild())) || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
-
+                    
+                    int distanceFromSpawn = (int) Math.max(Math.abs(i - spawnX), Math.abs(k - spawnZ));
+					boolean canBuild = (distanceFromSpawn > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || thePlayer.canBuild())) || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
                     BlockPlaceEvent event = new BlockPlaceEvent(eventType, placedBlock, replacedBlockState, blockClicked, itemInHand, thePlayer, canBuild);
                     server.getPluginManager().callEvent(event);
 
@@ -118,13 +119,13 @@ public class ItemBlock extends Item {
                                 world.setTypeId(i, j, k, 20);
                             }
 
-                            world.setTypeIdAndData(i, j, k, replacedBlockState.getTypeId(), replacedBlockState.getData().getData());
+                            world.setTypeIdAndData(i, j, k, replacedBlockState.getTypeId(), replacedBlockState.getRawData());
                         }
 
                     } else {
                         world.f(i, j, k, a); // <-- world.b does this on success (tell the world)
 
-                        Block.byId[this.a].c(world, i, j, k, l);
+                        Block.byId[this.a].d(world, i, j, k, l);
                         Block.byId[this.a].a(world, i, j, k, (EntityLiving) entityhuman);
                         world.a((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.c(), (block.stepSound.a() + 1.0F) / 2.0F, block.stepSound.b() * 0.8F);
                         --itemstack.count;

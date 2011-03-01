@@ -119,7 +119,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         double d0 = 0.03125D;
 
         this.r = this.n.a(this.r, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0, d0, 1.0D);
-        this.s = this.n.a(this.s, (double) (i * 16), 109.0134D, (double) (j * 16), 16, 1, 16, d0, 1.0D, d0); // CraftBukkit -- i & j swapped.
+        this.s = this.n.a(this.s, (double) (i * 16), 109.0134D, (double) (j * 16), 16, 1, 16, d0, 1.0D, d0);
         this.t = this.o.a(this.t, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
         for (int k = 0; k < 16; ++k) {
@@ -133,7 +133,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                 byte b2 = biomebase.p;
 
                 for (int k1 = 127; k1 >= 0; --k1) {
-                    int l1 = (k + l * 16) * 128 + k1; // CraftBukkit (k*16+l) -> (k+l*16)
+                    int l1 = (l * 16 + k) * 128 + k1;
 
                     if (k1 <= 0 + this.j.nextInt(5)) {
                         abyte[l1] = (byte) Block.BEDROCK.id;
@@ -180,6 +180,10 @@ public class ChunkProviderGenerate implements IChunkProvider {
                             } else if (j1 > 0) {
                                 --j1;
                                 abyte[l1] = b2;
+                                if (j1 == 0 && b2 == Block.SAND.id) {
+                                    j1 = this.j.nextInt(4);
+                                    b2 = (byte) Block.SANDSTONE.id;
+                                }
                             }
                         }
                     }
@@ -321,11 +325,11 @@ public class ChunkProviderGenerate implements IChunkProvider {
         int l = j * 16;
         BiomeBase biomebase = this.p.a().a(k + 16, l + 16);
 
-        this.j.setSeed(this.p.u);
+        this.j.setSeed(this.p.j());
         long i1 = this.j.nextLong() / 2L * 2L + 1L;
         long j1 = this.j.nextLong() / 2L * 2L + 1L;
 
-        this.j.setSeed((long) i * i1 + (long) j * j1 ^ this.p.u);
+        this.j.setSeed((long) i * i1 + (long) j * j1 ^ this.p.j());
         double d0 = 0.25D;
         int k1;
         int l1;
@@ -360,7 +364,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
             l1 = k + this.j.nextInt(16);
             i2 = this.j.nextInt(128);
             j2 = l + this.j.nextInt(16);
-            (new WorldGenClay(32)).a(this.p, this.j, l1, i2, j2);
+            (new WorldGenClay(Config.WORLD_CLAY_SIZE)).a(this.p, this.j, l1, i2, j2);
         }
 
         for (k1 = 0; k1 < Config.WORLD_DIRT_OCCURENCE; ++k1) {
@@ -502,7 +506,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
             (new WorldGenReed()).a(this.p, this.j, j2, k2, l2);
         }
 
-        if (this.j.nextInt(32) == Config.WORLD_PUMPKIN_OCCURENCE) {
+        if (this.j.nextInt(32) <= Config.WORLD_PUMPKIN_OCCURENCE) {
             i2 = k + this.j.nextInt(16) + 8;
             j2 = this.j.nextInt(128);
             k2 = l + this.j.nextInt(16) + 8;

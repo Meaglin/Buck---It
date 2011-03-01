@@ -14,7 +14,7 @@ public class PlayerListCommand extends Command {
 
 	public PlayerListCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Display al the online players.";
+        this.description = "Display al the online players.";
         this.usageMessage = "Usage: /playerlist";
         this.accessname = "buckit.playerlist";
         

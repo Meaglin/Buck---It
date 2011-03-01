@@ -16,7 +16,7 @@ public class WhitelistCommand extends Command {
 
     public WhitelistCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Add or remove a player from the whitelist.";
+        this.description = "Add or remove a player from the whitelist.";
         this.usageMessage = "Usage: /whitelist [add/a|remove/r|status/s] [player] ";
         this.accessname = "buckit.admin.whitelist";
         

@@ -19,7 +19,7 @@ public class MuteCommand extends Command {
     
     public MuteCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Mutes a player.";
+        this.description = "Mutes a player.";
         this.usageMessage = "Usage: /mute [player] <weeks|days|hours|minutes|seconds> <time> <reason>";
         this.accessname = "buckit.admin.mute";
         

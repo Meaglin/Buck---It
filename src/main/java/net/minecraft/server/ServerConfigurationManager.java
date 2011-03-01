@@ -18,7 +18,10 @@ import org.buckit.model.UserDataHolder;
 import org.buckit.util.MotdReader;
 import org.buckit.util.TimeFormat;
 import org.bukkit.Location;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Type;
@@ -31,57 +34,64 @@ public class ServerConfigurationManager {
 
     public static Logger a = Logger.getLogger("Minecraft");
     public List b = new ArrayList();
-    public MinecraftServer c; // Craftbukkit - public
-    // public PlayerManager d; // Craftbukkit - removed!
-    public int e; // Craftbukkit - public
+    public MinecraftServer c; // CraftBukkit - private->public
+    // public PlayerManager d; // CraftBukkit - removed!
+    public int e; // CraftBukkit - private->public
     private Set f = new HashSet();
     private Set g = new HashSet();
     private Set h = new HashSet();
-    private File i;
+    private Set i = new HashSet();
     private File j;
     private File k;
-    private PlayerNBTManager l;
+    private File l;
+    private File m;
+    private PlayerFileData n;
+    private boolean o;
 
     // CraftBukkit start
     private CraftServer server;
 
     public ServerConfigurationManager(MinecraftServer minecraftserver) {
         minecraftserver.server = new CraftServer(minecraftserver, this);
+        minecraftserver.console = new ColouredConsoleSender(minecraftserver.server);
         server = minecraftserver.server;
         // CraftBukkit end
 
         this.c = minecraftserver;
-        this.i = minecraftserver.a("banned-players.txt");
-        this.j = minecraftserver.a("banned-ips.txt");
-        this.k = minecraftserver.a("ops.txt");
-        // this.d = new PlayerManager(minecraftserver); // Craftbukkit - removed!
+        this.j = minecraftserver.a("banned-players.txt");
+        this.k = minecraftserver.a("banned-ips.txt");
+        this.l = minecraftserver.a("ops.txt");
+        this.m = minecraftserver.a("white-list.txt");
+        // this.d = new PlayerManager(minecraftserver); // CraftBukkit - removed!
         this.e = minecraftserver.d.a("max-players", 20);
-        this.e();
+        this.o = minecraftserver.d.a("white-list", false);
         this.g();
         this.i();
-        this.f();
+        this.k();
+        this.m();
         this.h();
         this.j();
+        this.l();
+        this.n();
     }
 
     public void a(WorldServer worldserver) {
-        // Craftbukkit start
-        if (this.l == null) {
-            this.l = new PlayerNBTManager(new File(worldserver.t, "players"));
+        // CraftBukkit start
+        if (this.n == null) {
+            this.n = worldserver.m().d();
         }
-        // Craftbukkit end
+        // CraftBukkit end
     }
 
     public int a() {
-        return 144; // Craftbukkit - magic number from PlayerManager.b() (??)
+        return 144; // CraftBukkit - magic number from PlayerManager.b() (??)
     }
 
     public void a(EntityPlayer entityplayer) {
         this.b.add(entityplayer);
-        this.l.b(entityplayer);
-
-        // Craftbukkit start
-        ((WorldServer)entityplayer.world).A.d((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
+        this.n.b(entityplayer);
+        // CraftBukkit start
+        ((WorldServer) entityplayer.world).u.d((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
 
         while (entityplayer.world.a(entityplayer, entityplayer.boundingBox).size() != 0) {
             entityplayer.a(entityplayer.locX, entityplayer.locY + 1.0D, entityplayer.locZ);
@@ -90,7 +100,6 @@ public class ServerConfigurationManager {
         entityplayer.world.a(entityplayer);
         
         server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_JOIN, server.getPlayer(entityplayer)));
-
         ((WorldServer)entityplayer.world).manager.a(entityplayer);
         // Craftbukkit end
         
@@ -106,12 +115,12 @@ public class ServerConfigurationManager {
     }
 
     public void b(EntityPlayer entityplayer) {
-        ((WorldServer)entityplayer.world).manager.c(entityplayer); // Craftbukkit
+        ((WorldServer) entityplayer.world).manager.c(entityplayer); // CraftBukkit
     }
 
     public void c(EntityPlayer entityplayer) {
-        this.l.a(entityplayer);
-        entityplayer.world.d(entityplayer); // Craftbukkit
+        this.n.a(entityplayer);
+        entityplayer.world.d(entityplayer); // CraftBukkit
         this.b.remove(entityplayer);
 
         // Buck - It start
@@ -121,7 +130,7 @@ public class ServerConfigurationManager {
         // Buck - It end
         
         // CraftBukkit start
-        ((WorldServer)entityplayer.world).manager.b(entityplayer);
+        ((WorldServer) entityplayer.world).manager.b(entityplayer);
         server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_QUIT, server.getPlayer(entityplayer))); // CraftBukkit
         // CraftBukkit end
     }
@@ -143,6 +152,8 @@ public class ServerConfigurationManager {
         UserDataHolder holder = player.getUserDataHolder(); //Buck - It
         if (this.f.contains(s.trim().toLowerCase())) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server!");
+        } else if (!this.g(s)) {
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are not white-listed on this server!");
         } else if (this.g.contains(s2)) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Your IP address is banned from this server!");
         // Buck - It start
@@ -179,17 +190,17 @@ public class ServerConfigurationManager {
     }
 
     public EntityPlayer d(EntityPlayer entityplayer) {
-        // Craftbukkit start - every reference to this.c.e should be entityplayer.world
+        // CraftBukkit start - every reference to this.c.e should be entityplayer.world
         this.c.k.a(entityplayer);
         this.c.k.b(entityplayer);
-        ((WorldServer)entityplayer.world).manager.b(entityplayer);
+        ((WorldServer) entityplayer.world).manager.b(entityplayer);
         this.b.remove(entityplayer);
         entityplayer.world.e(entityplayer);
         EntityPlayer entityplayer1 = new EntityPlayer(this.c, entityplayer.world, entityplayer.name, new ItemInWorldManager(entityplayer.world));
 
         entityplayer1.id = entityplayer.id;
         entityplayer1.a = entityplayer.a;
-        ((WorldServer)entityplayer.world).A.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
+        ((WorldServer) entityplayer.world).u.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
 
         while (entityplayer.world.a(entityplayer1, entityplayer1.boundingBox).size() != 0) {
             entityplayer1.a(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
@@ -198,37 +209,46 @@ public class ServerConfigurationManager {
         // CraftBukkit start
         Player respawnPlayer = server.getPlayer(entityplayer);
         Location respawnLocation = new Location(respawnPlayer.getWorld(), entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
+
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(Event.Type.PLAYER_RESPAWN, respawnPlayer, respawnLocation );
         server.getPluginManager().callEvent(respawnEvent);
+
+        entityplayer1.world = ((CraftWorld) respawnEvent.getRespawnLocation().getWorld()).getHandle();
         entityplayer1.locX = respawnEvent.getRespawnLocation().getX();
         entityplayer1.locY = respawnEvent.getRespawnLocation().getY();
         entityplayer1.locZ = respawnEvent.getRespawnLocation().getZ();
         entityplayer1.yaw = respawnEvent.getRespawnLocation().getYaw();
         entityplayer1.pitch = respawnEvent.getRespawnLocation().getPitch();
+        entityplayer1.c = new ItemInWorldManager(((CraftWorld) respawnEvent.getRespawnLocation().getWorld()).getHandle());
+        entityplayer1.c.a = entityplayer1;
+        ((WorldServer) entityplayer1.world).u.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
         // CraftBukkit end
 
         entityplayer1.a.b((Packet) (new Packet9Respawn()));
         entityplayer1.a.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
-        ((WorldServer)entityplayer1.world).manager.a(entityplayer1);
+        // CraftBukkit start
+        ((WorldServer) entityplayer1.world).manager.a(entityplayer1);
         entityplayer.world.a(entityplayer1);
+        // CraftBukkit end
         this.b.add(entityplayer1);
         entityplayer1.l();
+        entityplayer1.s();
         return entityplayer1;
-        // Craftbukkit end
     }
 
     public void b() {
-        // Craftbukkit start
-        for (WorldServer world : c.worlds) {
+        // CraftBukkit start
+        for (WorldServer world: c.worlds) {
             world.manager.a();
         }
-        // Craftbukkit end
+        // CraftBukkit end
     }
 
-    // Craftbukkit - changed signature
+    // CraftBukkit start - changed signature
     public void a(int i, int j, int k, WorldServer world) {
-        world.manager.a(i, j, k, world); // Craftbukkit
+        world.manager.a(i, j, k);
     }
+    // CraftBukkit end
 
     public void a(Packet packet) {
         for (int i = 0; i < this.b.size(); ++i) {
@@ -254,18 +274,18 @@ public class ServerConfigurationManager {
 
     public void a(String s) {
         this.f.add(s.toLowerCase());
-        this.f();
+        this.h();
     }
 
     public void b(String s) {
         this.f.remove(s.toLowerCase());
-        this.f();
+        this.h();
     }
 
-    private void e() {
+    private void g() {
         try {
             this.f.clear();
-            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.i));
+            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.j));
             String s = "";
 
             while ((s = bufferedreader.readLine()) != null) {
@@ -278,9 +298,9 @@ public class ServerConfigurationManager {
         }
     }
 
-    private void f() {
+    private void h() {
         try {
-            PrintWriter printwriter = new PrintWriter(new FileWriter(this.i, false));
+            PrintWriter printwriter = new PrintWriter(new FileWriter(this.j, false));
             Iterator iterator = this.f.iterator();
 
             while (iterator.hasNext()) {
@@ -297,18 +317,18 @@ public class ServerConfigurationManager {
 
     public void c(String s) {
         this.g.add(s.toLowerCase());
-        this.h();
+        this.j();
     }
 
     public void d(String s) {
         this.g.remove(s.toLowerCase());
-        this.h();
+        this.j();
     }
 
-    private void g() {
+    private void i() {
         try {
             this.g.clear();
-            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.j));
+            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.k));
             String s = "";
 
             while ((s = bufferedreader.readLine()) != null) {
@@ -321,9 +341,9 @@ public class ServerConfigurationManager {
         }
     }
 
-    private void h() {
+    private void j() {
         try {
-            PrintWriter printwriter = new PrintWriter(new FileWriter(this.j, false));
+            PrintWriter printwriter = new PrintWriter(new FileWriter(this.k, false));
             Iterator iterator = this.g.iterator();
 
             while (iterator.hasNext()) {
@@ -340,18 +360,18 @@ public class ServerConfigurationManager {
 
     public void e(String s) {
         this.h.add(s.toLowerCase());
-        this.j();
+        this.l();
     }
 
     public void f(String s) {
         this.h.remove(s.toLowerCase());
-        this.j();
+        this.l();
     }
 
-    private void i() {
+    private void k() {
         try {
             this.h.clear();
-            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.k));
+            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.l));
             String s = "";
 
             while ((s = bufferedreader.readLine()) != null) {
@@ -360,13 +380,13 @@ public class ServerConfigurationManager {
 
             bufferedreader.close();
         } catch (Exception exception) {
-            a.warning("Failed to load ip ban list: " + exception);
+            a.warning("Failed to load ops: " + exception);  // CraftBukkit corrected text
         }
     }
 
-    private void j() {
+    private void l() {
         try {
-            PrintWriter printwriter = new PrintWriter(new FileWriter(this.k, false));
+            PrintWriter printwriter = new PrintWriter(new FileWriter(this.l, false));
             Iterator iterator = this.h.iterator();
 
             while (iterator.hasNext()) {
@@ -377,15 +397,53 @@ public class ServerConfigurationManager {
 
             printwriter.close();
         } catch (Exception exception) {
-            a.warning("Failed to save ip ban list: " + exception);
+            a.warning("Failed to save ops: " + exception); // CraftBukkit corrected text
+        }
+    }
+
+    private void m() {
+        try {
+            this.i.clear();
+            BufferedReader bufferedreader = new BufferedReader(new FileReader(this.m));
+            String s = "";
+
+            while ((s = bufferedreader.readLine()) != null) {
+                this.i.add(s.trim().toLowerCase());
+            }
+
+            bufferedreader.close();
+        } catch (Exception exception) {
+            a.warning("Failed to load white-list: " + exception);
+        }
+    }
+
+    private void n() {
+        try {
+            PrintWriter printwriter = new PrintWriter(new FileWriter(this.m, false));
+            Iterator iterator = this.i.iterator();
+
+            while (iterator.hasNext()) {
+                String s = (String) iterator.next();
+
+                printwriter.println(s);
+            }
+
+            printwriter.close();
+        } catch (Exception exception) {
+            a.warning("Failed to save white-list: " + exception);
         }
     }
 
     public boolean g(String s) {
+        s = s.trim().toLowerCase();
+        return !this.o || this.h.contains(s) || this.i.contains(s);
+    }
+
+    public boolean h(String s) {
         return this.h.contains(s.trim().toLowerCase());
     }
 
-    public EntityPlayer h(String s) {
+    public EntityPlayer i(String s) {
         for (int i = 0; i < this.b.size(); ++i) {
             EntityPlayer entityplayer = (EntityPlayer) this.b.get(i);
 
@@ -398,7 +456,7 @@ public class ServerConfigurationManager {
     }
 
     public void a(String s, String s1) {
-        EntityPlayer entityplayer = this.h(s);
+        EntityPlayer entityplayer = this.i(s);
 
         if (entityplayer != null) {
             entityplayer.a.b((Packet) (new Packet3Chat(s1)));
@@ -418,20 +476,20 @@ public class ServerConfigurationManager {
         }
     }
 
-    public void i(String s) {
+    public void j(String s) {
         Packet3Chat packet3chat = new Packet3Chat(s);
 
         for (int i = 0; i < this.b.size(); ++i) {
             EntityPlayer entityplayer = (EntityPlayer) this.b.get(i);
 
-            if (this.g(entityplayer.name)) {
+            if (this.h(entityplayer.name)) {
                 entityplayer.a.b((Packet) packet3chat);
             }
         }
     }
 
     public boolean a(String s, Packet packet) {
-        EntityPlayer entityplayer = this.h(s);
+        EntityPlayer entityplayer = this.i(s);
 
         if (entityplayer != null) {
             entityplayer.a.b(packet);
@@ -443,9 +501,27 @@ public class ServerConfigurationManager {
 
     public void d() {
         for (int i = 0; i < this.b.size(); ++i) {
-            this.l.a((EntityPlayer) this.b.get(i));
+            this.n.a((EntityHuman) this.b.get(i));
         }
     }
 
     public void a(int i, int j, int k, TileEntity tileentity) {}
+
+    public void k(String s) {
+        this.i.add(s);
+        this.n();
+    }
+
+    public void l(String s) {
+        this.i.remove(s);
+        this.n();
+    }
+
+    public Set e() {
+        return this.i;
+    }
+
+    public void f() {
+        this.m();
+    }
 }

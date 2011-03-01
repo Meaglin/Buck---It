@@ -11,7 +11,7 @@ public class SpawnCommand extends Command {
 
 	public SpawnCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Warps you to spawn.";
+        this.description = "Warps you to spawn.";
         this.usageMessage = "Usage: /spawn";
         this.accessname = "buckit.spawn";
 	}

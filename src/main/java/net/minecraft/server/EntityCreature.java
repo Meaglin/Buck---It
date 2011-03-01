@@ -1,27 +1,24 @@
 package net.minecraft.server;
 
 // CraftBukkit start
-import org.bukkit.craftbukkit.entity.CraftMonster;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.craftbukkit.TrigMath;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 // CraftBukkit end
 
 public class EntityCreature extends EntityLiving {
 
-    public PathEntity a; // Craftbukkit - public
-    public Entity d; // Craftbukkit - public
+    public PathEntity a; // CraftBukkit - public
+    public Entity d; // CraftBukkit - public
     protected boolean e = false;
 
     public EntityCreature(World world) {
         super(world);
     }
 
-    protected void d() {
+    protected void c_() {
         this.e = false;
         float f = 16.0F;
 
@@ -32,6 +29,7 @@ public class EntityCreature extends EntityLiving {
                 EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), target.getBukkitEntity(), TargetReason.CLOSEST_PLAYER);
                 CraftServer server = ((WorldServer) this.world).getServer();
                 server.getPluginManager().callEvent(event);
+
                 if (!event.isCancelled()) {
                     if (event.getTarget() == null) {
                         this.d = null;
@@ -44,11 +42,12 @@ public class EntityCreature extends EntityLiving {
             if (this.d != null) {
                 this.a = this.world.a(this, this.d, f);
             }
-        } else if (!this.d.B()) {
+        } else if (!this.d.J()) {
             // CraftBukkit start
             EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), null, TargetReason.TARGET_DIED);
             CraftServer server = ((WorldServer) this.world).getServer();
             server.getPluginManager().callEvent(event);
+
             if (!event.isCancelled()) {
                 if (event.getTarget() == null) {
                     this.d = null;
@@ -58,9 +57,9 @@ public class EntityCreature extends EntityLiving {
             }
             // CraftBukkit end
         } else {
-            float f1 = this.d.a((Entity) this);
+            float f1 = this.d.f(this);
 
-            if (this.i(this.d)) {
+            if (this.e(this.d)) {
                 this.a(this.d, f1);
             }
         }
@@ -95,8 +94,8 @@ public class EntityCreature extends EntityLiving {
         }
 
         int l1 = MathHelper.b(this.boundingBox.b);
-        boolean flag1 = this.v();
-        boolean flag2 = this.x();
+        boolean flag1 = this.g_();
+        boolean flag2 = this.Q();
 
         this.pitch = 0.0F;
         if (this.a != null && this.random.nextInt(100) != 0) {
@@ -113,15 +112,16 @@ public class EntityCreature extends EntityLiving {
                 }
             }
 
-            this.bA = false;
+            this.ax = false;
             if (vec3d != null) {
                 double d1 = vec3d.a - this.locX;
                 double d2 = vec3d.c - this.locZ;
                 double d3 = vec3d.b - (double) l1;
-                float f4 = (float) (Math.atan2(d2, d1) * 180.0D / 3.1415927410125732D) - 90.0F;
+                // CraftBukkit -- Math -> TrigMath
+                float f4 = (float) (TrigMath.atan2(d2, d1) * 180.0D / 3.1415927410125732D) - 90.0F;
                 float f5 = f4 - this.yaw;
 
-                for (this.by = this.bC; f5 < -180.0F; f5 += 360.0F) {
+                for (this.av = this.az; f5 < -180.0F; f5 += 360.0F) {
                     ;
                 }
 
@@ -145,12 +145,12 @@ public class EntityCreature extends EntityLiving {
 
                     this.yaw = (float) (Math.atan2(d5, d4) * 180.0D / 3.1415927410125732D) - 90.0F;
                     f5 = (f6 - this.yaw + 90.0F) * 3.1415927F / 180.0F;
-                    this.bx = -MathHelper.a(f5) * this.by * 1.0F;
-                    this.by = MathHelper.b(f5) * this.by * 1.0F;
+                    this.au = -MathHelper.a(f5) * this.av * 1.0F;
+                    this.av = MathHelper.b(f5) * this.av * 1.0F;
                 }
 
                 if (d3 > 0.0D) {
-                    this.bA = true;
+                    this.ax = true;
                 }
             }
 
@@ -158,15 +158,15 @@ public class EntityCreature extends EntityLiving {
                 this.b(this.d, 30.0F);
             }
 
-            if (this.B) {
-                this.bA = true;
+            if (this.aV) {
+                this.ax = true;
             }
 
             if (this.random.nextFloat() < 0.8F && (flag1 || flag2)) {
-                this.bA = true;
+                this.ax = true;
             }
         } else {
-            super.d();
+            super.c_();
             this.a = null;
         }
     }

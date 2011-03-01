@@ -17,7 +17,7 @@ public class UnmuteCommand extends Command {
     
     public UnmuteCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Unmute a player.";
+        this.description = "Unmute a player.";
         this.usageMessage = "Usage: /unmute [player]";
         this.accessname = "buckit.admin.unmute";
         

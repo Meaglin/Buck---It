@@ -20,8 +20,8 @@ public class BlockStationary extends BlockFluids {
         }
     }
 
-    public void b(World world, int i, int j, int k, int l) {
-        super.b(world, i, j, k, l);
+    public void a(World world, int i, int j, int k, int l) {
+        super.a(world, i, j, k, l);
         if (world.getTypeId(i, j, k) == this.id) {
             this.i(world, i, j, k);
         }
@@ -30,11 +30,11 @@ public class BlockStationary extends BlockFluids {
     private void i(World world, int i, int j, int k) {
         int l = world.getData(i, j, k);
 
-        world.i = true;
+        world.h = true;
         world.setTypeIdAndData(i, j, k, this.id - 1, l);
         world.b(i, j, k, i, j, k);
-        world.i(i, j, k, this.id - 1);
-        world.i = false;
+        world.c(i, j, k, this.id - 1, this.b());
+        world.h = false;
     }
 
     public void a(World world, int i, int j, int k, Random random) {
@@ -42,8 +42,8 @@ public class BlockStationary extends BlockFluids {
             int l = random.nextInt(3);
 
             // CraftBukkit start: prevent lava putting something on fire.
-            Server server = ((WorldServer)world).getServer();
-            CraftWorld cworld = ((WorldServer)world).getWorld();
+            Server server = ((WorldServer) world).getServer();
+            CraftWorld cworld = ((WorldServer) world).getWorld();
 
             IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.LAVA;
             Player thePlayer = null;
@@ -58,9 +58,9 @@ public class BlockStationary extends BlockFluids {
                 if (j1 == 0) {
                     if (this.j(world, i - 1, j, k) || this.j(world, i + 1, j, k) || this.j(world, i, j, k - 1) || this.j(world, i, j, k + 1) || this.j(world, i, j - 1, k) || this.j(world, i, j + 1, k)) {
                         // CraftBukkit start: prevent lava putting something on fire.
-                        org.bukkit.block.Block theBlock = cworld.getBlockAt(k, l, i1);
+                        org.bukkit.block.Block theBlock = cworld.getBlockAt(i, j, k);
 
-                        if (theBlock.getTypeId() != Block.FIRE.id){
+                        if (theBlock.getTypeId() != Block.FIRE.id) {
                             BlockIgniteEvent event = new BlockIgniteEvent(theBlock, igniteCause, thePlayer);
                             server.getPluginManager().callEvent(event);
                             if (event.isCancelled()) {

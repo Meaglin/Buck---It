@@ -3,11 +3,9 @@ package net.minecraft.server;
 import java.util.Random;
 
 // CraftBukkit start
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockInteractEvent;
@@ -37,46 +35,32 @@ public class BlockButton extends Block {
         return world.d(i - 1, j, k) ? true : (world.d(i + 1, j, k) ? true : (world.d(i, j, k - 1) ? true : world.d(i, j, k + 1)));
     }
 
-    public void c(World world, int i, int j, int k, int l) {
+    public void d(World world, int i, int j, int k, int l) {
         int i1 = world.getData(i, j, k);
         int j1 = i1 & 8;
 
         i1 &= 7;
         if (l == 2 && world.d(i, j, k + 1)) {
             i1 = 4;
-        }
-
-        if (l == 3 && world.d(i, j, k - 1)) {
+        } else if (l == 3 && world.d(i, j, k - 1)) {
             i1 = 3;
-        }
-
-        if (l == 4 && world.d(i + 1, j, k)) {
+        } else if (l == 4 && world.d(i + 1, j, k)) {
             i1 = 2;
-        }
-
-        if (l == 5 && world.d(i - 1, j, k)) {
+        } else if (l == 5 && world.d(i - 1, j, k)) {
             i1 = 1;
+        } else {
+            i1 = this.g(world, i, j, k);
         }
 
         world.c(i, j, k, i1 + j1);
     }
 
-    public void e(World world, int i, int j, int k) {
-        if (world.d(i - 1, j, k)) {
-            world.c(i, j, k, 1);
-        } else if (world.d(i + 1, j, k)) {
-            world.c(i, j, k, 2);
-        } else if (world.d(i, j, k - 1)) {
-            world.c(i, j, k, 3);
-        } else if (world.d(i, j, k + 1)) {
-            world.c(i, j, k, 4);
-        }
-
-        this.g(world, i, j, k);
+    private int g(World world, int i, int j, int k) {
+        return world.d(i - 1, j, k) ? 1 : (world.d(i + 1, j, k) ? 2 : (world.d(i, j, k - 1) ? 3 : (world.d(i, j, k + 1) ? 4 : 1)));
     }
 
-    public void b(World world, int i, int j, int k, int l) {
-        if (this.g(world, i, j, k)) {
+    public void a(World world, int i, int j, int k, int l) {
+        if (this.h(world, i, j, k)) {
             int i1 = world.getData(i, j, k) & 7;
             boolean flag = false;
 
@@ -97,15 +81,15 @@ public class BlockButton extends Block {
             }
 
             if (flag) {
-                this.a_(world, i, j, k, world.getData(i, j, k));
+                this.b_(world, i, j, k, world.getData(i, j, k));
                 world.e(i, j, k, 0);
             }
         }
     }
 
-    private boolean g(World world, int i, int j, int k) {
+    private boolean h(World world, int i, int j, int k) {
         if (!this.a(world, i, j, k)) {
-            this.a_(world, i, j, k, world.getData(i, j, k));
+            this.b_(world, i, j, k, world.getData(i, j, k));
             world.e(i, j, k, 0);
             return false;
         } else {
@@ -142,56 +126,56 @@ public class BlockButton extends Block {
     }
 
     public boolean a(World world, int i, int j, int k, EntityHuman entityhuman) {
-        if (world.isStatic) {
+        // CraftBukkit start - Interact Button
+        CraftWorld craftWorld = ((WorldServer) world).getWorld();
+        CraftServer server = ((WorldServer) world).getServer();
+        Type eventType = Type.BLOCK_INTERACT;
+        CraftBlock block = (CraftBlock) craftWorld.getBlockAt(i, j, k);
+        LivingEntity who = (entityhuman == null) ? null : (LivingEntity) entityhuman.getBukkitEntity();
+
+        BlockInteractEvent event = new BlockInteractEvent(eventType, block, who);
+        server.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return true;
+        }
+        // CraftBukkit end
+
+        int l = world.getData(i, j, k);
+        int i1 = l & 7;
+        int j1 = 8 - (l & 8);
+
+        if (j1 == 0) {
             return true;
         } else {
-            // CraftBukkit start - Interact Button
-            CraftWorld craftWorld = ((WorldServer) world).getWorld();
-            CraftServer server = ((WorldServer) world).getServer();
-            Type eventType = Type.BLOCK_INTERACT;
-            CraftBlock block = (CraftBlock) craftWorld.getBlockAt(i, j, k);
-            LivingEntity who = (entityhuman == null) ? null : (LivingEntity) entityhuman.getBukkitEntity();
-
-            BlockInteractEvent event = new BlockInteractEvent(eventType, block, who);
-            server.getPluginManager().callEvent(event);
-
-            if (event.isCancelled()) {
+            // CraftBukkit start
+            int old = (j1 != 8) ? 1 : 0;
+            int current = (j1 == 8) ? 1 : 0;
+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
+            server.getPluginManager().callEvent(eventRedstone);
+            if ((eventRedstone.getNewCurrent() > 0) != (j1 == 8)) {
                 return true;
             }
             // CraftBukkit end
 
-            int l = world.getData(i, j, k);
-            int i1 = l & 7;
-            int j1 = 8 - (l & 8);
-
-            if (j1 == 0) {
-                return true;
+            world.c(i, j, k, i1 + j1);
+            world.b(i, j, k, i, j, k);
+            world.a((double) i + 0.5D, (double) j + 0.5D, (double) k + 0.5D, "random.click", 0.3F, 0.6F);
+            world.h(i, j, k, this.id);
+            if (i1 == 1) {
+                world.h(i - 1, j, k, this.id);
+            } else if (i1 == 2) {
+                world.h(i + 1, j, k, this.id);
+            } else if (i1 == 3) {
+                world.h(i, j, k - 1, this.id);
+            } else if (i1 == 4) {
+                world.h(i, j, k + 1, this.id);
             } else {
-                //Allow the lever to change the current
-                int old = (j1 != 8) ? 1 : 0;
-                int current = (j1 == 8) ? 1 : 0;
-                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
-                server.getPluginManager().callEvent(eventRedstone);
-                if ((eventRedstone.getNewCurrent() > 0) == (j1 == 8)) {
-                    world.c(i, j, k, i1 + j1);
-                    world.b(i, j, k, i, j, k);
-                    world.a((double) i + 0.5D, (double) j + 0.5D, (double) k + 0.5D, "random.click", 0.3F, 0.6F);
-                    world.h(i, j, k, this.id);
-                    if (i1 == 1) {
-                        world.h(i - 1, j, k, this.id);
-                    } else if (i1 == 2) {
-                        world.h(i + 1, j, k, this.id);
-                    } else if (i1 == 3) {
-                        world.h(i, j, k - 1, this.id);
-                    } else if (i1 == 4) {
-                        world.h(i, j, k + 1, this.id);
-                    } else {
-                        world.h(i, j - 1, k, this.id);
-                    }
-                    world.i(i, j, k, this.id);
-                }
-                return true;
+                world.h(i, j - 1, k, this.id);
             }
+
+            world.c(i, j, k, this.id, this.b());
+            return true;
         }
     }
 
@@ -222,7 +206,7 @@ public class BlockButton extends Block {
         return (iblockaccess.getData(i, j, k) & 8) > 0;
     }
 
-    public boolean d(World world, int i, int j, int k, int l) {
+    public boolean c(World world, int i, int j, int k, int l) {
         int i1 = world.getData(i, j, k);
 
         if ((i1 & 8) == 0) {
@@ -243,6 +227,15 @@ public class BlockButton extends Block {
             int l = world.getData(i, j, k);
 
             if ((l & 8) != 0) {
+                // CraftBukkit start
+                CraftWorld craftWorld = ((WorldServer) world).getWorld();
+                CraftServer server = ((WorldServer) world).getServer();
+                CraftBlock block = (CraftBlock) craftWorld.getBlockAt(i, j, k);
+                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 1, 0);
+                server.getPluginManager().callEvent(eventRedstone);
+                if (eventRedstone.getNewCurrent() > 0) return;
+                // CraftBukkit end
+
                 world.c(i, j, k, l & 7);
                 world.h(i, j, k, this.id);
                 int i1 = l & 7;

@@ -20,7 +20,7 @@ public class ModifyCommand extends Command {
 
 	public ModifyCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Modifies a player's properties.";
+        this.description = "Modifies a player's properties.";
         this.usageMessage = "Usage: /modify <player> <key1>:<value1> <key2>:<value2> <keyN>:<valueN>";
         this.accessname = "buckit.admin.modify";
         

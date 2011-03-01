@@ -15,7 +15,7 @@ public class SetHomeCommand extends Command {
     public SetHomeCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getHomesDataSource();
-        this.tooltip = "Sets your home.";
+        this.description = "Sets your home.";
         
         if(Config.HOMES_MULTI_ENABLED)
             this.usageMessage = "Usage: /sethome <home name>";

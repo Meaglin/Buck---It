@@ -11,10 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jline.ConsoleReader;
+import net.minecraft.server.ChunkCoordinates;
+import net.minecraft.server.ConvertProgressUpdater;
+import net.minecraft.server.Convertable;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PropertyManager;
 import net.minecraft.server.ServerConfigurationManager;
+import net.minecraft.server.ServerNBTManager;
+import net.minecraft.server.WorldLoaderServer;
 import net.minecraft.server.WorldManager;
 import net.minecraft.server.WorldServer;
 import org.bukkit.*;
@@ -30,7 +36,7 @@ import org.bukkit.event.world.WorldEvent;
 public final class CraftServer implements Server {
     private final String serverName = "Craftbukkit";
     private final String serverVersion;
-    private final String protocolVersion = "1.2_01";
+    private final String protocolVersion = "1.3";
     private final DataSource datasource = new DataSource(this);
     private final PluginManager pluginManager = new SimplePluginManager(this);
     private final BukkitScheduler scheduler =  new CraftScheduler(this);
@@ -71,10 +77,16 @@ public final class CraftServer implements Server {
 
     private void loadPlugin(Plugin plugin) {
         List<Command> pluginCommands = PluginCommandYamlParser.parse(plugin);
+
         if (!pluginCommands.isEmpty()) {
             commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
         }
-        pluginManager.enablePlugin(plugin);
+
+        try {
+            pluginManager.enablePlugin(plugin);
+        } catch (Throwable ex) {
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " loading " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+        }
     }
 
     public String getName() {
@@ -181,14 +193,14 @@ public final class CraftServer implements Server {
         console.d = config;
 
         boolean animals = config.a("spawn-monsters", console.m);
-        boolean monsters = config.a("spawn-monsters", console.worlds.get(0).k > 0);
+        boolean monsters = config.a("spawn-monsters", console.worlds.get(0).j > 0);
 
         console.l = config.a("online-mode", console.l);
         console.m = config.a("spawn-animals", console.m);
         console.n = config.a("pvp", console.n);
 
         for (WorldServer world : console.worlds) {
-            world.k = monsters ? 1 : 0;
+            world.j = monsters ? 1 : 0;
             world.a(monsters, animals);
         }
 
@@ -214,10 +226,16 @@ public final class CraftServer implements Server {
             throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
         }
 
-        WorldServer internal = new WorldServer(console, new File("."), name, environment == World.Environment.NETHER ? -1 : 0);
+        Convertable converter = new WorldLoaderServer(folder);
+        if (converter.a(name)) {
+            getLogger().info("Converting world '" + name + "'");
+            converter.a(name, new ConvertProgressUpdater(console));
+        }
+
+        WorldServer internal = new WorldServer(console, new ServerNBTManager(new File("."), name, true), name, environment == World.Environment.NETHER ? -1 : 0);
 
         internal.a(new WorldManager(console, internal));
-        internal.k = 1;
+        internal.j = 1;
         internal.a(true, true);
         console.f.a(internal);
         console.worlds.add(internal);
@@ -240,9 +258,10 @@ public final class CraftServer implements Server {
                     i = l;
                 }
 
-                internal.A.d(internal.spawnX + j >> 4, internal.spawnZ + k >> 4);
+                ChunkCoordinates chunkcoordinates = internal.l();
+                internal.u.d(chunkcoordinates.a + j >> 4, chunkcoordinates.c + k >> 4);
 
-                while (internal.d()) {
+                while (internal.e()) {
                     ;
                 }
             }
@@ -275,5 +294,23 @@ public final class CraftServer implements Server {
     @Override
     public Map<String, Command> getCommands() {
         return commandMap.getCommands();
+    }
+
+    public Logger getLogger() {
+        return MinecraftServer.a;
+    }
+
+    public ConsoleReader getReader() {
+        return console.reader;
+    }
+
+    public PluginCommand getPluginCommand(String name) {
+        Command command = commandMap.getCommand(name);
+
+        if (command instanceof PluginCommand) {
+            return (PluginCommand)command;
+        } else {
+            return null;
+        }
     }
 }

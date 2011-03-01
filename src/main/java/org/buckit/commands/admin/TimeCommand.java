@@ -13,7 +13,7 @@ public class TimeCommand extends Command {
 
     public TimeCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Changes the the time.";
+        this.description = "Changes the the time.";
         this.usageMessage = "Usage: /time [day|night|check|raw|time to set] <raw time>";
         this.accessname = "buckit.admin.time";
         this.setAliases(Arrays.asList("settime"));

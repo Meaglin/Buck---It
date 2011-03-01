@@ -19,7 +19,7 @@ public class BanCommand extends Command {
     
     public BanCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Ban a player.";
+        this.description = "Ban a player.";
         this.usageMessage = "Usage: /ban [player] <weeks|days|hours|minutes|seconds> <time> <reason>";
         this.accessname = "buckit.admin.ban";
         

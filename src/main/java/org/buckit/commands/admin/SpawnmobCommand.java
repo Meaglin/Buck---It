@@ -25,7 +25,7 @@ public class SpawnMobCommand extends Command {
 
     public SpawnMobCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Spawns a mob on your location.";
+        this.description = "Spawns a mob on your location.";
         this.usageMessage = "Usage: /spawnmob [mob name] <count>";
         this.accessname = "buckit.admin.spawnmob";
     }

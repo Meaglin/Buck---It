@@ -18,7 +18,7 @@ public class ClothCommand extends Command{
     
     public ClothCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Gives you wool in a sertain color.";
+        this.description = "Gives you wool in a sertain color.";
         this.usageMessage = "Usage: /cloth <color> <amount>";
         this.accessname = "buckit.admin.cloth";
     }

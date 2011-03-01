@@ -33,17 +33,19 @@ public class EntitySkeleton extends EntityMonster {
         return "mob.skeletonhurt";
     }
 
-    public void o() {
-        if (this.world.b()) {
-            float f = this.b(1.0F);
+    public void q() {
+        if (this.world.c()) {
+            float f = this.c(1.0F);
 
             if (f > 0.5F && this.world.i(MathHelper.b(this.locX), MathHelper.b(this.locY), MathHelper.b(this.locZ)) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 // CraftBukkit start
                 CraftServer server = ((WorldServer) this.world).getServer();
                 Type eventType = Type.ENTITY_COMBUST;
                 org.bukkit.entity.Entity entity = this.getBukkitEntity();
+
                 EntityCombustEvent event = new EntityCombustEvent(eventType, entity);
                 server.getPluginManager().callEvent(event);
+
                 if (!event.isCancelled()) {
                     this.fireTicks = 300;
                 }
@@ -51,7 +53,7 @@ public class EntitySkeleton extends EntityMonster {
             }
         }
 
-        super.o();
+        super.q();
     }
 
     protected void a(Entity entity, float f) {
@@ -89,8 +91,8 @@ public class EntitySkeleton extends EntityMonster {
         return Item.ARROW.id;
     }
 
-    protected void g_() {
-        // Craftbukkit start - whole method
+    protected void o() {
+        // CraftBukkit start - whole method
         List<org.bukkit.inventory.ItemStack> loot = new ArrayList<org.bukkit.inventory.ItemStack>();
 
         int count = this.random.nextInt(3);
@@ -103,15 +105,16 @@ public class EntitySkeleton extends EntityMonster {
             loot.add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BONE, count));
         }
 
-        CraftEntity entity = (CraftEntity)getBukkitEntity();
+        CraftWorld cworld = ((WorldServer) world).getWorld();
+        Server server = ((WorldServer) world).getServer();
+        CraftEntity entity = (CraftEntity) getBukkitEntity();
+
         EntityDeathEvent event = new EntityDeathEvent(Type.ENTITY_DEATH, entity, loot);
-        CraftWorld cworld = ((WorldServer)world).getWorld();
-        Server server = ((WorldServer)world).getServer();
         server.getPluginManager().callEvent(event);
 
-        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
+        for (org.bukkit.inventory.ItemStack stack: event.getDrops()) {
             cworld.dropItemNaturally(entity.getLocation(), stack);
         }
-        // Craftbukkit end
+        // CraftBukkit end
     }
 }

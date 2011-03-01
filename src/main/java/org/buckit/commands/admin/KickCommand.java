@@ -15,7 +15,7 @@ public class KickCommand extends Command {
 
 	public KickCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Kick a player.";
+        this.description = "Kick a player.";
         this.usageMessage = "Usage: /kick <player> <reason>";
         this.accessname = "buckit.admin.kick";
         

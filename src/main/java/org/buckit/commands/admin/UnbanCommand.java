@@ -16,7 +16,7 @@ public class UnbanCommand extends Command {
     
     public UnbanCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Unban a player.";
+        this.description = "Unban a player.";
         this.usageMessage = "Usage: /unban [player]";
         this.accessname = "buckit.admin.unban";
         

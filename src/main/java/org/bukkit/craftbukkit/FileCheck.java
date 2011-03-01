@@ -28,8 +28,8 @@ public class FileCheck {
     private static String jarjar = "./libs/jarjar.jar";
     private static String retroguard = "./libs/retroguard.jar";
     
-    private static String jarjar_rules = "./libs/rules/1.2.rules";
-    private static String retroguard_rules = "./libs/rules/1.2_01.rgs";
+    private static String jarjar_rules = "./libs/rules/latest.rules";
+    private static String retroguard_rules = "./libs/rules/latest.rgs";
     private static String jarjar_namespace_rules = "./libs/rules/namespace.rules";
     
     private static long crc_minecraft_server = 280458825L;
@@ -84,6 +84,10 @@ public class FileCheck {
                 t.printStackTrace();
             }
             log("Field names renamed, 99% done...");
+            
+            (new File(temp_file)).delete();
+            (new File(temp2_file)).delete();
+            (new File(temp3_file)).delete();
             
             checkCRC32(minecraft_servero, crc_minecraft_servero);
 

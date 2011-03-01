@@ -11,7 +11,7 @@ public class SetSpawnCommand extends Command {
 
 	public SetSpawnCommand(String name, Server server) {
 		super(name);
-        this.tooltip = "Sets the spawn location.";
+        this.description = "Sets the spawn location.";
         this.usageMessage = "Usage: /setspawn";
         this.accessname = "buckit.admin.setspawn";
 	}
@@ -24,9 +24,7 @@ public class SetSpawnCommand extends Command {
 		
 		Player player = (Player)sender;
 		CraftWorld world = (CraftWorld)player.getWorld();
-		world.getHandle().spawnX = player.getLocation().getBlockX();
-		world.getHandle().spawnY = player.getLocation().getBlockY();
-		world.getHandle().spawnZ = player.getLocation().getBlockZ();
+		world.setSpawnLocation(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 		//sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "This command isn't supported yet!");
 		sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Warning: spawn location gets reverted after a server restart.");
 		sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Spawn changed to your location.");

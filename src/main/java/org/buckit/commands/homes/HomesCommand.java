@@ -19,7 +19,7 @@ public class HomesCommand extends Command {
     public HomesCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getHomesDataSource();
-        this.tooltip = "Gives a list of your homes.";
+        this.description = "Gives a list of your homes.";
 
         this.usageMessage = "Usage: /homes";
         

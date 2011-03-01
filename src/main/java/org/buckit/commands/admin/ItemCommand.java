@@ -19,7 +19,7 @@ public class ItemCommand extends Command {
     
     public ItemCommand(String name, Server server){
         super(name);
-        this.tooltip = "Gives you a certain item.";
+        this.description = "Gives you a certain item.";
         this.server = server;
         this.usageMessage = "Usage: /item [item id] <amount> <damage> <player to give to>";
         

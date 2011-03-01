@@ -15,7 +15,7 @@ public class StackCommand extends Command {
 
     public StackCommand(String name, Server server) {
         super(name);
-        this.tooltip = "Stacks up all the items in your inventory.";
+        this.description = "Stacks up all the items in your inventory.";
         this.usageMessage = "Usage: /stack";
         this.accessname = "buckit.util.stack";
     }

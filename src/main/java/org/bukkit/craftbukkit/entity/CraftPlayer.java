@@ -18,6 +18,7 @@ import org.buckit.model.UserDataHolder;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.TextWrapper;
 import org.bukkit.entity.Player;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -34,7 +35,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean isOp() {
-        return server.getHandle().g(getName());
+        return server.getHandle().h(getName());
     }
 
     public boolean isPlayer() {
@@ -65,13 +66,31 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return entity;
     }
 
+    public double getEyeHeight() {
+        return getEyeHeight(false);
+    }
+
+    public double getEyeHeight(boolean ignoreSneaking) {
+        if(ignoreSneaking) {
+            return 1.62D;
+        } else {
+            if (isSneaking()) {
+                return 1.42D;
+            } else {
+                return 1.62D;
+            }
+        }
+    }
+
     public void setHandle(final EntityPlayer entity) {
         super.setHandle((EntityHuman) entity);
         this.entity = entity;
     }
 
     public void sendMessage(String message) {
-        entity.a.b(new Packet3Chat(message));
+        for (final String line: TextWrapper.wrapText(message)) {
+            entity.a.b(new Packet3Chat(line));
+        }
     }
 
     public String getDisplayName() {
@@ -117,6 +136,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         entity.a.b(((Packet) (new Packet6SpawnPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))));
     }
 
+    public void chat(String msg) {
+        entity.a.chat(msg);
+    }
+
     public boolean performCommand(String command) {
         return server.dispatchCommand(this, command);
     }
@@ -144,7 +167,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newEntity.inventory.e = newEntity;
             newEntity.activeContainer = entity.activeContainer;
             newEntity.defaultContainer = entity.defaultContainer;
-            newWorld.A.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
+            newWorld.u.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
 
             newEntity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
             newWorld.manager.a(newEntity);
@@ -163,7 +186,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean isSneaking() {
-        return entity.J();
+        return entity.U();
     }
     
     public void updateInventory() {

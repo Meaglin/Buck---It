@@ -20,27 +20,27 @@ public class EntityMonster extends EntityCreature implements IMonster {
         this.health = 20;
     }
 
-    public void o() {
-        float f = this.b(1.0F);
+    public void q() {
+        float f = this.c(1.0F);
 
         if (f > 0.5F) {
-            this.bw += 2;
+            this.at += 2;
         }
 
-        super.o();
+        super.q();
     }
 
-    public void b_() {
-        super.b_();
-        if (this.world.k == 0) {
-            this.q();
+    public void f_() {
+        super.f_();
+        if (this.world.j == 0) {
+            this.C();
         }
     }
 
     protected Entity l() {
         EntityHuman entityhuman = this.world.a(this, 16.0D);
 
-        return entityhuman != null && this.i(entityhuman) ? entityhuman : null;
+        return entityhuman != null && this.e(entityhuman) ? entityhuman : null;
     }
 
     public boolean a(Entity entity, int i) {
@@ -48,18 +48,20 @@ public class EntityMonster extends EntityCreature implements IMonster {
             if (this.passenger != entity && this.vehicle != entity) {
                 if (entity != this) {
                     // CraftBukkit start
+                    CraftServer server = ((WorldServer) this.world).getServer();
                     org.bukkit.entity.Entity bukkitTarget = null;
                     if (entity != null) {
                         bukkitTarget = entity.getBukkitEntity();
                     }
+
                     EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), bukkitTarget, TargetReason.TARGET_ATTACKED_ENTITY);
-                    CraftServer server = ((WorldServer) this.world).getServer();
                     server.getPluginManager().callEvent(event);
+
                     if (!event.isCancelled()) {
                         if (event.getTarget() == null) {
-                            d = null;
+                            this.d = null;
                         } else {
-                            d = ((CraftEntity) event.getTarget()).getHandle();
+                            this.d = ((CraftEntity) event.getTarget()).getHandle();
                         }
                     }
                     // CraftBukkit end
@@ -75,26 +77,28 @@ public class EntityMonster extends EntityCreature implements IMonster {
     }
 
     protected void a(Entity entity, float f) {
-        if ((double) f < 2.5D && entity.boundingBox.e > this.boundingBox.b && entity.boundingBox.b < this.boundingBox.e) {
+        if ((double) f < 1.5D && entity.boundingBox.e > this.boundingBox.b && entity.boundingBox.b < this.boundingBox.e) {
             this.attackTicks = 20;
-            // CraftBukkit start
-            if(entity instanceof EntityLiving) {
+            // CraftBukkit start - this is still duplicated here and EntityHuman because it's possible for an EntityMonster
+            // to damage another EntityMonster, and we want to catch those events.
+            // This does not fire events for slime attacks, as they're not an EntityMonster.
+            if (entity instanceof EntityLiving && !(entity instanceof EntityHuman)) {
                 CraftServer server = ((WorldServer) this.world).getServer();
                 org.bukkit.entity.Entity damager = this.getBukkitEntity();
                 org.bukkit.entity.Entity damagee = (entity == null) ? null : entity.getBukkitEntity();
                 DamageCause damageType = EntityDamageEvent.DamageCause.ENTITY_ATTACK;
-                int damageDone = this.c;
 
-                EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, damagee, damageType, damageDone);
+                EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, damagee, damageType, this.c);
                 server.getPluginManager().callEvent(event);
 
-                if (!event.isCancelled()){
+                if (!event.isCancelled()) {
                     entity.a(this, event.getDamage());
                 }
-            } else {
-                entity.a(this, this.c);
+                return;
             }
             // CraftBukkit end
+
+            entity.a(this, this.c);
         }
     }
 

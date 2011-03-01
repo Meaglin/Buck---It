@@ -18,7 +18,7 @@ public class KitCommand extends Command {
     public KitCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getKitsDataSource();
-        this.tooltip = "Gives the specified kit to yourself.";
+        this.description = "Gives the specified kit to yourself.";
 
         this.usageMessage = "Usage: /kit [kit name]";
         

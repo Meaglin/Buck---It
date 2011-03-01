@@ -15,7 +15,7 @@ public class SetWarpCommand extends Command {
     public SetWarpCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSource().getWarpsDataSource();
-        this.tooltip = "Specifies a new warp or replaces a existing one(if name was already used).";
+        this.description = "Specifies a new warp or replaces a existing one(if name was already used).";
         
         if(Config.WARPS_GROUPS_ENABLED)
             this.usageMessage = "Usage: /setwarp [warp name] <group name> <min accesslevel>";
