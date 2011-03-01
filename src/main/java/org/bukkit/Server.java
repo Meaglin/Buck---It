@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.bukkit.command.PluginCommand;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -123,4 +125,19 @@ public interface Server {
     
     //Buck - It
     public Map<String, Command> getCommands();
+
+    /**
+     * Returns the primary logger associated with this server instance
+     *
+     * @return Logger associated with this server
+     */
+    public Logger getLogger();
+
+    /**
+     * Gets a {@link PluginCommand} with the given name or alias
+     *
+     * @param name Name of the command to retrieve
+     * @return PluginCommand if found, otherwise null
+     */
+    public PluginCommand getPluginCommand(String name);
 }

@@ -25,7 +25,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldEvent;
 import org.bukkit.event.world.WorldListener;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.*;
 
 /**
@@ -72,9 +71,11 @@ public final class JavaPluginLoader implements PluginLoader {
             ClassLoader loader = new PluginClassLoader(this, new URL[]{file.toURI().toURL()}, getClass().getClassLoader());
             Class<?> jarClass = Class.forName(description.getMain(), true, loader);
             Class<? extends JavaPlugin> plugin = jarClass.asSubclass(JavaPlugin.class);
-            Constructor<? extends JavaPlugin> constructor = plugin.getConstructor(PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
 
-            result = constructor.newInstance(this, server, description, dataFolder, file, loader);
+            Constructor<? extends JavaPlugin> constructor = plugin.getConstructor();
+            result = constructor.newInstance();
+            
+            result.initialize(this, server, description, dataFolder, file, loader);
         } catch (Throwable ex) {
             throw new InvalidPluginException(ex);
         }
@@ -139,9 +140,9 @@ public final class JavaPluginLoader implements PluginLoader {
                     ((PlayerListener)listener).onPlayerKick( (PlayerKickEvent)event );
                 }
             };
-        case PLAYER_COMMAND:
+        case PLAYER_COMMAND_PREPROCESS:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
-                    ((PlayerListener)listener).onPlayerCommand( (PlayerChatEvent)event );
+                    ((PlayerListener)listener).onPlayerCommandPreprocess( (PlayerChatEvent)event );
                 }
             };
         case PLAYER_CHAT:
@@ -313,21 +314,6 @@ public final class JavaPluginLoader implements PluginLoader {
             };
 
         // Entity Events
-        case ENTITY_DAMAGEDBY_BLOCK:
-            return new EventExecutor() { public void execute( Listener listener, Event event ) {
-                    ((EntityListener)listener).onEntityDamageByBlock( (EntityDamageByBlockEvent)event );
-                }
-            };
-        case ENTITY_DAMAGEDBY_ENTITY:
-            return new EventExecutor() { public void execute( Listener listener, Event event ) {
-                    ((EntityListener)listener).onEntityDamageByEntity( (EntityDamageByEntityEvent)event );
-                }
-            };
-        case ENTITY_DAMAGEDBY_PROJECTILE:
-            return new EventExecutor() { public void execute( Listener listener, Event event ) {
-                    ((EntityListener)listener).onEntityDamageByProjectile( (EntityDamageByProjectileEvent)event );
-                }
-            };
         case ENTITY_DAMAGED:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
                     ((EntityListener)listener).onEntityDamage( (EntityDamageEvent)event );
@@ -356,6 +342,11 @@ public final class JavaPluginLoader implements PluginLoader {
         case ENTITY_TARGET:
             return new EventExecutor() { public void execute( Listener listener, Event event ) {
                     ((EntityListener)listener).onEntityTarget( (EntityTargetEvent)event );
+                }
+            };
+        case CREATURE_SPAWN:
+            return new EventExecutor() { public void execute( Listener listener, Event event ) {
+                    ((EntityListener)listener).onCreatureSpawn( (CreatureSpawnEvent)event );
                 }
             };
 
@@ -420,9 +411,8 @@ public final class JavaPluginLoader implements PluginLoader {
         if (!plugin.isEnabled()) {
             JavaPlugin jPlugin = (JavaPlugin)plugin;
 
-            server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_ENABLE, plugin));
-
             jPlugin.setEnabled(true);
+            server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_ENABLE, plugin));
         }
     }
 
@@ -435,9 +425,9 @@ public final class JavaPluginLoader implements PluginLoader {
             JavaPlugin jPlugin = (JavaPlugin)plugin;
             ClassLoader cloader = jPlugin.getClassLoader();
 
-            server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_DISABLE, plugin));
-
             jPlugin.setEnabled(false);
+
+            server.getPluginManager().callEvent(new PluginEvent(Event.Type.PLUGIN_DISABLE, plugin));
 
             if (cloader instanceof PluginClassLoader) {
                 PluginClassLoader loader = (PluginClassLoader)cloader;

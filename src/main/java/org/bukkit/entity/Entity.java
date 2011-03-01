@@ -2,6 +2,7 @@
 package org.bukkit.entity;
 
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 
 /**
@@ -42,4 +43,37 @@ public interface Entity {
      * @return Entity id
      */
     public int getEntityId();
+
+    /**
+     * Returns the entity's current fire ticks (ticks before the entity stops being on fire).
+     *
+     * @return int fireTicks
+     */
+    public int getFireTicks();
+
+    /**
+     * Returns the entity's maximum fire ticks.
+     *
+     * @return int maxFireTicks
+     */
+    public int getMaxFireTicks();
+
+    /**
+     * Sets the entity's current fire ticks (ticks before the entity stops being on fire).
+     *
+     * @param ticks
+     */
+    public void setFireTicks(int ticks);
+    
+    /**
+     * Mark the entity's removal.
+     */
+    public void remove();
+
+    /**
+     * Gets the {@link Server} that contains this Entity
+     *
+     * @return Server instance running this Entity
+     */
+    public Server getServer();
 }

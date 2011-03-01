@@ -127,6 +127,19 @@ public class Vector implements Cloneable {
     }
 
     /**
+     * Copies another vector
+     *
+     * @param vec
+     * @return the same vector
+     */
+    public Vector copy(Vector vec) {
+        x = vec.x;
+        y = vec.y;
+        z = vec.z;
+        return this;
+    }
+
+    /**
      * Gets the magnitude of the vector, defined as sqrt(x^2+y^2+z^2). The value
      * of this method is not cached and uses a costly square-root function, so
      * do not repeatedly call this method to get the vector's magnitude. NaN
@@ -513,16 +526,17 @@ public class Vector implements Cloneable {
     }
 
     /**
-     * Returns a hash code for this vector. Due to floating point errors, this
-     * hash code should not be used in hash tables of any sort.
+     * Returns a hash code for this vector
      *
      * @return hash code
      */
     @Override
     public int hashCode() {
-        return ((int)Double.doubleToLongBits(x) >> 13) ^
-                ((int)Double.doubleToLongBits(y) >> 7) ^
-                (int)Double.doubleToLongBits(z);
+        int hash = 7;
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        return hash;
     }
 
     /**

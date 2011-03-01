@@ -6,7 +6,7 @@ import org.bukkit.plugin.*;
 
 import java.io.File;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.command.CommandSender;
 
 public class Updater {
     public static String DIRECTORY = Fillr.DIRECTORY;
@@ -19,16 +19,16 @@ public class Updater {
     /**
      * Checks and updates the plugins
      *
-     * @param player
+     * @param sender
      *            The player to send info to
      */
-    void updateAll(Player player) {
+    void updateAll(CommandSender sender) {
         File folder = new File(DIRECTORY);
         File[] files = folder.listFiles(new PluginFilter());
         if (files.length == 0) {
-            player.sendMessage("No plugins to update.");
+            sender.sendMessage("No plugins to update.");
         } else {
-            player.sendMessage("Updating "
+            sender.sendMessage("Updating "
                     + files.length + " plugins:");
             for (File file : files) {
                 PluginDescriptionFile pdfFile = Checker.getPDF(file);
@@ -37,7 +37,7 @@ public class Updater {
                 }
                 FillReader reader = Checker.needsUpdate(pdfFile);
                 if (reader != null) {
-                    update(reader, player);
+                    update(reader, sender);
                 }
             }
         }
@@ -51,7 +51,7 @@ public class Updater {
      * @param player
      *            The player to send info to
      */
-    void update(String string, Player player) {
+    void update(String string, CommandSender player) {
         //TODO so much .jars
         File file = new File(DIRECTORY, string + ".jar");
         if (file.exists()) {
@@ -72,21 +72,21 @@ public class Updater {
      *
      * @param update
      *            The FillReader with all the plugin info
-     * @param player The player to send info to
+     * @param sender The player to send info to
      */
-    private void update(FillReader update, Player player) {
+    private void update(FillReader update, CommandSender sender) {
         disablePlugin(update);
-        player.sendMessage("Disabling " + update.getName() + " for update");
-        player.sendMessage("Downloading " + update.getName() + " "
+        sender.sendMessage("Disabling " + update.getName() + " for update");
+        sender.sendMessage("Downloading " + update.getName() + " "
                 + update.getCurrVersion());
         try {
             Downloader.downloadJar(update.getFile());
             if (update.getNotes() != null && !update.getNotes().equals("")) {
-                player.sendMessage("Notes: " + update.getNotes());
+                sender.sendMessage("Notes: " + update.getNotes());
             }
-            player.sendMessage("Finished Download!");
+            sender.sendMessage("Finished Download!");
             enablePlugin(update);
-            player.sendMessage("Loading " + update.getName());
+            sender.sendMessage("Loading " + update.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,9 +99,9 @@ public class Updater {
         try {
             server.getPluginManager().loadPlugin(plugin);
         } catch (InvalidPluginException ex) {
-            Logger.getLogger(Getter.class.getName()).log(Level.SEVERE, null, ex);
+            server.getLogger().log(Level.SEVERE, null, ex);
         } catch (InvalidDescriptionException ex) {
-            Logger.getLogger(Getter.class.getName()).log(Level.SEVERE, null, ex);
+            server.getLogger().log(Level.SEVERE, null, ex);
         }
     }
 

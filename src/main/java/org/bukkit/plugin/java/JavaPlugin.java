@@ -4,7 +4,9 @@ package org.bukkit.plugin.java;
 import java.io.File;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
@@ -15,35 +17,16 @@ import org.bukkit.util.config.Configuration;
  */
 public abstract class JavaPlugin implements Plugin {
     private boolean isEnabled = false;
-    private final PluginLoader loader;
-    private final Server server;
-    private final File file;
-    private final PluginDescriptionFile description;
-    private final File dataFolder;
-    private final ClassLoader classLoader;
-    private final Configuration config;
+    private boolean initialized = false;
+    private PluginLoader loader = null;
+    private Server server = null;
+    private File file = null;
+    private PluginDescriptionFile description = null;
+    private File dataFolder = null;
+    private ClassLoader classLoader = null;
+    private Configuration config = null;
 
-    /**
-     * Constructs a new Java plugin instance
-     *
-     * @param pluginLoader PluginLoader that is responsible for this plugin
-     * @param instance Server instance that is running this plugin
-     * @param desc PluginDescriptionFile containing metadata on this plugin
-     * @param folder Folder containing the plugin's data
-     * @param plugin File containing this plugin
-     * @param cLoader ClassLoader which holds this plugin
-     */
-    public JavaPlugin(PluginLoader pluginLoader, Server instance,
-            PluginDescriptionFile desc, File folder, File plugin,
-            ClassLoader cLoader) {
-        loader = pluginLoader;
-        server = instance;
-        file = plugin;
-        description = desc;
-        dataFolder = folder;
-        classLoader = cLoader;
-        config = new Configuration(new File(dataFolder, "config.yml"));
-        config.load();
+    public JavaPlugin() {
     }
 
     /**
@@ -140,9 +123,67 @@ public abstract class JavaPlugin implements Plugin {
     }
 
     /**
-     * Called when a command registered by this plugin is received.
+     * Initializes this plugin with the given variables.
+     *
+     * This method should never be called manually.
+     *
+     * @param loader PluginLoader that is responsible for this plugin
+     * @param server Server instance that is running this plugin
+     * @param description PluginDescriptionFile containing metadata on this plugin
+     * @param dataFolder Folder containing the plugin's data
+     * @param file File containing this plugin
+     * @param classLoader ClassLoader which holds this plugin
      */
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        return false; // default implementation:  do nothing!
+    protected final void initialize(PluginLoader loader, Server server,
+            PluginDescriptionFile description, File dataFolder, File file,
+            ClassLoader classLoader) {
+        if (!initialized) {
+            this.initialized = true;
+            this.loader = loader;
+            this.server = server;
+            this.file = file;
+            this.description = description;
+            this.dataFolder = dataFolder;
+            this.classLoader = classLoader;
+            this.config = new Configuration(new File(dataFolder, "config.yml"));
+            this.config.load();
+        }
+    }
+
+    /**
+     * Gets the initialization status of this plugin
+     *
+     * @return true if this plugin is initialized, otherwise false
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return false;
+    }
+
+    /**
+     * Gets the command with the given name, specific to this plugin
+     *
+     * @param name Name or alias of the command
+     * @return PluginCommand if found, otherwise null
+     */
+    public PluginCommand getCommand(String name) {
+        String alias = name.toLowerCase();
+        PluginCommand command = getServer().getPluginCommand(alias);
+
+        if ((command != null) && (command.getPlugin() != this)) {
+            command = getServer().getPluginCommand(getDescription().getName().toLowerCase() + ":" + alias);
+        }
+
+        if ((command != null) && (command.getPlugin() == this)) {
+            return command;
+        } else {
+            return null;
+        }
     }
 }

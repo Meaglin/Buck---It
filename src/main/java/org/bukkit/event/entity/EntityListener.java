@@ -9,13 +9,7 @@ public class EntityListener implements Listener {
     public EntityListener() {
     }
 
-    public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
-    }
-
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-    }
-
-    public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
     }
 
     public void onEntityCombust(EntityCombustEvent event) {
