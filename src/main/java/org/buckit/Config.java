@@ -48,6 +48,8 @@ public class Config {
     public static String       RESERVELIST_MESSAGE;
     
     public static String       DEFAULT_USER_FORMAT;
+    public static String       DEFAULT_CHAT_FORMAT;
+    
     public static int          DEFAULT_ACCESS_LEVEL;
     
 	public static String	   DEFAULT_ERROR_COLOR;
@@ -198,6 +200,7 @@ public class Config {
             TP_REQUEST_COMMANDS_ENABLED = gp.getBool("TpRequestEnabled", false);
             
             DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","^0{$username}");
+            DEFAULT_CHAT_FORMAT = gp.getProperty("DefaultChatFormat","<{$usernameformat}> {$message}");
             DEFAULT_ACCESS_LEVEL = gp.getInt("DefaultAccessLevel", 0);
             
             DEFAULT_ERROR_COLOR = gp.getProperty("DefaultErrorColor","^C").replace("^", "\u00A7");
@@ -289,7 +292,6 @@ public class Config {
     private static void loadFlatFileProperties() {
         try{
             Properties fp = new Properties(new File(FLATFILE_CONFIG_FILE));
-            FLATFILE_USERS_DIRECTORY = fp.getProperty("UsersDirectory", "./flatfile/players/");
             FLATFILE_USERS_FILE = fp.getProperty("UsersFile", "./flatfile/users.txt");
             FLATFILE_WARPS_FILE = fp.getProperty("WarpsFile", "./flatfile/warps.txt");
             FLATFILE_HOMES_DIRECTORY = fp.getProperty("HomesDirectory", "./flatfile/homes/");

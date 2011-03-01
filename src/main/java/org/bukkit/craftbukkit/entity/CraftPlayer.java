@@ -12,6 +12,7 @@ import net.minecraft.server.Packet9Respawn;
 import net.minecraft.server.ServerConfigurationManager;
 import net.minecraft.server.WorldServer;
 
+import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 import org.buckit.model.UserDataHolder;
 import org.bukkit.Location;
@@ -177,10 +178,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private void loadBuckItData(){
         dataholder = server.getDataSource().getUserDataSource().getUserData(getName());
         
-        String format = "";
+        String format = Config.DEFAULT_USER_FORMAT;
+        
         if(dataholder.getUsernameformat() != null)
             format = dataholder.getUsernameformat();
-        else
+        else if(getAccessLevel().getUsernameformat() != null)
             format = getAccessLevel().getUsernameformat();
         
         setDisplayName(format.replace("{$username}", getName()).replace("{$group}", getAccessLevel().getName()).replace("^", "\u00A7"));

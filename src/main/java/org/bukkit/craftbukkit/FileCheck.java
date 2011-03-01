@@ -103,7 +103,7 @@ public class FileCheck {
         "Database.properties" , 
         "Expert.properties" , 
         "FlatFile.properties" , 
-        "Database.properties" ,
+        "General.properties" ,
         "motd.txt" ,
         "World.properties"
         };

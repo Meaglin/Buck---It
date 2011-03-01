@@ -31,6 +31,7 @@ public final class CraftServer implements Server {
     private final String serverName = "Craftbukkit";
     private final String serverVersion;
     private final String protocolVersion = "1.2_01";
+    private final DataSource datasource = new DataSource(this);
     private final PluginManager pluginManager = new SimplePluginManager(this);
     private final BukkitScheduler scheduler =  new CraftScheduler(this);
     private final CommandMap commandMap = new SimpleCommandMap(this);
@@ -264,7 +265,7 @@ public final class CraftServer implements Server {
         pluginManager.callEvent(new WorldEvent(Type.WORLD_LOADED, world));
     }
 
-    private final DataSource datasource = new DataSource(this);
+    
     
     @Override
     public DataSource getDataSource() {

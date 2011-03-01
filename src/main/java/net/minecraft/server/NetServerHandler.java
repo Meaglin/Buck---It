@@ -593,6 +593,8 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 // CraftBukkit start
                 Player player = getPlayer();
                 PlayerChatEvent event = new PlayerChatEvent(Type.PLAYER_CHAT, player, s);
+                event.setFormat(Config.DEFAULT_CHAT_FORMAT.replace("{$usernameformat}", "%1$s").replace("{$message}", "%2$s").replace("{$username}", player.getName()).replace("{$group}", player.getAccessLevel().getName()));
+                
                 server.getPluginManager().callEvent(event);
                 s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
                 if (event.isCancelled()) {
