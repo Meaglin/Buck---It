@@ -21,6 +21,9 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
     private Map<Integer, AccessLevel> accesslevelsint;
     private Map<String, AccessLevel>  accesslevels;
     
+    private static final Group defaultGroup = new Group(-1,"default","");
+    private static final AccessLevel defaultLevel = new AccessLevel(-1,new Group[]{defaultGroup},"default",null,false,false);
+    
     private DataSourceManager datasource;
     
     public FlatFileAccessDataSource(DataSourceManager dataSource) {
@@ -32,22 +35,34 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
     
     @Override
     public AccessLevel getAccessLevel(int id) {
-        return accesslevelsint.get(id);
+        if(accesslevelsint.containsKey(id))
+            return accesslevelsint.get(id);
+        else
+            return defaultLevel;
     }
 
     @Override
     public AccessLevel getAccessLevel(String name) {
-        return accesslevels.get(name);
+        if(accesslevels.containsKey(name))
+            return accesslevels.get(name);
+        else
+            return defaultLevel;
     }
 
     @Override
     public Group getGroup(int id) {
-        return groupsint.get(id);
+        if(groupsint.containsKey(id))
+            return groupsint.get(id);
+        else
+            return defaultGroup;
     }
 
     @Override
     public Group getGroup(String name) {
-        return groups.get(name);
+        if(groups.containsKey(name))
+            return groups.get(name);
+        else
+            return defaultGroup;
     }
 
     @Override

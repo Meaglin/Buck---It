@@ -13,7 +13,7 @@ import org.buckit.model.UserDataHolder;
 public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
     private DataSourceManager datasource;
-    private int newId=0;
+    private int newId=1;
     
     public FlatFileUserDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
@@ -51,7 +51,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
         }
         
         if (!exists) {
-        	user = new UserDataHolder(newId, username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
+            user = new UserDataHolder(newId, username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
         	newId++;
         	
         	lines.add(user.getId()+FileHandler.sep1+

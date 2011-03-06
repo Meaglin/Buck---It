@@ -1,7 +1,6 @@
 package org.buckit.datasource.flatfile;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
     private DataSourceManager datasource;
     private Server      server;
     
-    private int newId=0;    
+    private int newId=1;    
     
     public FlatFileHomesDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
@@ -109,18 +108,20 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
         File dir = new File(Config.FLATFILE_HOMES_DIRECTORY);
         String[] files = dir.list();
         
-        List<String> lines;
-        for (String f : files) {
-        	lines = FileHandler.getLines(Config.FLATFILE_HOMES_DIRECTORY+f);
-        	
-        	String[] entry;
-            for (int i=0; i<lines.size(); i++) {
-                entry = lines.get(i).split(FileHandler.sep1);
-                
-                int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-                
-                if (homeId > newId) newId = homeId;
-            }
+        if (files != null) {
+	        List<String> lines;
+	        for (String f : files) {
+	        	lines = FileHandler.getLines(Config.FLATFILE_HOMES_DIRECTORY+f);
+	        	
+	        	String[] entry;
+	            for (int i=0; i<lines.size(); i++) {
+	                entry = lines.get(i).split(FileHandler.sep1);
+	                
+	                int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+	                
+	                if (homeId > newId) newId = homeId;
+	            }
+	        }
         }
         
         return true;

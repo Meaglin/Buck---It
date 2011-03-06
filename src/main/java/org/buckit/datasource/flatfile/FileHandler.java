@@ -34,6 +34,9 @@ public class FileHandler {
     }
 
     public static boolean addLine(String file, String line) {
+        if (!loaded)
+            load();
+        
         File f = new File(filenames.get(file.toLowerCase()));
         List<String> lines = readFile(f);
         lines.add(line);
@@ -41,6 +44,9 @@ public class FileHandler {
     }
     
     public static boolean writeFile(String file, List<String> lines) {
+        if (!loaded)
+            load();
+        
         File f = new File(filenames.get(file.toLowerCase()));
         return writeFile(f, lines);
     }
@@ -49,6 +55,9 @@ public class FileHandler {
     //read function
     //@return error = null;
     public static List<String> readFile(File file) {
+        if (!loaded)
+            load();
+        
         List<String> lines = null;
         
         try {
@@ -75,7 +84,7 @@ public class FileHandler {
     
     //write function
     //@return error = false;
-    public static boolean writeFile(File file, List<String> lines) {
+    public static boolean writeFile(File file, List<String> lines) {        
         boolean worked;
         
         try {
@@ -104,7 +113,7 @@ public class FileHandler {
         
         Collection<String> files = filenames.values();
         for (String f : files) {
-            File temp = new File(configDir+f);
+            File temp = new File(f);
             if (!temp.exists()) {
                 createFile(temp);
             }

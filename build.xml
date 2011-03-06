@@ -84,7 +84,7 @@
 				<include name="json_simple-1.1.jar" />
 				<include name="snakeyaml-1.7.jar" />
 				<include name="trove-2.1.0.jar" />
-				<include name="jline-0_9_5.jar" />
+				<include name="jline-0.9.94.jar" />
 				<include name="mchange-commons-0.2.jar" />
 				<include name="javolution-5.5.1.jar" />
 				<include name="mysql-connector-java-5.1.13-bin.jar" />
