@@ -8,24 +8,25 @@ import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 import org.buckit.access.Group;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.AccessDataSource;
 
 
 //groups: ID:NAME:COMMANDS
 //levels: ID:NAME:USERNAMEFORMAT:ACCESSGROUPS:ADMINGROUP:CANBUILD
-public class FlatFileAccessDataSource implements AccessDataSource {
+public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
 
     private Map<Integer, Group>       groupsint;
     private Map<String, Group>        groups;
     private Map<Integer, AccessLevel> accesslevelsint;
     private Map<String, AccessLevel>  accesslevels;
     
-    private DataSource datasource;
+    private DataSourceManager datasource;
     
-    public FlatFileAccessDataSource(DataSource dataSource) {
+    public FlatFileAccessDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     

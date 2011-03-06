@@ -37,7 +37,7 @@ public class MuteCommand extends Command {
             return true;
         }
         String playername = args[0].toLowerCase();
-        UserDataHolder data = server.getDataSource().getUserDataSource().getUserData(playername);
+        UserDataHolder data = server.getDataSourceManager().getUserDataSource().getUserData(playername);
         
         if(data == null){
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No player with name '" + playername + "' ever logged into this server.");
@@ -77,12 +77,12 @@ public class MuteCommand extends Command {
         
         if(time == 0){
             data.setMutetime(-1);
-            server.getDataSource().getUserDataSource().updateUserMuteTime(data);
+            server.getDataSourceManager().getUserDataSource().updateUserMuteTime(data);
             if(player != null)player.kickPlayer("You have been permanently muted.");
             log.info("Player '" + playername + "' has been permanently muted by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
         } else {
             data.setMutetime(time + (int)(System.currentTimeMillis()/1000));
-            server.getDataSource().getUserDataSource().updateUserMuteTime(data);
+            server.getDataSourceManager().getUserDataSource().updateUserMuteTime(data);
             if(player != null)player.sendMessage(Config.DEFAULT_ERROR_COLOR + "You have been muted for " + TimeFormat.formatRemaining(time) + ".");
             log.info("Player '" + playername + "' has been muted for "  + TimeFormat.formatRemaining(time) + " by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
         }

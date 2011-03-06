@@ -2,7 +2,7 @@
 -- MySQL 5.1.44
 -- Thu, 10 Feb 2011 20:15:07 +0000
 --
-
+DROP TABLE IF EXISTS `accessgroups`;
 CREATE TABLE `accessgroups` (
    `id` int(11) not null,
    `name` varchar(50),
@@ -11,7 +11,7 @@ CREATE TABLE `accessgroups` (
    UNIQUE KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+DROP TABLE IF EXISTS `accesslevels`;
 CREATE TABLE `accesslevels` (
    `id` int(11) not null,
    `name` varchar(50),
@@ -22,7 +22,7 @@ CREATE TABLE `accesslevels` (
    PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+DROP TABLE IF EXISTS `homes`;
 CREATE TABLE `homes` (
    `id` int(10) unsigned not null auto_increment,
    `name` varchar(50),
@@ -36,9 +36,9 @@ CREATE TABLE `homes` (
    `rotY` float not null,
    PRIMARY KEY (`id`),
    UNIQUE KEY (`name`,`userid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=3;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
-
+DROP TABLE IF EXISTS `kits`;
 CREATE TABLE `kits` (
    `id` int(11) not null,
    `name` varchar(50) not null,
@@ -49,7 +49,7 @@ CREATE TABLE `kits` (
    UNIQUE KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
    `id` int(11) not null auto_increment,
    `username` varchar(255) not null,
@@ -69,7 +69,7 @@ CREATE TABLE `users` (
    UNIQUE KEY (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
-
+DROP TABLE IF EXISTS `warps`;
 CREATE TABLE `warps` (
    `id` int(10) unsigned not null auto_increment,
    `name` varchar(50) not null,
@@ -83,4 +83,11 @@ CREATE TABLE `warps` (
    `minaccesslevel` int(11) default '0',
    PRIMARY KEY (`id`),
    UNIQUE KEY (`name`,`groupname`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=6;s
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
+DROP TABLE IF EXISTS `kits_delay`;
+CREATE TABLE `kits_delay` (
+`userid` INT NOT NULL ,
+`name` VARCHAR( 255 ) NOT NULL ,
+`time` INT NOT NULL
+) ENGINE = MYISAM ;

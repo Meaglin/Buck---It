@@ -3,16 +3,17 @@ package org.buckit.datasource.flatfile;
 import java.util.List;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
 //USERID:LISTED
-public class FlatFileWhiteListDataSource implements WhiteListDataSource {
+public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSource {
 
-    public FlatFileWhiteListDataSource(DataSource dataSource) {
+    public FlatFileWhiteListDataSource(DataSourceManager dataSource) {
     }
 
     @Override
-    public boolean isWhiteListed(int userid) {
+    public boolean isWhiteListed(int userid, String username) {
         boolean ret = false;
         List<String> lines = FileHandler.getLines("whitelist");
         
@@ -35,7 +36,7 @@ public class FlatFileWhiteListDataSource implements WhiteListDataSource {
     }
 
     @Override
-    public boolean setWhiteListed(int userid, boolean whitelisted) {
+    public boolean setWhiteListed(int userid, String username, boolean whitelisted) {
         List<String> lines = FileHandler.getLines("whitelist");
         
         for (int i=0; i<lines.size(); i++) {

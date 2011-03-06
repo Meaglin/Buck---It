@@ -45,7 +45,7 @@ public class UnmuteCommand extends Command {
         if(player != null)
             data = player.getUserDataHolder();
         else
-            data = server.getDataSource().getUserDataSource().getUserData(playername);
+            data = server.getDataSourceManager().getUserDataSource().getUserData(playername);
         
         if(data == null){
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No player with name '" + playername + "' ever logged into this server.");
@@ -53,7 +53,7 @@ public class UnmuteCommand extends Command {
         }
         
         data.setMutetime(0);
-        server.getDataSource().getUserDataSource().updateUserMuteTime(data);
+        server.getDataSourceManager().getUserDataSource().updateUserMuteTime(data);
         
         sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Player '" + playername + "' is now unmuted.");
         if(player != null)player.sendMessage(Config.DEFAULT_INFO_COLOR + "You have been unmuted.");

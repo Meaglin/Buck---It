@@ -25,8 +25,8 @@ public class ModifyCommand extends Command {
         this.accessname = "buckit.admin.modify";
         
         this.server = server;
-        this.userData = server.getDataSource().getUserDataSource();
-        this.accessData = server.getDataSource().getAccessDataSource();
+        this.userData = server.getDataSourceManager().getUserDataSource();
+        this.accessData = server.getDataSourceManager().getAccessDataSource();
 	}
 
 	@Override

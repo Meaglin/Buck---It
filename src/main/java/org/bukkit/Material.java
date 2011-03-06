@@ -365,6 +365,7 @@ public enum Material {
         for (Material material : values()) {
             lookupId.put(material.getId(), material);
             lookupName.put(material.name(), material);
+            lookupName.put(material.name().replace("_", ""), material);
         }
     }
 }

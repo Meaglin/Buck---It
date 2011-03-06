@@ -1,7 +1,7 @@
 
 package org.bukkit;
 
-import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
@@ -121,7 +121,7 @@ public interface Server {
     public void reload();
     
     //Buck - It
-    public DataSource getDataSource();
+    public DataSourceManager getDataSourceManager();
     
     //Buck - It
     public Map<String, Command> getCommands();

@@ -50,18 +50,18 @@ public class ReservelistCommand extends Command {
             return true;
         }
 
-        ReserveListDataSource reservelist = server.getDataSource().getReserveListDataSource();        
+        ReserveListDataSource reservelist = server.getDataSourceManager().getReserveListDataSource();        
         Player player = matches.get(0);
         
-        boolean before = reservelist.isReserveListed(player.getPlayerId());
+        boolean before = reservelist.isReserveListed(player.getPlayerId(), player.getName());
         
         if (args[0].equals("add") || args[0].equals("a")) {
-            reservelist.setReserveListed(player.getPlayerId(), true);
+            reservelist.setReserveListed(player.getPlayerId(),player.getName(), true);
             sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been added to the reservelist!");
             return true;
         }
         else if (args[0].equals("remove") || args[0].equals("r")) {
-            reservelist.setReserveListed(player.getPlayerId(), false);
+            reservelist.setReserveListed(player.getPlayerId(), player.getName(), false);
             sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been removed to the reservelist!");
             return true;
         }

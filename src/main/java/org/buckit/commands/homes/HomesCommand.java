@@ -18,7 +18,7 @@ public class HomesCommand extends Command {
     private final HomesDataSource datasource;
     public HomesCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getHomesDataSource();
+        this.datasource = server.getDataSourceManager().getHomesDataSource();
         this.description = "Gives a list of your homes.";
 
         this.usageMessage = "Usage: /homes";

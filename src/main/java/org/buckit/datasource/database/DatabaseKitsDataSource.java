@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,22 +10,23 @@ import java.util.Map;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
-import org.buckit.datasource.mysql.Field.Type;
+import org.buckit.datasource.DataSourceManager;
+import org.buckit.datasource.database.Field.Type;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
-public class MysqlKitsDataSource implements KitsDataSource {
+public class DatabaseKitsDataSource implements KitsDataSource, DataSource {
 
     private Map<String, Kit> kits;
 
     private static String       SELECT_KITS = "SELECT id,name,items,minaccesslevel,delay FROM " + Config.DATABASE_KITS_TABLE;
     private static String       INSERT_KIT = "REPLACE INTO " + Config.DATABASE_KITS_TABLE + " (name,items,minaccesslevel,delay) VALUES (?,?,?,?)";
     
-    private DataSource datasource;
-    public MysqlKitsDataSource(DataSource dataSource) {
+    private DataSourceManager datasource;
+    public DatabaseKitsDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     

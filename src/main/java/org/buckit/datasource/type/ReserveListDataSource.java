@@ -4,7 +4,7 @@ public interface ReserveListDataSource {
     
     public boolean load();
     
-    public boolean isReserveListed(int userid);
-    public boolean setReserveListed(int userid, boolean reservelist);
+    public boolean isReserveListed(int userid, String username);
+    public boolean setReserveListed(int userid, String username, boolean reservelist);
     
 }

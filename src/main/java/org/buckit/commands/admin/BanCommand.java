@@ -38,7 +38,7 @@ public class BanCommand extends Command {
             return true;
         }
         String playername = args[0].toLowerCase();
-        UserDataHolder data = server.getDataSource().getUserDataSource().getUserData(playername);
+        UserDataHolder data = server.getDataSourceManager().getUserDataSource().getUserData(playername);
         
         if(data == null){
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No player with name '" + playername + "' ever logged into this server.");
@@ -77,13 +77,13 @@ public class BanCommand extends Command {
         
         if(time == 0){
             data.setBantime(-1);
-            server.getDataSource().getUserDataSource().updateUserBanTime(data);
+            server.getDataSourceManager().getUserDataSource().updateUserBanTime(data);
             if(player != null)player.kickPlayer("You have been permabanned.");
             log.info("Player '" + playername + "' has been permabanned by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
 
         } else {
             data.setBantime(time + (int)(System.currentTimeMillis()/1000));
-            server.getDataSource().getUserDataSource().updateUserBanTime(data);
+            server.getDataSourceManager().getUserDataSource().updateUserBanTime(data);
             if(player != null)player.kickPlayer("You have been banned for " + TimeFormat.formatRemaining(time) + ".");
             log.info("Player '" + playername + "' has been banned for "  + TimeFormat.formatRemaining(time) + " by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
         }

@@ -1,18 +1,19 @@
 package org.buckit.datasource.yaml;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-public class YamlUserDataSource implements UserDataSource {
+public class YamlUserDataSource implements UserDataSource, DataSource {
 
-    public YamlUserDataSource(DataSource dataSource) {
+    public YamlUserDataSource(DataSourceManager dataSource) {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public DataSource getDataSource() {
+    public DataSourceManager getDataSource() {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }

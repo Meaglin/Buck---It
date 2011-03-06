@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 public class Field {
     enum Type {

@@ -35,7 +35,7 @@ public class UnbanCommand extends Command {
         }
         
         String playername = args[0];
-        UserDataHolder data = server.getDataSource().getUserDataSource().getUserData(playername);
+        UserDataHolder data = server.getDataSourceManager().getUserDataSource().getUserData(playername);
         
         if(data == null){
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No player with name '" + playername + "' ever logged into this server.");
@@ -43,8 +43,8 @@ public class UnbanCommand extends Command {
         }
         
         data.setBantime(0);
-        data.setAccesslevel(server.getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
-        server.getDataSource().getUserDataSource().updateUser(data);
+        data.setAccesslevel(server.getDataSourceManager().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
+        server.getDataSourceManager().getUserDataSource().updateUser(data);
         
         sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Player '" + playername + "' is now unbanned.");
         log.info("Player '" + playername + "' has been unbanned by " + ((Player)sender).getName() + ".");

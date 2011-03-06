@@ -2,15 +2,14 @@ package org.buckit.datasource.type;
 
 import java.util.Collection;
 
-import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
-import org.bukkit.Server;
 
 public interface WarpsDataSource {
 
-    public boolean load(Server server);
-    public DataSource getDataSource();
+    public boolean load();
+    public DataSourceManager getDataSource();
 
     public boolean addWarp(String groupname, String name, Location warp, int minaccesslevel);
 

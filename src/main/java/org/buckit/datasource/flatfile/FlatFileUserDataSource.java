@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.buckit.access.AccessLevel;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
 //ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVEL
-public class FlatFileUserDataSource implements UserDataSource {
+public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
-    private DataSource datasource;
-    public FlatFileUserDataSource(DataSource dataSource) {
+    private DataSourceManager datasource;
+    public FlatFileUserDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
 

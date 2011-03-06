@@ -2,12 +2,12 @@ package org.buckit.datasource.type;
 
 import org.buckit.access.AccessLevel;
 import org.buckit.access.Group;
-import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 
-public interface AccessDataSource {
+public interface AccessDataSource{
 
     public boolean load();
-    public DataSource getDataSource();
+    public DataSourceManager getDataSource();
 
     public AccessLevel getAccessLevel(int id);
 

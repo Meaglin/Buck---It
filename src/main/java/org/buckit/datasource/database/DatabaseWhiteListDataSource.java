@@ -1,14 +1,13 @@
-package org.buckit.datasource.yaml;
+package org.buckit.datasource.database;
 
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
-public class YamlWhiteListDataSource implements WhiteListDataSource, DataSource {
+public class DatabaseWhiteListDataSource implements WhiteListDataSource, DataSource {
 
-    public YamlWhiteListDataSource(DataSourceManager dataSource) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+    public DatabaseWhiteListDataSource(DataSourceManager dataSource) {
+        // do nothing
     }
 
     @Override
@@ -19,8 +18,9 @@ public class YamlWhiteListDataSource implements WhiteListDataSource, DataSource 
 
     @Override
     public boolean load() {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        // do nothing
+        // we chose for a non caching setting for this situation.
+        return true;
     }
 
     @Override

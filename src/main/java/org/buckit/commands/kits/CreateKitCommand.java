@@ -15,7 +15,7 @@ public class CreateKitCommand extends Command {
     private final KitsDataSource datasource;
     public CreateKitCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getKitsDataSource();
+        this.datasource = server.getDataSourceManager().getKitsDataSource();
         this.description = "Used to create kits on a live server, items format: itemid,amount,damage and ";
         
         this.usageMessage = "Usage: /createkit [kit name] [min access level] [delay] [items...]";

@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +12,13 @@ import java.util.Map;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-public class MysqlWarpsDataSource implements WarpsDataSource {
+public class DatabaseWarpsDataSource implements WarpsDataSource, DataSource {
 
     private static String           INSERT_WARP  = "REPLACE INTO " + Config.DATABASE_WARPS_TABLE + " (name,groupname,world,x,y,z,rotX,rotY) VALUES (?,?,?,?,?,?,?,?)";
     private static String           DELETE_WARP  = "DELETE FROM " + Config.DATABASE_WARPS_TABLE + " WHERE id = ?";
@@ -26,11 +27,11 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
     private Map<String, Warp>       warps;
     private Map<String, List<Warp>> warpgroups;
 
-    private DataSource datasource;
-    public MysqlWarpsDataSource(DataSource dataSource) {
+    private DataSourceManager datasource;
+    public DatabaseWarpsDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     
@@ -114,7 +115,7 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
     }
 
     @Override
-    public boolean load(Server server) {
+    public boolean load() {
         warps = new HashMap<String, Warp>();
         Connection conn = null;
         PreparedStatement st = null;
@@ -125,7 +126,7 @@ public class MysqlWarpsDataSource implements WarpsDataSource {
             rs = st.executeQuery();
             Warp warp;
             while (rs.next()) {
-                warp = new Warp(rs.getInt("id"), rs.getString("name"), rs.getString("groupname"), new Location(server.getWorld(rs.getString("world")), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("rotX"), rs.getFloat("rotY")), rs.getInt("minaccesslevel"));
+                warp = new Warp(rs.getInt("id"), rs.getString("name"), rs.getString("groupname"), new Location(datasource.getServer().getWorld(rs.getString("world")), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("rotX"), rs.getFloat("rotY")), rs.getInt("minaccesslevel"));
                 addWarp(warp);
             }
         } catch (Exception e) {

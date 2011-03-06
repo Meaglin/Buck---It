@@ -16,7 +16,7 @@ public class ListWarpsCommand extends Command {
     private final WarpsDataSource datasource;
     public ListWarpsCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getWarpsDataSource();
+        this.datasource = server.getDataSourceManager().getWarpsDataSource();
         this.description = "Gives a list of all the warps.";
         
         if(Config.WARPS_GROUPS_ENABLED)

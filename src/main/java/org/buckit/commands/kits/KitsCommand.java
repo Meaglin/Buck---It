@@ -17,7 +17,7 @@ public class KitsCommand extends Command {
     private final KitsDataSource datasource;
     public KitsCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getKitsDataSource();
+        this.datasource = server.getDataSourceManager().getKitsDataSource();
         this.description = "A list of all availeble kits.";
 
         this.usageMessage = "Usage: /kits";

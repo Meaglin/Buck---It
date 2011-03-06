@@ -7,23 +7,24 @@ import java.util.Map;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.flatfile.FileHandler;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
 // kits: NAME:IDs:DELAY:GROUP
 // kitslast: USERID:KITNAME:TIME
-public class FlatFileKitsDataSource implements KitsDataSource {
+public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
 
     private Map<String, Kit> kits;
-    private DataSource datasource;
+    private DataSourceManager datasource;
     private Map<String, Integer> kitslast; //key=userid/kitname
     
     
-    public FlatFileKitsDataSource(DataSource dataSource) {
+    public FlatFileKitsDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     

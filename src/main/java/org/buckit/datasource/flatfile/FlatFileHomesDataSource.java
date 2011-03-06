@@ -6,22 +6,23 @@ import java.util.List;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
 // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
-public class FlatFileHomesDataSource implements HomesDataSource {
+public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
 
-    private DataSource datasource;
+    private DataSourceManager datasource;
     private Server      server;
     
-    public FlatFileHomesDataSource(DataSource dataSource) {
+    public FlatFileHomesDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
         server = datasource.getServer();
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     

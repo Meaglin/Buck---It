@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="libs/jopt-simple-3.2.jar"/>
 	<classpathentry kind="lib" path="libs/minecraft_servero.jar"/>
 	<classpathentry kind="lib" path="libs/jline-0_9_5.jar"/>
+	<classpathentry kind="lib" path="libs/jline-0.9.94.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

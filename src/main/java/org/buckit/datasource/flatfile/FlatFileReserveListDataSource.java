@@ -3,16 +3,17 @@ package org.buckit.datasource.flatfile;
 import java.util.List;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
 //USERID:LISTED
-public class FlatFileReserveListDataSource implements ReserveListDataSource {
+public class FlatFileReserveListDataSource implements ReserveListDataSource, DataSource {
 
-    public FlatFileReserveListDataSource(DataSource dataSource) {
+    public FlatFileReserveListDataSource(DataSourceManager dataSource) {
     }
 
     @Override
-    public boolean isReserveListed(int userid) {
+    public boolean isReserveListed(int userid, String username) {
         boolean ret = false;
         List<String> lines = FileHandler.getLines("reservelist");
         
@@ -35,7 +36,7 @@ public class FlatFileReserveListDataSource implements ReserveListDataSource {
     }
 
     @Override
-    public boolean setReserveListed(int userid, boolean reservelist) {
+    public boolean setReserveListed(int userid, String username, boolean reservelist) {
         List<String> lines = FileHandler.getLines("reservelist");
         
         for (int i=0; i<lines.size(); i++) {

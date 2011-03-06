@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,10 @@ import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 import org.buckit.access.Group;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.AccessDataSource;
 
-public class MysqlAccessDataSource implements AccessDataSource {
+public class DatabaseAccessDataSource implements AccessDataSource, DataSource {
 
     private Map<Integer, Group>       groupsint;
     private Map<String, Group>        groups;
@@ -22,33 +23,47 @@ public class MysqlAccessDataSource implements AccessDataSource {
     private static String             SELECT_GROUPS       = "SELECT id,name,commands FROM " + Config.DATABASE_ACCESSGROUPS_TABLE;
     private static String             SELECT_ACCESSLEVELS = "SELECT id,name,usernameformat,accessgroups,admingroup,canbuild FROM " + Config.DATABASE_ACCESS_TABLE;
 
+    private static final Group defaultGroup = new Group(-1,"default","");
+    private static final AccessLevel defaultLevel = new AccessLevel(-1,new Group[]{defaultGroup},"default",null,false,false);
     
-    private DataSource datasource;
-    public MysqlAccessDataSource(DataSource dataSource) {
+    private DataSourceManager datasource;
+    public DatabaseAccessDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     
     @Override
     public AccessLevel getAccessLevel(int id) {
-        return accesslevelsint.get(id);
+        if(accesslevelsint.containsKey(id))
+            return accesslevelsint.get(id);
+        else
+            return defaultLevel;
     }
 
     @Override
     public AccessLevel getAccessLevel(String name) {
-        return accesslevels.get(name);
+        if(accesslevels.containsKey(name))
+            return accesslevels.get(name);
+        else
+            return defaultLevel;
     }
 
     @Override
     public Group getGroup(int id) {
-        return groupsint.get(id);
+        if(groupsint.containsKey(id))
+            return groupsint.get(id);
+        else
+            return defaultGroup;
     }
 
     @Override
     public Group getGroup(String name) {
-        return groups.get(name);
+        if(groups.containsKey(name))
+            return groups.get(name);
+        else
+            return defaultGroup;
     }
 
     @Override
@@ -101,6 +116,9 @@ public class MysqlAccessDataSource implements AccessDataSource {
     }
 
     private Group[] getGroups(String list) {
+        if(list == null || list.equals(""))
+            return null;
+        
         String[] split = list.split(Config.DATABASE_DELIMITER);
         Group[] group = new Group[split.length];
         for (int i = 0; i < split.length; i++) {

@@ -15,7 +15,7 @@ public class RemoveWarpCommand extends Command {
     private final WarpsDataSource datasource;
     public RemoveWarpCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getWarpsDataSource();
+        this.datasource = server.getDataSourceManager().getWarpsDataSource();
         this.description = "Removes an existing warp.";
         
         if(Config.WARPS_GROUPS_ENABLED)

@@ -198,8 +198,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      * 
      */
     private UserDataHolder dataholder;
+
     private void loadBuckItData(){
-        dataholder = server.getDataSource().getUserDataSource().getUserData(getName());
+        dataholder = server.getDataSourceManager().getUserDataSource().getUserData(getName());
         
         String format = Config.DEFAULT_USER_FORMAT;
         
@@ -211,15 +212,25 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         setDisplayName(format.replace("{$username}", getName()).replace("{$group}", getAccessLevel().getName()).replace("^", "\u00A7"));
         
     }
+    
+    public void reloadBuckItData() {
+        try {
+            loadBuckItData();
+        } catch(Throwable t) {
+            server.getLogger().warning("Error reloading Buck - It data of player " + getName() + ", error:");
+            t.printStackTrace();
+        }
+    }
+    
     @Override
     public boolean canBuild() {
-        return getAccessLevel().canBuild();
+        return getAccessLevel().canBuild() || dataholder.canbuild();
     }
 
     @Override
     // TODO: optimize
     public boolean canUseCommand(String command) {
-        if(dataholder.getAccessLevel().canUseCommand(command))
+        if(dataholder.canUseCommand(command))
             return true;
         
         String[] split = command.split(".");
@@ -228,8 +239,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 String t = split[0];
                 for(int x = 1;x <= i;x++)
                     t += "." + split[x];
-                t += ".*";
-                if(dataholder.getAccessLevel().canUseCommand(t))
+                t += "."+Config.FULL_ACCESS_STRING;
+                if(dataholder.canUseCommand(t))
                     return true;
             }
         }
@@ -239,7 +250,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isAdmin() {
-        return getAccessLevel().isAdmin();
+        return getAccessLevel().isAdmin() || dataholder.isAdmin();
     }
     
     @Override

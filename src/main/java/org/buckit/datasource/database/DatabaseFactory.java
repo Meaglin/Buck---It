@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,7 +33,7 @@ public class DatabaseFactory {
     static Logger log = Logger.getLogger(DatabaseFactory.class.getName());
 
     public static enum ProviderType {
-        MySql, MsSql
+        MySql, MsSql, SqLite
     }
 
     // =========================================================
@@ -46,7 +46,24 @@ public class DatabaseFactory {
     // =========================================================
     // Constructor
     public DatabaseFactory() throws SQLException {
+        load();
+    }
+
+    public void reload() {
         try {
+            load();
+        } catch(Throwable t){
+            log.warning("Error reloading DatabaseFactory, error:");
+            t.printStackTrace();
+        }
+    }
+    
+    private void load() throws SQLException {
+        try {
+            
+            if(source != null)
+                shutdown();
+            
             if (Config.DATABASE_MAX_CONNECTIONS < 2) {
                 Config.DATABASE_MAX_CONNECTIONS = 2;
                 log.warning("A minimum of " + Config.DATABASE_MAX_CONNECTIONS + " db connections are required.");
@@ -112,6 +129,8 @@ public class DatabaseFactory {
 
             if (Config.DATABASE_DRIVER.toLowerCase().contains("microsoft"))
                 providerType = ProviderType.MsSql;
+            else if(Config.DATABASE_DRIVER.toLowerCase().contains("sqlite"))
+                providerType = ProviderType.SqLite;
             else
                 providerType = ProviderType.MySql;
         } catch (SQLException x) {
@@ -121,7 +140,7 @@ public class DatabaseFactory {
             throw new SQLException("Could not init DB connection:" + e.getMessage());
         }
     }
-
+    
     // =========================================================
     // Method - Public
     public final String prepQuerySelect(String[] fields, String tableName, String whereClause, boolean returnOnlyTopRecord) {

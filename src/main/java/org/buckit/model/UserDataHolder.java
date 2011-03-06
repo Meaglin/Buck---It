@@ -1,5 +1,8 @@
 package org.buckit.model;
 
+import java.util.ArrayList;
+
+import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 
 public class UserDataHolder {
@@ -8,7 +11,9 @@ public class UserDataHolder {
     private String      username, usernameformat, commands;
     private boolean     admin, canbuild;
     private AccessLevel accesslevel;
-
+    private ArrayList<String> commandArray;
+    private boolean canuseall = false;
+    
     public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int bantime, int mutetime, AccessLevel accesslevel) {
         this.id = id;
         this.username = username;
@@ -22,6 +27,12 @@ public class UserDataHolder {
         this.bantime = bantime;
         this.mutetime = mutetime;
         this.accesslevel = accesslevel;
+        
+        this.commandArray = new ArrayList<String>();
+        for (String command : commands.split(Config.DATABASE_DELIMITER))
+            this.commandArray.add(command);
+        
+        canuseall = commandArray.contains(Config.FULL_ACCESS_STRING);
     }
 
     /**
@@ -125,7 +136,6 @@ public class UserDataHolder {
         return (getBantime() == -1);
     }
 
-
     /**
      * @param id
      *            the id to set
@@ -196,6 +206,12 @@ public class UserDataHolder {
      */
     public void setCommands(String commands) {
         this.commands = commands;
+        
+        this.commandArray = new ArrayList<String>();
+        for (String command : commands.split(Config.DATABASE_DELIMITER))
+            this.commandArray.add(command);
+        
+        canuseall = commandArray.contains(Config.FULL_ACCESS_STRING);
     }
 
     /**
@@ -222,4 +238,8 @@ public class UserDataHolder {
         this.accesslevel = accesslevel;
     }
 
+    
+    public boolean canUseCommand(String command) {
+        return canuseall || commandArray.contains(command) || getAccessLevel().canUseCommand(command);
+    }
 }

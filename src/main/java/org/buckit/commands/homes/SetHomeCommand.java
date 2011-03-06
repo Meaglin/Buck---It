@@ -14,7 +14,7 @@ public class SetHomeCommand extends Command {
     private final HomesDataSource datasource;
     public SetHomeCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getHomesDataSource();
+        this.datasource = server.getDataSourceManager().getHomesDataSource();
         this.description = "Sets your home.";
         
         if(Config.HOMES_MULTI_ENABLED)

@@ -14,7 +14,7 @@ public class HomeCommand extends Command {
     private final HomesDataSource datasource;
     public HomeCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getHomesDataSource();
+        this.datasource = server.getDataSourceManager().getHomesDataSource();
         this.description = "Teleports you to your home.";
         
         if(Config.HOMES_MULTI_ENABLED)

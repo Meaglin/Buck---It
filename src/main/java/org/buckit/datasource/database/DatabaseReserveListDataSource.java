@@ -1,14 +1,13 @@
-package org.buckit.datasource.yaml;
+package org.buckit.datasource.database;
 
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
-public class YamlReserveListDataSource implements ReserveListDataSource, DataSource {
+public class DatabaseReserveListDataSource implements ReserveListDataSource, DataSource {
 
-    public YamlReserveListDataSource(DataSourceManager dataSource) {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+    public DatabaseReserveListDataSource(DataSourceManager dataSource) {
+        // do nothing
     }
 
     @Override
@@ -19,8 +18,9 @@ public class YamlReserveListDataSource implements ReserveListDataSource, DataSou
 
     @Override
     public boolean load() {
-        // TODO: Implement.
-        throw new UnsupportedOperationException("Not supported yet.");
+        // do nothing
+        // we chose for a non caching setting for this situation.
+        return true;
     }
 
     @Override

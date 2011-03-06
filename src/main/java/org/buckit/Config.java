@@ -149,7 +149,7 @@ public class Config {
         loadGeneralProperties();
         loadWorldProperties();
         switch(DATA_SOURCE_TYPE){
-            case MYSQL:
+            case DATABASE:
                 loadDatabaseProperties();
                 break;
             case FLATFILE:
@@ -177,9 +177,9 @@ public class Config {
             SPAWN_RADIUS = gp.getInt("SpawnRadius", 16);
             SPAWN_RESPAWN_AREA_RADIUS = gp.getInt("RespawnAreaRadius", "10");
 
-            String datasource = gp.getProperty("DataSource", "flatfile");
+            String datasource = gp.getProperty("DataSource", "database");
             if(datasource.equalsIgnoreCase("flatfile"))DATA_SOURCE_TYPE = DataType.FLATFILE;
-            else if(datasource.equalsIgnoreCase("mysql"))DATA_SOURCE_TYPE = DataType.MYSQL;
+            else if(datasource.equalsIgnoreCase("database"))DATA_SOURCE_TYPE = DataType.DATABASE;
             else if(datasource.equalsIgnoreCase("yaml"))DATA_SOURCE_TYPE = DataType.YAML;
             
             KITS_ENABLED = gp.getBool("KitsEnabled", "false");
@@ -195,7 +195,7 @@ public class Config {
             RESERVELIST_ENABLED = gp.getBool("ReserveListEnabled", false);
             
             WHITELIST_MESSAGE = gp.getProperty("WhiteListMessage","Not on whitelist.");
-            RESERVELIST_MESSAGE = gp.getProperty("ReservelistMessage","The server is full!");
+            RESERVELIST_MESSAGE = gp.getProperty("ReserveListMessage","The server is full!");
             
             TP_REQUEST_COMMANDS_ENABLED = gp.getBool("TpRequestEnabled", false);
             
@@ -204,7 +204,7 @@ public class Config {
             DEFAULT_ACCESS_LEVEL = gp.getInt("DefaultAccessLevel", 0);
             
             DEFAULT_ERROR_COLOR = gp.getProperty("DefaultErrorColor","^C").replace("^", "\u00A7");
-            DEFAULT_INFO_COLOR = gp.getProperty("DefaultErrorColor","^A").replace("^", "\u00A7");
+            DEFAULT_INFO_COLOR = gp.getProperty("DefaultInfoColor","^A").replace("^", "\u00A7");
             
             TRACK_USER_ONLINE_TIME = gp.getBool("TrackUserOnlineTime", "true");
             NOT_ENOUGH_ACCESS_MESSAGE = gp.getProperty("AccessMessage", "Your are not allowed to use this command.");

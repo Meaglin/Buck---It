@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,27 +7,28 @@ import java.sql.Statement;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-public class MysqlUserDataSource implements UserDataSource {
+public class DatabaseUserDataSource implements UserDataSource, DataSource {
 
     
-    private static String SELECT_USER           = "SELECT * FROM " + Config.DATABASE_USERS_TABLE + " WHERE name = ?";
+    private static String SELECT_USER           = "SELECT * FROM " + Config.DATABASE_USERS_TABLE + " WHERE username = ?";
     private static String INSERT_USER           = "INSERT INTO " + Config.DATABASE_USERS_TABLE + " (username,usernameformat,firstlogin,lastlogin) VALUES (?,?,?,?) ";
 
     private static String UPDATE_USER_LASTLOGIN = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET lastlogin = ? WHERE id = ?";
     private static String UPDATE_USER_UPTIME    = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET onlinetime = ? WHERE id = ?";
     private static String UPDATE_USER_BANTIME   = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET bantime = ? WHERE id = ?";
     private static String UPDATE_USER_MUTETIME  = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET mutetime = ? WHERE id = ?";
-    private static String UPDATE_USER           = "UPDATE " + Config.DATABASE_USERS_TABLE + "SET username = ?, usernameformat = ?, firstlogin = ?,lastlogin = ?,onlinetime = ?,bantime = ?,mutetime = ?,commands = ?,canbuild = ?,isadmin = ?,accesslevel = ? WHERE id = ?";
+    private static String UPDATE_USER           = "UPDATE " + Config.DATABASE_USERS_TABLE + " SET username = ? , usernameformat = ? , firstlogin = ? , lastlogin = ? , onlinetime = ? , bantime = ? , mutetime = ? , commands = ? , canbuild = ? , isadmin = ? , accesslevel = ? WHERE id = ?";
 
     
-    private DataSource datasource;
-    public MysqlUserDataSource(DataSource dataSource) {
+    private DataSourceManager datasource;
+    public DatabaseUserDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     
@@ -45,14 +46,14 @@ public class MysqlUserDataSource implements UserDataSource {
             st = conn.prepareStatement(SELECT_USER);
             st.setString(1, username);
             rs = st.executeQuery();
-            if (!rs.first()) {
+            if (!rs.next()) {
                 st.close();
                 rs.close();
                 st = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
                 st.setString(1, username);
                 st.setString(2, Config.DEFAULT_USER_FORMAT);
-                st.setInt(2, currentTime());
                 st.setInt(3, currentTime());
+                st.setInt(4, currentTime());
                 st.execute();
 
                 rs = st.getGeneratedKeys();
@@ -60,11 +61,11 @@ public class MysqlUserDataSource implements UserDataSource {
                     rt = new UserDataHolder(rs.getInt(1), username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(0));
                 }
             } else {
-                rt = new UserDataHolder(rs.getInt("id"), username, rs.getString("usernameformat"), rs.getBoolean("isadmin"), rs.getBoolean("canbuild"), rs.getString("commands"), rs.getInt("firstlogin"), currentTime(), rs.getInt("uptime"), rs.getInt("bantime"), rs.getInt("mutetime"), getDataSource().getAccessDataSource().getAccessLevel(rs.getInt("accesslevel")));
+                rt = new UserDataHolder(rs.getInt("id"), username, rs.getString("usernameformat"), rs.getBoolean("isadmin"), rs.getBoolean("canbuild"), rs.getString("commands"), rs.getInt("firstlogin"), currentTime(), rs.getInt("onlinetime"), rs.getInt("bantime"), rs.getInt("mutetime"), getDataSource().getAccessDataSource().getAccessLevel(rs.getInt("accesslevel")));
                 st.close();
                 st = conn.prepareStatement(UPDATE_USER_LASTLOGIN);
                 st.setInt(1, rt.getLastlogin());
-                st.setInt(3, rt.getId());
+                st.setInt(2, rt.getId());
                 st.execute();
             }
 

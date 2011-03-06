@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import java.io.File;
@@ -29,6 +29,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.world.WorldEvent;
@@ -37,7 +38,7 @@ public final class CraftServer implements Server {
     private final String serverName = "Craftbukkit";
     private final String serverVersion;
     private final String protocolVersion = "1.3";
-    private final DataSource datasource = new DataSource(this);
+    private final DataSourceManager datasourcemanager = new DataSourceManager(this);
     private final PluginManager pluginManager = new SimplePluginManager(this);
     private final BukkitScheduler scheduler =  new CraftScheduler(this);
     private final CommandMap commandMap = new SimpleCommandMap(this);
@@ -187,18 +188,26 @@ public final class CraftServer implements Server {
     }
 
     public void reload() {
+        // Buck - It start
         Config.load();
+        getDataSourceManager().reload();
+        for(Player p : getOnlinePlayers())
+            if(p instanceof CraftPlayer)
+                ((CraftPlayer)p).reloadBuckItData();
+                
         PropertyManager config = new PropertyManager(console.options);
 
         console.d = config;
 
-        boolean animals = config.a("spawn-monsters", console.m);
-        boolean monsters = config.a("spawn-monsters", console.worlds.get(0).j > 0);
+        boolean animals = Config.ANIMALS_ENABLED;
+        boolean monsters = Config.MONSTERS_ENABLED;
 
-        console.l = config.a("online-mode", console.l);
-        console.m = config.a("spawn-animals", console.m);
-        console.n = config.a("pvp", console.n);
+        console.l = Config.ONLINE_MODE_ENABLED;
+        console.m = Config.ANIMALS_ENABLED;
+        console.n = Config.PVP_ENABLED;
 
+        // Buck - It end
+        
         for (WorldServer world : console.worlds) {
             world.j = monsters ? 1 : 0;
             world.a(monsters, animals);
@@ -287,8 +296,8 @@ public final class CraftServer implements Server {
     
     
     @Override
-    public DataSource getDataSource() {
-        return datasource;
+    public DataSourceManager getDataSourceManager() {
+        return datasourcemanager;
     }
     
     @Override

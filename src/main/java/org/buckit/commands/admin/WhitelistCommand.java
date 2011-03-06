@@ -50,18 +50,18 @@ public class WhitelistCommand extends Command {
             return true;
         }
 
-        WhiteListDataSource whitelist = server.getDataSource().getWhiteListDataSource();        
+        WhiteListDataSource whitelist = server.getDataSourceManager().getWhiteListDataSource();        
         Player player = matches.get(0);
         
-        boolean before = whitelist.isWhiteListed(player.getPlayerId());
+        boolean before = whitelist.isWhiteListed(player.getPlayerId(), player.getName());
         
         if (args[0].equals("add") || args[0].equals("a")) {
-            whitelist.setWhiteListed(player.getPlayerId(), true);
+            whitelist.setWhiteListed(player.getPlayerId(),player.getName(), true);
             sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been added to the whitelist!");
             return true;
         }
         else if (args[0].equals("remove") || args[0].equals("r")) {
-            whitelist.setWhiteListed(player.getPlayerId(), false);
+            whitelist.setWhiteListed(player.getPlayerId(),player.getName(), false);
             sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been removed to the whitelist!");
             return true;
         }

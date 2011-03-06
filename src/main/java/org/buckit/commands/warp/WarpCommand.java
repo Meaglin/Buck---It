@@ -15,7 +15,7 @@ public class WarpCommand extends Command{
     private final WarpsDataSource datasource;
     public WarpCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getWarpsDataSource();
+        this.datasource = server.getDataSourceManager().getWarpsDataSource();
         this.description = "Warps you to the location of the specified warp.";
         
         if(Config.WARPS_GROUPS_ENABLED)

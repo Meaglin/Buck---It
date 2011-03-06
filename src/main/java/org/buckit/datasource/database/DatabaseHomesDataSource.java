@@ -1,4 +1,4 @@
-package org.buckit.datasource.mysql;
+package org.buckit.datasource.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,25 +8,26 @@ import java.util.List;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-public class MysqlHomesDataSource implements HomesDataSource {
+public class DatabaseHomesDataSource implements HomesDataSource, DataSource {
 
     private static String SELECT_HOME  = "SELECT id,x,y,z,rotX,rotY,world FROM " + Config.DATABASE_HOMES_TABLE + " WHERE userid = ? AND name = ? LIMIT 1";
     private static String INSERT_HOME  = "INSERT INTO " + Config.DATABASE_HOMES_TABLE + " (name,userid,username,world,x,y,z,rotX,rotY) VALUES (?,?,?,?,?,?,?,?,?)";
     private static String DELETE_HOME  = "DELETE FROM " + Config.DATABASE_HOMES_TABLE + " WHERE userid = ? AND name = ?";
     private static String SELECT_HOMES = "SELECT id,name,x,y,z,rotX,rotY,world FROM " + Config.DATABASE_HOMES_TABLE + " WHERE userid = ?";
 
-    private DataSource datasource;
+    private DataSourceManager datasource;
     private Server      server;
-    public MysqlHomesDataSource(DataSource dataSource) {
+    public DatabaseHomesDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
         server = datasource.getServer();
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
     
@@ -69,7 +70,7 @@ public class MysqlHomesDataSource implements HomesDataSource {
             st.setInt(1, userId);
             st.setString(2, name);
             rs = st.executeQuery();
-            if (rs.first()) {
+            if (rs.next()) {
                 home = new Home(rs.getInt("id"), name, new Location(server.getWorld(rs.getString("world")), rs.getDouble("x"), rs.getDouble("y"), rs.getDouble("z"), rs.getFloat("rotX"), rs.getFloat("rotY")));
             }
         } catch (Exception e) {

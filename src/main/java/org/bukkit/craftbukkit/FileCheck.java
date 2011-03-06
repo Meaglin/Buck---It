@@ -33,7 +33,7 @@ public class FileCheck {
     private static String jarjar_namespace_rules = "./libs/rules/namespace.rules";
     
     private static long crc_minecraft_server = 280458825L;
-    private static long crc_minecraft_servero = 2186524365L;
+    private static long crc_minecraft_servero = 3658007949L;
     
     private static long crc_jarjar = 519567578L;
     private static long crc_retroguard = 2728595211L;
@@ -59,7 +59,7 @@ public class FileCheck {
             
             if (!fileExists(minecraft_server)) {
                 log("Missing minecraft_servero.jar, Downloading minecraft_server.jar...");
-                downloadFile("http://minecraft.net/download/minecraft_server.jar", minecraft_server);
+                downloadFile("https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar", minecraft_server);
                 checkCRC32(minecraft_server, crc_minecraft_server);
 
                 log("Finished downloading minecraft_server.jar, start converting minecraft_server.jar to minecraft_servero.jar...");

@@ -14,7 +14,7 @@ public class SetWarpCommand extends Command {
     private final WarpsDataSource datasource;
     public SetWarpCommand(String name, Server server){
         super(name);
-        this.datasource = server.getDataSource().getWarpsDataSource();
+        this.datasource = server.getDataSourceManager().getWarpsDataSource();
         this.description = "Specifies a new warp or replaces a existing one(if name was already used).";
         
         if(Config.WARPS_GROUPS_ENABLED)

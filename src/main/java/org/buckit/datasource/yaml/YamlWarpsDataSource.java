@@ -3,14 +3,15 @@ package org.buckit.datasource.yaml;
 import java.util.Collection;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-public class YamlWarpsDataSource implements WarpsDataSource {
+public class YamlWarpsDataSource implements WarpsDataSource, DataSource {
 
-    public YamlWarpsDataSource(DataSource dataSource) {
+    public YamlWarpsDataSource(DataSourceManager dataSource) {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -28,7 +29,7 @@ public class YamlWarpsDataSource implements WarpsDataSource {
     }
 
     @Override
-    public DataSource getDataSource() {
+    public DataSourceManager getDataSource() {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -46,7 +47,7 @@ public class YamlWarpsDataSource implements WarpsDataSource {
     }
 
     @Override
-    public boolean load(Server server) {
+    public boolean load() {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }

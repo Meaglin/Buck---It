@@ -3,11 +3,12 @@ package org.buckit.datasource.yaml;
 import org.buckit.access.AccessLevel;
 import org.buckit.access.Group;
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.AccessDataSource;
 
-public class YamlAccessDataSource implements AccessDataSource {
+public class YamlAccessDataSource implements AccessDataSource, DataSource {
 
-    public YamlAccessDataSource(DataSource dataSource) {
+    public YamlAccessDataSource(DataSourceManager dataSource) {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -25,7 +26,7 @@ public class YamlAccessDataSource implements AccessDataSource {
     }
 
     @Override
-    public DataSource getDataSource() {
+    public DataSourceManager getDataSource() {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }

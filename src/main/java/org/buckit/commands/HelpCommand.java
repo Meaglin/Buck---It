@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import org.buckit.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -34,7 +35,7 @@ public class HelpCommand extends Command {
         int page = 0;
         String commandIn = "";
         Map<String, Command> commandMapTemp = server.getCommands();
-        String[] keysTemp = (String[]) commandMapTemp.keySet().toArray();
+        String[] keysTemp = commandMapTemp.keySet().toArray(new String[]{});
         
         for (String k : keysTemp) {
             if (commandMapTemp.get(k).getAccessName()==null || !((Player) sender).canUseCommand(commandMapTemp.get(k).getAccessName()))
@@ -42,9 +43,9 @@ public class HelpCommand extends Command {
         }
         
         Map<String, Command> commandMap = commandMapTemp;
-        String[] keys = (String[]) commandMap.keySet().toArray();
+        String[] keys = commandMapTemp.keySet().toArray(new String[]{});
         
-        if (args.length > 0)
+        if (args.length == 0)
             page = 1;
         else {
             try {
@@ -88,18 +89,18 @@ public class HelpCommand extends Command {
             
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Info about command /" + commandOut.getName());
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Aliases: " + aliasesString);
-            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Tooltip: " + commandOut.getTooltip());
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Description: " + commandOut.getDescription());
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Usage:   " + commandOut.getUsage());
             return true;
             
         } else {
             int commandTotal = commandMap.size();
-            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Page " + page + " of " + (Math.ceil(commandTotal/7)) + ":");
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Page " + page + " of " + ((int)Math.ceil(commandTotal/7)) + ":");
             int begin   = 7*(page-1);
             int end     = (commandTotal < 7*page) ? commandTotal : 7*page;
             for (int i=begin; i<end; i++) {
                 Command commandOutTemp = commandMap.get(keys[i]);
-                sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- /" + commandIn + ": " + commandOutTemp.getTooltip());
+                sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- /" + commandOutTemp.getName() + ": " + commandOutTemp.getDescription());
             }
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "For more info about commands, type /help <command>");
             return true;

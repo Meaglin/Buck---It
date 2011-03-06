@@ -125,7 +125,7 @@ public class ServerConfigurationManager {
 
         // Buck - It start
         if(Config.TRACK_USER_ONLINE_TIME) {
-            server.getDataSource().getUserDataSource().updateUserDataOnDisconnect(server.getPlayer(entityplayer).getUserDataHolder());
+            server.getDataSourceManager().getUserDataSource().updateUserDataOnDisconnect(server.getPlayer(entityplayer).getUserDataHolder());
         }
         // Buck - It end
         
@@ -157,18 +157,18 @@ public class ServerConfigurationManager {
         } else if (this.g.contains(s2)) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Your IP address is banned from this server!");
         // Buck - It start
-        } else if (this.b.size() >= this.e && ((Config.RESERVELIST_ENABLED && !server.getDataSource().getReserveListDataSource().isReserveListed(holder.getId())) || !Config.RESERVELIST_ENABLED)) {
+        } else if (this.b.size() >= this.e && ((Config.RESERVELIST_ENABLED && !server.getDataSourceManager().getReserveListDataSource().isReserveListed(holder.getId(),holder.getUsername())) || !Config.RESERVELIST_ENABLED)) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full!");
         } else if(holder.isBanned()) {
             int time = holder.getBantime() - ((int)(System.currentTimeMillis()/1000));
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server" + (time > 0 ? " for another " + TimeFormat.formatRemaining(time) : "") + "!");
-        } else if(Config.WHITELIST_ENABLED && !server.getDataSource().getWhiteListDataSource().isWhiteListed(holder.getId())) {
+        } else if(Config.WHITELIST_ENABLED && !server.getDataSourceManager().getWhiteListDataSource().isWhiteListed(holder.getId(),holder.getUsername())) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, Config.WHITELIST_MESSAGE);
         }      
         // TODO: optimize.
         
         holder.setLastlogin((int) (System.currentTimeMillis()/1000));
-        server.getDataSource().getUserDataSource().updateUser(holder);
+        server.getDataSourceManager().getUserDataSource().updateUser(holder);
         // Buck - It end
         
         server.getPluginManager().callEvent(event);

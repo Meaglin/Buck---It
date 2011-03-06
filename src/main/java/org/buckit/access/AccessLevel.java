@@ -74,6 +74,9 @@ public class AccessLevel {
         if (hasFullAccess())
             return true;
 
+        if(getChilds() == null)
+            return false;
+        
         for (Group g : getChilds())
             if (g.canUseCommand(command))
                 return true;

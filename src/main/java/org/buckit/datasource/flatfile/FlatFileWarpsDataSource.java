@@ -7,24 +7,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
 //id,name,groupname,world,x,y,z,rotX,rotY,minaccesslevel
-public class FlatFileWarpsDataSource implements WarpsDataSource {
+public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
 
 
     //key = groupname/name
     private Map<String, Warp> warps;
-    private DataSource datasource;
+    private DataSourceManager datasource;
     private int nextId = 0;
     
-    public FlatFileWarpsDataSource(DataSource dataSource) {
+    public FlatFileWarpsDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSource getDataSource(){
+    public DataSourceManager getDataSource(){
         return datasource;
     }
 
@@ -70,7 +71,7 @@ public class FlatFileWarpsDataSource implements WarpsDataSource {
     }
 
     @Override
-    public boolean load(Server server) {
+    public boolean load() {
         warps = new HashMap<String, Warp>();
         
         List<String> lines = FileHandler.getLines("warps");
@@ -91,7 +92,7 @@ public class FlatFileWarpsDataSource implements WarpsDataSource {
             float   rotY;    try { rotY = Float.parseFloat(entry[8]); } catch (Exception e) { return false; }  
             int     level;   try { level = Integer.parseInt(entry[4]); } catch (Exception e) { return false; }
             
-            warp = new Warp(id, name, groupname, new Location(server.getWorld(world), x, y, z, rotX, rotY), level);
+            warp = new Warp(id, name, groupname, new Location(datasource.getServer().getWorld(world), x, y, z, rotX, rotY), level);
             warps.put(groupname+"/"+name, warp);
             
             if (id>nextId)

@@ -3,13 +3,14 @@ package org.buckit.datasource.yaml;
 import java.util.Collection;
 
 import org.buckit.datasource.DataSource;
+import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
 import org.bukkit.Location;
 
-public class YamlHomesDataSource implements HomesDataSource {
+public class YamlHomesDataSource implements HomesDataSource, DataSource {
 
-    public YamlHomesDataSource(DataSource dataSource) {
+    public YamlHomesDataSource(DataSourceManager dataSource) {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -21,7 +22,7 @@ public class YamlHomesDataSource implements HomesDataSource {
     }
 
     @Override
-    public DataSource getDataSource() {
+    public DataSourceManager getDataSource() {
         // TODO: Implement.
         throw new UnsupportedOperationException("Not supported yet.");
     }
