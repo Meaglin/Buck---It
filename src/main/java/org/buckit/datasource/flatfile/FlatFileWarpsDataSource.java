@@ -11,7 +11,6 @@ import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
-import org.bukkit.Server;
 
 //id,name,groupname,world,x,y,z,rotX,rotY,minaccesslevel
 public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {

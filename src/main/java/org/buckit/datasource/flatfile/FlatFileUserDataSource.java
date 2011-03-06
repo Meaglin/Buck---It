@@ -2,6 +2,7 @@ package org.buckit.datasource.flatfile;
 
 import java.util.List;
 
+import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
@@ -12,6 +13,8 @@ import org.buckit.model.UserDataHolder;
 public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
     private DataSourceManager datasource;
+    private int newId=0;
+    
     public FlatFileUserDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
@@ -25,6 +28,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
         
         List<String> lines = FileHandler.getLines("user");
         
+        boolean exists = false;
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
@@ -40,8 +44,30 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
             Boolean isadmin;        try { isadmin = Boolean.parseBoolean(entry[10]); } catch (Exception e) { return user; }
             AccessLevel level       = getDataSource().getAccessDataSource().getAccessLevel(entry[11]);
             
-            if (username.equals(usernamename))
+            if (username.equals(usernamename)) {
                 user = new UserDataHolder(id, username, usernameformat, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, bantime, mutetime, level);
+                exists = true;
+            }
+        }
+        
+        if (!exists) {
+        	user = new UserDataHolder(newId, username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
+        	newId++;
+        	
+        	lines.add(user.getId()+FileHandler.sep1+
+                    user.getUsername()+FileHandler.sep1+
+                    user.getUsernameformat()+FileHandler.sep1+
+                    user.getFirstlogin()+FileHandler.sep1+
+                    user.getLastlogin()+FileHandler.sep1+
+                    user.getUptime()+FileHandler.sep1+
+                    user.getBantime()+FileHandler.sep1+
+                    user.getMutetime()+FileHandler.sep1+
+                    user.getCommands()+FileHandler.sep1+
+                    user.canbuild()+FileHandler.sep1+
+                    user.isAdmin()+FileHandler.sep1+
+                    user.getAccessLevel());
+        	
+        	FileHandler.writeFile("user", lines);
         }
         
         return user;
@@ -49,6 +75,17 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
     @Override
     public boolean load() {
+        List<String> lines = FileHandler.getLines("user");
+        
+        int nextId = 0;
+        for (int i=0; i<lines.size(); i++) {
+            String[] entry = lines.get(i).split(FileHandler.sep1);
+            
+            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+            nextId = (id > nextId) ? id : nextId;
+        }
+        
+        this.newId = nextId+1;
         return true;
     }
 
@@ -63,7 +100,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
           //ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVEL
             
-            if (holder.getId() == id)
+            if (holder.getId() == id) {
                 lines.set(i, holder.getId()+FileHandler.sep1+
                             holder.getUsername()+FileHandler.sep1+
                             holder.getUsernameformat()+FileHandler.sep1+
@@ -76,6 +113,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                             holder.canbuild()+FileHandler.sep1+
                             holder.isAdmin()+FileHandler.sep1+
                             holder.getAccessLevel());
+            }
         }
         
         return FileHandler.writeFile("user", lines);

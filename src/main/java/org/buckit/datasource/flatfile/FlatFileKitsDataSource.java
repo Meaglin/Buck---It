@@ -12,15 +12,16 @@ import org.buckit.datasource.flatfile.FileHandler;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
-// kits: NAME:IDs:DELAY:GROUP
+// kits: NAME:IDs:DELAY:ACCESSLEVEL
 // kitslast: USERID:KITNAME:TIME
+
 public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
 
     private Map<String, Kit> kits;
-    private DataSourceManager datasource;
     private Map<String, Integer> kitslast; //key=userid/kitname
     
-    
+
+    private DataSourceManager datasource;
     public FlatFileKitsDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
@@ -39,11 +40,33 @@ public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
     }
     
     public boolean setKit(Kit kit) {
+
         kits.put(kit.getName(), kit);
-        return FileHandler.addLine("kits", kit.getName() + FileHandler.sep1 + 
-                                            kit.itemsToString() + FileHandler.sep1 + 
-                                            kit.getDelay() + FileHandler.sep1 + 
-                                            kit.getMinaccesslevel());
+    	
+    	if (kits.containsKey(kit.getName())) {
+        	List<String> lines = FileHandler.getLines("kits");
+        	for (int i=0; i<lines.size(); i++) {
+        		String[] entry = lines.get(i).split(FileHandler.sep1);
+               
+        		String name = entry[0];
+                
+                if (kit.getName().equals(name)) {
+                	String str = kit.getName() + FileHandler.sep1 + 
+                    				kit.itemsToString() + FileHandler.sep1 + 
+                    				kit.getDelay() + FileHandler.sep1 + 
+                    				kit.getMinaccesslevel();
+                	lines.set(i, str);
+                }
+        	}
+        	
+            return FileHandler.writeFile("kits", lines);
+    		
+    	} else {
+            return FileHandler.addLine("kits", kit.getName() + FileHandler.sep1 + 
+                                                kit.itemsToString() + FileHandler.sep1 + 
+                                                kit.getDelay() + FileHandler.sep1 + 
+                                                kit.getMinaccesslevel());
+    	}
     }
 
     @Override
@@ -54,12 +77,8 @@ public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
         List<String> lines = FileHandler.getLines("kits");
         
         int id = 0;
-        for (String l : lines) {
-            String[] entry = l.split(FileHandler.sep1);
-            
-
-            if (entry.length < 3)
-                break;
+        for (int i=0; i<lines.size(); i++) {
+            String[] entry = lines.get(i).split(FileHandler.sep1);
             
             String name = entry[0];
             int[][] items = getItemArray(entry[1]);

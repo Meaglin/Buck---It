@@ -6,7 +6,7 @@ import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
-//USERID:LISTED
+//USERID:USERNAME
 public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSource {
 
     public FlatFileWhiteListDataSource(DataSourceManager dataSource) {
@@ -15,16 +15,15 @@ public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSou
     @Override
     public boolean isWhiteListed(int userid, String username) {
         boolean ret = false;
-        List<String> lines = FileHandler.getLines("whitelist");
         
+        List<String> lines = FileHandler.getLines("whitelist");
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
             int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            boolean isR;  try { isR = Boolean.parseBoolean(entry[1]); } catch (Exception e) { return false; }
             
             if (userid==useridR)
-                ret = isR;
+                ret = true;
         }
         
         return ret;
@@ -37,19 +36,23 @@ public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSou
 
     @Override
     public boolean setWhiteListed(int userid, String username, boolean whitelisted) {
-        List<String> lines = FileHandler.getLines("whitelist");
-        
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            
-            if (userid==useridR) {
-                lines.set(i, useridR + FileHandler.sep1 + whitelisted);
+    	
+    	if (whitelisted == true) {
+    		return FileHandler.addLine("whitelist", userid + FileHandler.sep1 + username);
+    	} else {
+    		List<String> lines = FileHandler.getLines("whitelist");
+    		
+    		for (int i=0; i<lines.size(); i++) {
+                String[] entry = lines.get(i).split(FileHandler.sep1);
+                
+                int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+                
+                if (userid==useridR)
+                	lines.remove(i);
             }
-        }
-        
-        return FileHandler.writeFile("whitelist", lines);
+    		
+    		return FileHandler.writeFile("whitelist", lines);
+    	}
     }
 
 }
