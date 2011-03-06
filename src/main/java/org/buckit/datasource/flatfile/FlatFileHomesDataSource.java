@@ -3,6 +3,7 @@ package org.buckit.datasource.flatfile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
@@ -129,7 +130,7 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
 
     @Override
     public boolean setHome(int userId, String username, String name, Location home) {
-    	
+    	Logger.getLogger("Minecraft").info("New home of '"+username+"': '"+name+"' ("+Config.FLATFILE_HOMES_DIRECTORY+userId+".txt)");
     	boolean exists = false;
         List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         for (int i=0; i<lines.size(); i++) {

@@ -60,7 +60,7 @@ public class ListWarpsCommand extends Command {
                     str += w.getName() + ", ";
             
             if(str.length() == 0)
-                str = "No warps are availeble.";
+                str = "No warps are available.";
             else
                 str = str.substring(0, str.length() - 2);
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "List of available warps " + (!Config.WARPS_DEFAULT_GROUP_NAME.equals(group) ? " in group " + group : "" ) + ":");

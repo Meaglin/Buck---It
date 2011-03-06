@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.buckit.Config;
 import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
@@ -33,7 +34,10 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
         nextId++;
         
         Warp warp = new Warp(nextId, name, groupname, new Location(l.getWorld(), l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw()), minaccesslevel);
-        warps.put(groupname+"/"+name, warp);
+        if (Config.WARPS_GROUPS_ENABLED)
+            warps.put(groupname+"/"+name, warp);
+        else
+            warps.put(name, warp);
         
         return FileHandler.addLine("warps", nextId+FileHandler.sep1+
                                     name+FileHandler.sep1+
@@ -54,7 +58,10 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
 
     @Override
     public Warp getWarp(String groupname, String name) {
-        return warps.get(groupname+"/"+name);
+        if (Config.WARPS_GROUPS_ENABLED)
+            return warps.get(groupname+"/"+name);
+        else
+            return warps.get(name);
     }
 
     @Override
@@ -92,7 +99,11 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
             int     level;   try { level = Integer.parseInt(entry[4]); } catch (Exception e) { return false; }
             
             warp = new Warp(id, name, groupname, new Location(datasource.getServer().getWorld(world), x, y, z, rotX, rotY), level);
-            warps.put(groupname+"/"+name, warp);
+            
+            if (Config.WARPS_GROUPS_ENABLED)
+                warps.put(groupname+"/"+name, warp);
+            else
+                warps.put(name, warp);
             
             if (id>nextId)
                 nextId=id;
@@ -112,7 +123,10 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
             int     id;  try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
             
             if (warp.getId() == id) {
-                warps.remove(warp.getGroup()+"/"+warp.getName());
+                if (Config.WARPS_GROUPS_ENABLED)
+                    warps.remove(warp.getGroup()+"/"+warp.getName());
+                else
+                    warps.remove(warp.getName());
                 lines.remove(i);
             }
         }

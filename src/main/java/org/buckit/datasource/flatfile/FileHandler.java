@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.buckit.Config;
 
@@ -20,7 +21,6 @@ public class FileHandler {
     
     private static Map<String, String> filenames = new HashMap<String, String>();
     private static boolean loaded = false;
-    private final static String configDir = "./config/";
     
     public final static String sep1 = ":";
     public final static String sep2 = ";";
@@ -47,8 +47,11 @@ public class FileHandler {
         if (!loaded)
             load();
         
+        List<String> newLines = defaultText(file);
+        newLines.addAll(lines);
+        
         File f = new File(filenames.get(file.toLowerCase()));
-        return writeFile(f, lines);
+        return writeFile(f, newLines);
     }
     
     
@@ -70,7 +73,7 @@ public class FileHandler {
             
             String strLine;
             while ((strLine = br.readLine()) != null)   {
-                if (!strLine.startsWith("#"))
+                if (!strLine.startsWith("#") && !strLine.equals(""))
                     lines.add(strLine);
             }
             
@@ -91,6 +94,7 @@ public class FileHandler {
             BufferedWriter out = new BufferedWriter(new FileWriter(file.getPath()));
             for (String line : lines) {
                 out.write(line);
+                out.newLine();
             }
             out.close();
             worked = true;
@@ -112,6 +116,7 @@ public class FileHandler {
         filenames.put("whitelist", Config.FLATFILE_WHITELIST_FILE);
         
         Collection<String> files = filenames.values();
+
         for (String f : files) {
             File temp = new File(f);
             if (!temp.exists()) {
@@ -123,25 +128,23 @@ public class FileHandler {
     }
     
     private static void createFile(File file) {
-           writeFile(file, defaultText(file.getName()));
+        try {
+            new File(file.getParent()).mkdirs();
+            file.createNewFile();
+            Logger.getLogger("Minecraft").info("Created new file: "+file.getPath());
+            writeFile(file, defaultText(file.getName()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private static List<String> defaultText(String name) {
         List<String> l = new ArrayList<String>();
         
         //TODO make default filetext
-        if (name.equals("kits")) {
-            l.add("#Add your kits here. Example entry below (When adding your entry DO NOT include #!_");
-            l.add("#miningbasics:1,2,3,4:6000");
-            l.add("#The formats are (Find out more about groeps in users.txt):");
-            l.add("#NAME:IDs:DELAY");
-            l.add("#NAME:IDs:DELAY:MINACCESSLEVEL");
-            l.add("#6000 for delay is roughly 5 minutes");
-            l.add("");
-        } else {
-            l.add("#File: " + name);
-            l.add("");
-        }
+        l.add("#File: " + name);
+        l.add("");
         
         return l;
     }
