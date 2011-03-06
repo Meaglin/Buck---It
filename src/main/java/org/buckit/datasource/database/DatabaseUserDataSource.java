@@ -58,7 +58,7 @@ public class DatabaseUserDataSource implements UserDataSource, DataSource {
 
                 rs = st.getGeneratedKeys();
                 if (rs.next()) {
-                    rt = new UserDataHolder(rs.getInt(1), username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(0));
+                    rt = new UserDataHolder(rs.getInt(1), username, Config.DEFAULT_USER_FORMAT, false, false, null, currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
                 }
             } else {
                 rt = new UserDataHolder(rs.getInt("id"), username, rs.getString("usernameformat"), rs.getBoolean("isadmin"), rs.getBoolean("canbuild"), rs.getString("commands"), rs.getInt("firstlogin"), currentTime(), rs.getInt("onlinetime"), rs.getInt("bantime"), rs.getInt("mutetime"), getDataSource().getAccessDataSource().getAccessLevel(rs.getInt("accesslevel")));
