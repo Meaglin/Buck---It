@@ -46,7 +46,12 @@ public class CreateKitCommand extends Command {
         String[] items = Arrays.copyOfRange(args, 3, args.length);
         Kit kit;
         try {
-            kit = new Kit(-1, name, getItemArray(items), minaccesslevel, delay);
+            int[][] itemarray = getItemArray(items);
+            if (itemarray==null) {
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid items.");
+                return true;
+            }
+            kit = new Kit(-1, name, itemarray, minaccesslevel, delay);
         } catch (NumberFormatException e ) {sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Invalid items."); return true; }
         
         if(kit != null && datasource.setKit(kit)) {
@@ -64,7 +69,6 @@ public class CreateKitCommand extends Command {
             parts = items[i].split(",");
             
             if (parts.length<3){
-                //TODO als itemlist niet klopt, fixt dit de server error... denk ik -pjm
                 return null;
             }
             

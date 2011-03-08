@@ -54,6 +54,12 @@ public class ModifyCommand extends Command {
 			
 			for (int i=1; i<args.length; i++) {
 				String[] key_value = args[i].split(":");
+				
+				if (key_value.length<2) {
+				    sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Syntax error!");
+				    return true;
+				}
+				
 				String key 		= key_value[0].toLowerCase();
 				String value 	= key_value[1].toLowerCase();
 				

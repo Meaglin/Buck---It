@@ -11,9 +11,6 @@ import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.AccessDataSource;
 
-
-//groups: ID:NAME:COMMANDS
-//levels: ID:NAME:USERNAMEFORMAT:ACCESSGROUPS:ADMINGROUP:CANBUILD
 public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
 
     private Map<Integer, Group>       groupsint;
@@ -21,16 +18,81 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
     private Map<Integer, AccessLevel> accesslevelsint;
     private Map<String, AccessLevel>  accesslevels;
     
-    private static final Group defaultGroup = new Group(-1,"default","");
-    private static final AccessLevel defaultLevel = new AccessLevel(-1,new Group[]{defaultGroup},"default",null,false,false);
+    private static final Group defaultGroup = new Group(0,"default","");
+    private static final AccessLevel defaultLevel = new AccessLevel(0,new Group[]{defaultGroup},"default",null,false,false);
     
     private DataSourceManager datasource;
     
     public FlatFileAccessDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
     }
-    public DataSourceManager getDataSource(){
+    
+    public DataSourceManager getDataSource() {
         return datasource;
+    }
+    
+    @Override
+    public boolean load() {
+        groups          = new HashMap<String, Group>();
+        groupsint       = new HashMap<Integer, Group>();
+        accesslevels    = new HashMap<String, AccessLevel>();
+        accesslevelsint = new HashMap<Integer, AccessLevel>();
+          
+        List<String> lines = FileHandler.getLines("groups");
+        
+        Group group;
+        LineReader r;
+        int id;
+        String name, commands;
+        for (int i=0; i<lines.size(); i++) {
+            
+            r = new LineReader(lines.get(i));
+            id          = r.nextInt();
+            name        = r.nextStr();
+            commands    = r.nextStr();
+
+            group = new Group(
+                        id, 
+                        name, 
+                        commands
+                    );
+            
+            groups.put(group.getName(), group);
+            groupsint.put(group.getId(), group);
+        }
+
+        FFLog.newInit("Accessgroups", groups.size());
+        
+        List<String> lines2 = FileHandler.getLines("accesslevels");
+        AccessLevel access;
+        String  usernameformat, accessgroups;
+        Boolean admingroup, canbuild;
+        for (int i=0; i<lines2.size(); i++) {
+            
+            r = new LineReader(lines2.get(i));
+            id              = r.nextInt();
+            name            = r.nextStr();
+            usernameformat  = r.nextStr();
+            accessgroups    = r.nextStr();
+            admingroup      = r.nextBool();
+            canbuild        = r.nextBool();
+            
+            access = new AccessLevel(
+                        id, 
+                        getGroups(accessgroups), 
+                        name, 
+                        usernameformat, 
+                        canbuild, 
+                        admingroup
+                     );
+            
+            accesslevels.put(access.getName(), access);
+            accesslevelsint.put(access.getId(), access);
+        }
+        
+        FFLog.newInit("Accesslevels", accesslevels.size());
+        
+        return true;
     }
     
     @Override
@@ -65,51 +127,6 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
             return defaultGroup;
     }
 
-    @Override
-    public boolean load() {
-        groups = new HashMap<String, Group>();
-        groupsint = new HashMap<Integer, Group>();
-
-        accesslevels = new HashMap<String, AccessLevel>();
-        accesslevelsint = new HashMap<Integer, AccessLevel>();
-
-        //groups: ID:NAME:COMMANDS
-        //levels: ID:NAME:USERNAMEFORMAT:ACCESSGROUPS:ADMINGROUP:CANBUILD
-          
-        List<String> lines = FileHandler.getLines("groups");
-        Group group;
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            String  name            = entry[1];
-            String  commands        = entry[2];
-            
-            group = new Group(id, name, commands);
-            groups.put(group.getName(), group);
-            groupsint.put(group.getId(), group);
-        }
-        
-        List<String> lines2 = FileHandler.getLines("accesslevels");
-        AccessLevel access;
-        for (int i=0; i<lines2.size(); i++) {
-            String[] entry = lines2.get(i).split(FileHandler.sep1);
-            
-            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            String  name            = entry[1];
-            String  usernameformat  = entry[2]; 
-            String  accessgroups    = entry[3];
-            Boolean admingroup;     try { admingroup = Boolean.parseBoolean(entry[4]); } catch (Exception e) { return false; }
-            Boolean canbuild;       try { canbuild = Boolean.parseBoolean(entry[5]); } catch (Exception e) { return false; }
-            
-            access = new AccessLevel(id, getGroups(accessgroups), name, usernameformat, canbuild, admingroup);
-            accesslevels.put(access.getName(), access);
-            accesslevelsint.put(access.getId(), access);
-        }
-        
-        return true;
-    }
-
     private Group[] getGroups(String list) {
         String[] split = list.split(Config.DATABASE_DELIMITER);
         Group[] group = new Group[split.length];
@@ -120,7 +137,6 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
                 group[i] = getGroup(split[i]);
             }
             if (group[i] == null) {
-                // TODO: print error.
             }
         }
 

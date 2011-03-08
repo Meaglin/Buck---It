@@ -6,27 +6,9 @@ import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
-//USERID:USERNAME
 public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSource {
 
     public FlatFileWhiteListDataSource(DataSourceManager dataSource) {
-    }
-
-    @Override
-    public boolean isWhiteListed(int userid, String username) {
-        boolean ret = false;
-        
-        List<String> lines = FileHandler.getLines("whitelist");
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            
-            if (userid==useridR)
-                ret = true;
-        }
-        
-        return ret;
     }
 
     @Override
@@ -36,23 +18,51 @@ public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSou
 
     @Override
     public boolean setWhiteListed(int userid, String username, boolean whitelisted) {
-    	
-    	if (whitelisted == true) {
-    		return FileHandler.addLine("whitelist", userid + FileHandler.sep1 + username);
-    	} else {
-    		List<String> lines = FileHandler.getLines("whitelist");
-    		
-    		for (int i=0; i<lines.size(); i++) {
-                String[] entry = lines.get(i).split(FileHandler.sep1);
+        
+        if (whitelisted == true) {
+            FFLog.newEdit("reservelist", "new player '"+username+"' added");
+            return FileHandler.addLine("whitelist",   userid + FileHandler.sep1 + 
+                                                        username);
+        } else {
+            List<String> lines = FileHandler.getLines("whitelist");
+            
+            LineReader r;
+            int useridR;
+            for (int i=0; i<lines.size(); i++) {
+                r = new LineReader(lines.get(i));
                 
-                int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+                useridR = r.nextInt();
                 
-                if (userid==useridR)
-                	lines.remove(i);
+                if (userid==useridR) {
+                    lines.remove(i);
+                    FFLog.newEdit("reservelist", "player '"+username+"' removed");
+                    break;
+                }
             }
-    		
-    		return FileHandler.writeFile("whitelist", lines);
-    	}
+            
+            return FileHandler.writeFile("whitelist", lines);
+        }
     }
-
+    
+    @Override
+    public boolean isWhiteListed(int userid, String username) {
+        boolean rt = false;
+        
+        List<String> lines = FileHandler.getLines("whitelist");
+        
+        LineReader r;
+        int useridR;
+        for (int i=0; i<lines.size(); i++) {
+            r = new LineReader(lines.get(i));
+            
+            useridR = r.nextInt();
+            
+            if (userid==useridR) {
+                rt = true;
+                break;
+            }
+        }
+        
+        return rt;
+    }
 }

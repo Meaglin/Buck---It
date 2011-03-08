@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.buckit.Config;
 
@@ -22,9 +21,10 @@ public class FileHandler {
     private static Map<String, String> filenames = new HashMap<String, String>();
     private static boolean loaded = false;
     
-    public final static String sep1 = ":";
+    public final static String sep1 = "<-->";
     public final static String sep2 = ";";
     public final static String sep3 = ",";
+    public final static String sep1Good = ":";
     
     public static List<String> getLines(String file) {
         if (!loaded)
@@ -37,6 +37,10 @@ public class FileHandler {
         if (!loaded)
             load();
         
+        //SECURITY!!
+        line = line.replace(sep1Good, "_");
+        line = line.replace(sep1, sep1Good);
+        
         File f = new File(filenames.get(file.toLowerCase()));
         List<String> lines = defaultText(file);
         lines.addAll(readFile(f));
@@ -47,6 +51,10 @@ public class FileHandler {
     public static boolean writeFile(String file, List<String> lines) {
         if (!loaded)
             load();
+        
+        for(int i=0; i<lines.size(); i++) {
+            lines.set(i, lines.get(i).replace(sep1Good, "_").replace(sep1, sep1Good));
+        }
         
         List<String> newLines = defaultText(file);
         newLines.addAll(lines);
@@ -74,8 +82,9 @@ public class FileHandler {
             
             String strLine;
             while ((strLine = br.readLine()) != null)   {
-                if (!strLine.startsWith("#") && !strLine.equals(""))
-                    lines.add(strLine);
+                if (!strLine.startsWith("#") && !strLine.equals("")) {
+                    lines.add(strLine.replace(sep1Good, sep1));
+                }
             }
             
             in.close();
@@ -88,7 +97,7 @@ public class FileHandler {
     
     //write function
     //@return error = false;
-    public static boolean writeFile(File file, List<String> lines) {        
+    public static boolean writeFile(File file, List<String> lines) {    
         boolean worked;
         
         try {
@@ -132,7 +141,8 @@ public class FileHandler {
             File file = new File(filenames.get(k));
             new File(file.getParent()).mkdirs();
             file.createNewFile();
-            Logger.getLogger("Minecraft").info("Created new file: "+file.getPath());
+            
+            FFLog.newFile(file.getPath());
             
             List<String> lines = defaultText(k);
             lines.addAll(defaultSetting(k));
@@ -181,17 +191,19 @@ public class FileHandler {
         List<String> l = new ArrayList<String>();
         
         if (k.equals("groups")) {
+            l.add("0:none_group:/spawn");
             l.add("1:default_group:/help,/sethome,/home,/spawn,/me,/msg,/kit,/playerlist,/warp,/motd,/compass");
             l.add("2:vip_group:/tp,/tpchere");
             l.add("3:mod_group:/ban,/kick,/item,/tp,/tphere,/s,/i,/give");
             l.add("4:admin_group:*");
         }
         else if (k.equals("accesslevels")) {
-            l.add("1:beunhaas:^8{$username}:default_group:false:false");
-            l.add("2:default:^a{$username}:default_group:false:true");
-            l.add("3:vip:^6{$username}:default_group,vip_group:false:true");
-            l.add("4:mod:^9{$username}:default_group,vip_group,mod_group:true:true");
-            l.add("5:admin:^4{$username}:admin_group:true:true");
+            l.add("0:nieuw:^f{$username}:none_group:false:false");
+            l.add("1:beunhaas:^8{$username}^f:default_group:false:false");
+            l.add("2:default:^a{$username}^f:default_group:false:true");
+            l.add("3:vip:^6{$username}^f:default_group,vip_group:false:true");
+            l.add("4:mod:^9{$username}^f:default_group,vip_group,mod_group:true:true");
+            l.add("5:admin:^4{$username}^f:admin_group:true:true");
         }
         
         return l;       

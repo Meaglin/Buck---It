@@ -1,9 +1,18 @@
 package org.buckit.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import org.buckit.Config;
 import org.bukkit.ChatColor;
@@ -34,16 +43,20 @@ public class HelpCommand extends Command {
         
         int page = 0;
         String commandIn = "";
-        Map<String, Command> commandMapTemp = server.getCommands();
-        String[] keysTemp = commandMapTemp.keySet().toArray(new String[]{});
+        Map<String, Command> commandMap = server.getCommands();
         
-        for (String k : keysTemp) {
-            if (commandMapTemp.get(k).getAccessName()==null || !((Player) sender).canUseCommand(commandMapTemp.get(k).getAccessName()))
-                commandMapTemp.remove(k);
+        String str="";
+        for (String s : commandMap.keySet()) {
+            str+=s+",";
         }
+        Logger.getLogger("Minecraft").info(str);
         
-        Map<String, Command> commandMap = commandMapTemp;
-        String[] keys = commandMapTemp.keySet().toArray(new String[]{});
+        String name;
+        for (Entry<String, Command> e : commandMap.entrySet()) {
+            name = e.getValue().getAccessName();
+            if (name==null || !((Player) sender).canUseCommand(name))
+                commandMap.remove(e.getValue());
+        }
         
         if (args.length == 0)
             page = 1;
@@ -69,15 +82,18 @@ public class HelpCommand extends Command {
                         break;
                     }
                 }
-                
-                if (commandOut == null) {
-                    sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Unknown command: " + ChatColor.WHITE + "'" + commandIn + "'");
-                    return true;
-                }
+            }
+            
+            if (commandOut == null) {
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Unknown command: " + ChatColor.WHITE + "'" + commandIn + "'");
+                return true;
             }
             
             String aliasesString = "";
-            List<String> aliases = commandOut.getAliases();
+            List<String> aliases = new ArrayList<String>();
+            aliases.add(commandIn);
+            aliases.addAll(commandOut.getAliases());
+            
             if (aliases.size() != 0) {
                 for (String a : aliases) {
                     aliasesString += ", " + a;
@@ -87,7 +103,7 @@ public class HelpCommand extends Command {
                 aliasesString = "none";
             }
             
-            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Info about command /" + commandOut.getName());
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Info about command /" + commandIn);
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Aliases: " + aliasesString);
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Description: " + commandOut.getDescription());
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Usage:   " + commandOut.getUsage());
@@ -95,15 +111,25 @@ public class HelpCommand extends Command {
             
         } else {
             int commandTotal = commandMap.size();
-            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Page " + page + " of " + ((int)Math.ceil(commandTotal/7)) + ":");
+            int pages = ((int)Math.ceil(commandTotal/7));
+            
+            if (page > pages) {
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Page does not exists. Last page is page "+pages);
+                return true;
+            }
+            
+            ArrayList<Command> cmds = new ArrayList<Command>();
+            cmds.addAll(commandMap.values());
+            
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Page " + page + " of " + pages + ":");
             int begin   = 7*(page-1);
             int end     = (commandTotal < 7*page) ? commandTotal : 7*page;
             for (int i=begin; i<end; i++) {
-                Command commandOutTemp = commandMap.get(keys[i]);
+                Command commandOutTemp = cmds.get(i);
                 sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- /" + commandOutTemp.getName() + ": " + commandOutTemp.getDescription());
             }
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "For more info about commands, type /help <command>");
             return true;
         }
-    }
+    }  
 }

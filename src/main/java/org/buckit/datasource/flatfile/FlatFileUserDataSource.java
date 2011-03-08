@@ -9,11 +9,10 @@ import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-//ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVELID
 public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
     private DataSourceManager datasource;
-    private int newId=1;
+    private int lastId=0;
     
     public FlatFileUserDataSource(DataSourceManager dataSource) {
         datasource = dataSource;
@@ -23,42 +22,69 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
     }
 
     @Override
+    public boolean load() {
+        List<String> lines = FileHandler.getLines("user");
+        
+        LineReader r;
+        int id;
+        for (int i=0; i<lines.size(); i++) {
+            r = new LineReader(lines.get(i));
+            
+            id = r.nextInt();
+            
+            if (id > lastId)
+                lastId = id;
+        }
+        
+        FFLog.newFound("Userdata", lines.size());
+        
+        return true;
+    }
+    
+    @Override
     public UserDataHolder getUserData(String username) {
+        username = username.toLowerCase();
+        boolean exists = false;
+        
         UserDataHolder user = null;
         
         List<String> lines = FileHandler.getLines("user");
         
-        boolean exists = false;
+        LineReader r;
+        int id, firstlogin, uptime, bantime, mutetime, aLevel;
+        String name, format, commands;
+        Boolean canbuild,isadmin;
+        AccessLevel level;
         for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
+            r = new LineReader(lines.get(i));
             
-            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return user; }
-            String  usernamename    = entry[1];
-            String  usernameformat  = entry[2];
-            int     firstlogin;     try { firstlogin = Integer.parseInt(entry[3]); } catch (Exception e) { return user; }
-            int     uptime;         try { uptime = Integer.parseInt(entry[5]); } catch (Exception e) { return user; }
-            int     bantime;        try { bantime = Integer.parseInt(entry[6]); } catch (Exception e) { return user; }
-            int     mutetime;       try { mutetime = Integer.parseInt(entry[7]); } catch (Exception e) { return user; }
-            String  commands        = entry[8];
-            Boolean canbuild;       try { canbuild = Boolean.parseBoolean(entry[9]); } catch (Exception e) { return user; }
-            Boolean isadmin;        try { isadmin = Boolean.parseBoolean(entry[10]); } catch (Exception e) { return user; }
+            id          = r.nextInt();
+            name        = r.nextStr();
+            format      = r.nextStr();
+            firstlogin  = r.nextInt();
+                        r.skip();
+            uptime      = r.nextInt();
+            bantime     = r.nextInt();
+            mutetime    = r.nextInt();
+            commands    = r.nextStr();
+            canbuild    = r.nextBool();
+            isadmin     = r.nextBool();
+            aLevel      = r.nextInt();
+            level       = getDataSource().getAccessDataSource().getAccessLevel(aLevel);
             
-
-            int     aLevel;       try { aLevel = Integer.parseInt(entry[11]); } catch (Exception e) { return user; }
-            AccessLevel level       = getDataSource().getAccessDataSource().getAccessLevel(aLevel);
-            
-            if (username.equals(usernamename)) {
-                user = new UserDataHolder(id, username, usernameformat, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, bantime, mutetime, level);
+            if (username.equals(name)) {
+                user = new UserDataHolder(id, username, format, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, bantime, mutetime, level);
                 exists = true;
+                break;
             }
         }
         
         if (!exists) {
-            user = new UserDataHolder(newId, username, Config.DEFAULT_USER_FORMAT, false, false, "", currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
-        	newId++;
+            user = new UserDataHolder((lastId+1), username.toLowerCase(), Config.DEFAULT_USER_FORMAT, false, false, "", currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
+        	lastId++;
         	
         	lines.add(user.getId()+FileHandler.sep1+
-                    user.getUsername()+FileHandler.sep1+
+                    user.getUsername().toLowerCase()+FileHandler.sep1+
                     user.getUsernameformat()+FileHandler.sep1+
                     user.getFirstlogin()+FileHandler.sep1+
                     user.getLastlogin()+FileHandler.sep1+
@@ -70,42 +96,29 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                     user.isAdmin()+FileHandler.sep1+
                     Config.DEFAULT_ACCESS_LEVEL);
         	
+        	FFLog.newEdit("Userdata", "new user '"+username+"' with id "+user.getId());
+        	
         	FileHandler.writeFile("user", lines);
         }
         
         return user;
     }
 
-    @Override
-    public boolean load() {
-        List<String> lines = FileHandler.getLines("user");
-        
-        int nextId = 0;
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            nextId = (id > nextId) ? id : nextId;
-        }
-        
-        this.newId = nextId+1;
-        return true;
-    }
 
     @Override
     public boolean updateUser(UserDataHolder holder) {
         List<String> lines = FileHandler.getLines("user");
         
+        LineReader r;
+        int id;
         for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
+            r = new LineReader(lines.get(i));
             
-            int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-
-          //ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVELID
+            id = r.nextInt();
             
             if (holder.getId() == id) {
                 lines.set(i, holder.getId()+FileHandler.sep1+
-                            holder.getUsername()+FileHandler.sep1+
+                            holder.getUsername().toLowerCase()+FileHandler.sep1+
                             holder.getUsernameformat()+FileHandler.sep1+
                             holder.getFirstlogin()+FileHandler.sep1+
                             holder.getLastlogin()+FileHandler.sep1+
@@ -116,8 +129,11 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                             holder.canbuild()+FileHandler.sep1+
                             holder.isAdmin()+FileHandler.sep1+
                             holder.getAccessLevel().getId());
+                break;
             }
         }
+
+        FFLog.newEdit("Userdata", "update user '"+holder.getUsername()+"'");
         
         return FileHandler.writeFile("user", lines);
     }
@@ -141,6 +157,4 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
     private static int currentTime() {
         return (int) (System.currentTimeMillis() / 1000);
     }
-
-
 }

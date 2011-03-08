@@ -6,27 +6,9 @@ import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
-//USERID:USERNAME
 public class FlatFileReserveListDataSource implements ReserveListDataSource, DataSource {
 
     public FlatFileReserveListDataSource(DataSourceManager dataSource) {
-    }
-
-    @Override
-    public boolean isReserveListed(int userid, String username) {
-        boolean ret = false;
-        
-        List<String> lines = FileHandler.getLines("reservelist");
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            
-            if (userid==useridR)
-                ret = true;
-        }
-        
-        return ret;
     }
 
     @Override
@@ -36,23 +18,51 @@ public class FlatFileReserveListDataSource implements ReserveListDataSource, Dat
 
     @Override
     public boolean setReserveListed(int userid, String username, boolean reservelisted) {
-    	
-    	if (reservelisted == true) {
-    		return FileHandler.addLine("reservelist", userid + FileHandler.sep1 + username);
-    	} else {
-    		List<String> lines = FileHandler.getLines("reservelist");
-    		
-    		for (int i=0; i<lines.size(); i++) {
-                String[] entry = lines.get(i).split(FileHandler.sep1);
+        
+        if (reservelisted == true) {
+            FFLog.newEdit("reservelist", "new player '"+username+"' added");
+            return FileHandler.addLine("reservelist",   userid + FileHandler.sep1 + 
+                                                        username);
+        } else {
+            List<String> lines = FileHandler.getLines("reservelist");
+            
+            LineReader r;
+            int useridR;
+            for (int i=0; i<lines.size(); i++) {
+                r = new LineReader(lines.get(i));
                 
-                int useridR;  try { useridR = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
+                useridR = r.nextInt();
                 
-                if (userid==useridR)
-                	lines.remove(i);
+                if (userid==useridR) {
+                    lines.remove(i);
+                    FFLog.newEdit("reservelist", "player '"+username+"' removed");
+                    break;
+                }
             }
-    		
-    		return FileHandler.writeFile("reservelist", lines);
-    	}
+            
+            return FileHandler.writeFile("reservelist", lines);
+        }
     }
-
+    
+    @Override
+    public boolean isReserveListed(int userid, String username) {
+        boolean rt = false;
+        
+        List<String> lines = FileHandler.getLines("reservelist");
+        
+        LineReader r;
+        int useridR;
+        for (int i=0; i<lines.size(); i++) {
+            r = new LineReader(lines.get(i));
+            
+            useridR = r.nextInt();
+            
+            if (userid==useridR) {
+                rt = true;
+                break;
+            }
+        }
+        
+        return rt;
+    }
 }

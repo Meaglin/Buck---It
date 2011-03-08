@@ -48,7 +48,7 @@ public class KitsCommand extends Command {
         }else
             str = str.substring(0,str.length()-2);
         
-        sender.sendMessage(Config.DEFAULT_INFO_COLOR + "List of availeble kits:");
+        sender.sendMessage(Config.DEFAULT_INFO_COLOR + "List of available kits:");
         sender.sendMessage(str);
         
         return true;

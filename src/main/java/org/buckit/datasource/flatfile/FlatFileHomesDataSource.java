@@ -2,9 +2,10 @@ package org.buckit.datasource.flatfile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
@@ -14,148 +15,82 @@ import org.buckit.model.Home;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-// ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
 public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
 
     private DataSourceManager datasource;
-    private Server      server;
+    private Server server;
     
-    private int newId=1;    
+    private int lastId=0;    
     
     public FlatFileHomesDataSource(DataSourceManager dataSource) {
-        datasource = dataSource;
-        server = datasource.getServer();
+        datasource  = dataSource;
+        server      = datasource.getServer();
     }
+    
     public DataSourceManager getDataSource(){
         return datasource;
     }
     
     @Override
-    public boolean deleteHome(int userId, String name) {
-        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
-        
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int homeUserid;
-            try {
-                homeUserid = Integer.parseInt(entry[2]);
-            } catch (Exception e) {
-                return false;
-            }
-            
-            String homeName = entry[1];
-            
-            if (userId==homeUserid && name.equals(homeName)) {
-                lines.remove(i);
-            }
-        }
-        
-        return FileHandler.writeFile("homes", lines);
-    }
-
-    @Override
-    public Home getHome(int userId, String name) {
-        Home home = null;
-        
-        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return home; }
-            String  homeName = entry[1];
-            String  world    = entry[4];
-            double  x;       try { x = Double.parseDouble(entry[5]); } catch (Exception e) { return home; }
-            double  y;       try { y = Double.parseDouble(entry[6]); } catch (Exception e) { return home; }
-            double  z;       try { z = Double.parseDouble(entry[7]); } catch (Exception e) { return home; }
-            float   rotY;    try { rotY = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }     
-            float   rotX;    try { rotX = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }       
-         // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
-            
-            if (name.equals(homeName)) {
-                home = new Home(homeId, name, new Location(server.getWorld(world), x, y, z, rotX, rotY));
-            }
-        }
-        
-        return home;
-    }
-
-    @Override
-    public List<Home> getHomes(int userId) {
-        List<Home> home = new ArrayList<Home>();
-
-        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
-        for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
-            
-            int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return home; }
-            String  homeName = entry[1];
-            String  world    = entry[4];
-            double  x;       try { x = Double.parseDouble(entry[5]); } catch (Exception e) { return home; }
-            double  y;       try { y = Double.parseDouble(entry[6]); } catch (Exception e) { return home; }
-            double  z;       try { z = Double.parseDouble(entry[7]); } catch (Exception e) { return home; }
-            float   rotY;    try { rotY = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }   
-            float   rotX;    try { rotX = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }         
-         // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
-            
-            home.add(new Home(homeId, homeName, new Location(server.getWorld(world), x, y, z, rotX, rotY)));
-        }
-        
-        return home;       
-    }
-
-    @Override
     public boolean load() {
         File dir = new File(Config.FLATFILE_HOMES_DIRECTORY);
         String[] files = dir.list();
         
+        int linestotal=0;
         if (files != null) {
-	        List<String> lines;
-	        for (String f : files) {
-	        	lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+f));
-	        	
-	        	String[] entry;
-	            for (int i=0; i<lines.size(); i++) {
-	                entry = lines.get(i).split(FileHandler.sep1);
-	                
-	                int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-	                
-	                if (homeId > newId) newId = homeId;
-	            }
-	        }
-	        
-	        newId++;
+            List<String> lines;
+            for (String f : files) {
+                File file = new File(Config.FLATFILE_HOMES_DIRECTORY+f);
+                lines = FileHandler.readFile(file);
+                
+                LineReader r;
+                int homeId;
+                
+                for (int i=0; i<lines.size(); i++) {
+                    r = new LineReader(lines.get(i));
+                    
+                    homeId      = r.nextInt();
+                    
+                    if (homeId > lastId) 
+                        lastId = homeId;
+                    
+                    linestotal++;
+                }
+            }
         }
+        
+        FFLog.newFound("Homes", linestotal);
         
         return true;
     }
 
     @Override
     public boolean setHome(int userId, String username, String name, Location home) {
-    	Logger.getLogger("Minecraft").info("New home of '"+username+"': '"+name+"'");
-    	boolean exists = false;
-    	
-    	File file = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
-    	if (!file.exists()) {
-            new File(file.getParent()).mkdirs();
+        boolean exists = false;
+        
+        File f = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
+        
+        if (!f.exists()) {
+            new File(f.getParent()).mkdirs();
             try {
-                file.createNewFile();
+                f.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Logger.getLogger("Minecraft").info("Created new file: "+file.getPath());
-    	}
-    	
-        List<String> lines = FileHandler.readFile(file);
+            FFLog.newFile(f.getPath());
+        }
+        
+        LineReader r;
+        List<String> lines = FileHandler.readFile(f);
+        int homeId;
+        String homeName;
         for (int i=0; i<lines.size(); i++) {
-            String[] entry = lines.get(i).split(FileHandler.sep1);
+            r = new LineReader(lines.get(i));
             
-            int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
-            String  homeName = entry[1];
-         // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
+            homeId      = r.nextInt();
+            homeName    = r.nextStr();
             
             if (name.equals(homeName)) {
-            	exists = true;
                 lines.set(i, homeId+FileHandler.sep1+
                             homeName+FileHandler.sep1+
                             userId+FileHandler.sep1+
@@ -166,11 +101,14 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
                             home.getZ()+FileHandler.sep1+
                             home.getPitch()+FileHandler.sep1+
                             home.getYaw());
+                exists = true;
+                FFLog.newEdit("Homes ("+username+")", "edit home '"+name+"'");
+                break;
             }
         }
         
         if (!exists) {
-        	lines.add(newId+FileHandler.sep1+
+            lines.add((lastId+1)+FileHandler.sep1+
                 name+FileHandler.sep1+
                 userId+FileHandler.sep1+
                 username+FileHandler.sep1+
@@ -180,10 +118,101 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
                 home.getZ()+FileHandler.sep1+
                 home.getPitch()+FileHandler.sep1+
                 home.getYaw());
-        	newId++;
+            lastId++;
+            
+            FFLog.newEdit("Homes ("+username+")", "new home '"+name+"'");
         }
 
-        return FileHandler.writeFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"), lines);
+        return FileHandler.writeFile(f, lines);
     }
 
+    @Override
+    public Home getHome(int userId, String name) {
+        File f = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
+        List<String> lines = FileHandler.readFile(f);
+        
+        LineReader r;
+        Home home = null;
+        int homeId;
+        String homeName, world;
+        double x,y,z;
+        float rotY, rotX;
+        
+        for (int i=0; i<lines.size(); i++) {
+            
+            r = new LineReader(lines.get(i));
+            
+            homeId      = r.nextInt();
+            homeName    = r.nextStr();
+            r.skip();
+            r.skip();
+            world       = r.nextStr();
+            x           = r.nextDouble();
+            y           = r.nextDouble();
+            z           = r.nextDouble();
+            rotY        = r.nextFloat();
+            rotX        = r.nextFloat();    
+            
+            if (name.equals(homeName)) {
+                home = new Home(homeId, name, new Location(server.getWorld(world), x, y, z, rotX, rotY));
+                break;
+            }
+        }
+        
+        return home;
+    }
+
+    @Override
+    public Collection<Home> getHomes(int userId) {
+        File f = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
+        List<String> lines = FileHandler.readFile(f);
+
+        LineReader r;
+        Map<String, Home> homes = new LinkedHashMap<String, Home>();
+        int homeId;
+        String homeName, world;
+        double x,y,z;
+        float rotY, rotX;
+        
+        for (int i=0; i<lines.size(); i++) {
+            r = new LineReader(lines.get(i));
+            
+            homeId      = r.nextInt();
+            homeName    = r.nextStr();
+            r.skip();
+            r.skip();
+            world       = r.nextStr();
+            x           = r.nextDouble();
+            y           = r.nextDouble();
+            z           = r.nextDouble();
+            rotY        = r.nextFloat();
+            rotX        = r.nextFloat();    
+            
+            homes.put(homeName, new Home(homeId, homeName, new Location(server.getWorld(world), x, y, z, rotX, rotY)));
+        }
+        
+        return homes.values();
+    }
+    
+    @Override
+    public boolean deleteHome(int userId, String name) {
+        File f = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
+        List<String> lines = FileHandler.readFile(f);
+        
+        LineReader r;
+        String homeName;
+        
+        for (int i=0; i<lines.size(); i++) {
+            r = new LineReader(lines.get(i));
+            homeName = r.getStr(1);
+            
+            if (name.equals(homeName)) {
+                lines.remove(i);
+                FFLog.newEdit("Homes ("+userId+")", "delete home '"+name+"'");
+                break;
+            }
+        }
+        
+        return FileHandler.writeFile("homes", lines);
+    }
 }
