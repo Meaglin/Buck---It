@@ -47,7 +47,7 @@ public class TpHereCommand extends Command {
 			Player receiver = receivers.get(0);
 			Location target = this.getLandingLocation(((Player) sender).getLocation());
 			
-			if (((Player) sender).equals(receiver.getPlayerId())) {
+			if (((Player) sender).equals(receiver)) {
 				sender.sendMessage(Config.DEFAULT_INFO_COLOR + "You're already here!");
 			}
 			else {

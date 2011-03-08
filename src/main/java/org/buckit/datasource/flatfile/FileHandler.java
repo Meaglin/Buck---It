@@ -38,7 +38,8 @@ public class FileHandler {
             load();
         
         File f = new File(filenames.get(file.toLowerCase()));
-        List<String> lines = readFile(f);
+        List<String> lines = defaultText(file);
+        lines.addAll(readFile(f));
         lines.add(line);
         return writeFile(f, lines);
     }
@@ -105,7 +106,6 @@ public class FileHandler {
     }
 
     private static void load() {
-        //TODO insert filenames
         filenames.put("groups", Config.FLATFILE_ACCESSGROUPS_FILE);
         filenames.put("accesslevels", Config.FLATFILE_ACCESS_FILE);
         filenames.put("kits", Config.FLATFILE_KITS_FILE);
@@ -115,37 +115,85 @@ public class FileHandler {
         filenames.put("warps", Config.FLATFILE_WARPS_FILE);
         filenames.put("whitelist", Config.FLATFILE_WHITELIST_FILE);
         
-        Collection<String> files = filenames.values();
+        Collection<String> keys = filenames.keySet();
 
-        for (String f : files) {
-            File temp = new File(f);
+        for (String k : keys) {
+            File temp = new File(filenames.get(k));
             if (!temp.exists()) {
-                createFile(temp);
+                createFile(k);
             }
         }
         
         loaded = true;
     }
     
-    private static void createFile(File file) {
+    private static void createFile(String k) {
         try {
+            File file = new File(filenames.get(k));
             new File(file.getParent()).mkdirs();
             file.createNewFile();
             Logger.getLogger("Minecraft").info("Created new file: "+file.getPath());
-            writeFile(file, defaultText(file.getName()));
+            
+            List<String> lines = defaultText(k);
+            lines.addAll(defaultSetting(k));
+            
+            writeFile(file, lines);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    private static List<String> defaultText(String name) {
+    private static List<String> defaultText(String k) {
         List<String> l = new ArrayList<String>();
         
-        //TODO make default filetext
-        l.add("#File: " + name);
+        l.add("#File: " + (new File(filenames.get(k)).getName()));
         l.add("");
         
+        if (k.equals("groups")) {
+            l.add("#USAGE: ID:NAME:COMMANDS");
+        }
+        else if (k.equals("accesslevels")) {
+            l.add("#USAGE: ID:NAME:USERNAMEFORMAT:ACCESSGROUPS:ADMINGROUP:CANBUILD");
+        }
+        else if (k.equals("kits")) {
+            l.add("#USAGE: NAME:IDs:DELAY:ACCESSLEVEL");
+        }
+        else if (k.equals("kitslast")) {
+            l.add("#USAGE: USERID:KITNAME:TIME");
+        }
+        else if (k.equals("reservelist")) {
+            l.add("#USAGE: USERID:USERNAME");
+        }
+        else if (k.equals("user")) {
+            l.add("#USAGE: ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVELID");
+        }
+        else if (k.equals("warps")) {
+            l.add("#USAGE: ID:NAME:GROUPNAME:WORLD:X:Y:Z:ROTX:ROTY:MINACCESSLEVEL");
+        }
+        else if (k.equals("whitelist")) {
+            l.add("#USAGE: USERID:USERNAME");
+        }
+        
         return l;
+    }
+    
+    private static List<String> defaultSetting(String k) {
+        List<String> l = new ArrayList<String>();
+        
+        if (k.equals("groups")) {
+            l.add("1:default_group:/help,/sethome,/home,/spawn,/me,/msg,/kit,/playerlist,/warp,/motd,/compass");
+            l.add("2:vip_group:/tp,/tpchere");
+            l.add("3:mod_group:/ban,/kick,/item,/tp,/tphere,/s,/i,/give");
+            l.add("4:admin_group:*");
+        }
+        else if (k.equals("accesslevels")) {
+            l.add("1:beunhaas:^8{$username}:default_group:false:false");
+            l.add("2:default:^a{$username}:default_group:false:true");
+            l.add("3:vip:^6{$username}:default_group,vip_group:false:true");
+            l.add("4:mod:^9{$username}:default_group,vip_group,mod_group:true:true");
+            l.add("5:admin:^4{$username}:admin_group:true:true");
+        }
+        
+        return l;       
     }
 }

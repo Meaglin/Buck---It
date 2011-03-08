@@ -9,7 +9,7 @@ import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-//ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVEL
+//ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVELID
 public class FlatFileUserDataSource implements UserDataSource, DataSource {
 
     private DataSourceManager datasource;
@@ -42,7 +42,10 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
             String  commands        = entry[8];
             Boolean canbuild;       try { canbuild = Boolean.parseBoolean(entry[9]); } catch (Exception e) { return user; }
             Boolean isadmin;        try { isadmin = Boolean.parseBoolean(entry[10]); } catch (Exception e) { return user; }
-            AccessLevel level       = getDataSource().getAccessDataSource().getAccessLevel(entry[11]);
+            
+
+            int     aLevel;       try { aLevel = Integer.parseInt(entry[11]); } catch (Exception e) { return user; }
+            AccessLevel level       = getDataSource().getAccessDataSource().getAccessLevel(aLevel);
             
             if (username.equals(usernamename)) {
                 user = new UserDataHolder(id, username, usernameformat, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, bantime, mutetime, level);
@@ -65,7 +68,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                     user.getCommands()+FileHandler.sep1+
                     user.canbuild()+FileHandler.sep1+
                     user.isAdmin()+FileHandler.sep1+
-                    user.getAccessLevel());
+                    Config.DEFAULT_ACCESS_LEVEL);
         	
         	FileHandler.writeFile("user", lines);
         }
@@ -98,7 +101,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
             
             int     id;             try { id = Integer.parseInt(entry[0]); } catch (Exception e) { return false; }
 
-          //ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVEL
+          //ID:USERNAME:USERNAMEFORMAT:FIRSTLOGIN:LASTLOGIN:ONLINETIME:BANTIME:MUTETIME:COMMANDS:CANBUILD:ISADMIN:ACCESSLEVELID
             
             if (holder.getId() == id) {
                 lines.set(i, holder.getId()+FileHandler.sep1+
@@ -112,7 +115,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                             holder.getCommands()+FileHandler.sep1+
                             holder.canbuild()+FileHandler.sep1+
                             holder.isAdmin()+FileHandler.sep1+
-                            holder.getAccessLevel());
+                            holder.getAccessLevel().getId());
             }
         }
         

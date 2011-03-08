@@ -18,7 +18,7 @@ public class KitsCommand extends Command {
     public KitsCommand(String name, Server server){
         super(name);
         this.datasource = server.getDataSourceManager().getKitsDataSource();
-        this.description = "A list of all availeble kits.";
+        this.description = "A list of all available kits.";
 
         this.usageMessage = "Usage: /kits";
         
@@ -43,7 +43,7 @@ public class KitsCommand extends Command {
         for(String name : names)
             str += name + ", ";
         if(str.length() == 0){
-            sender.sendMessage("No kits availeble.");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No kits available.");
             return true;
         }else
             str = str.substring(0,str.length()-2);

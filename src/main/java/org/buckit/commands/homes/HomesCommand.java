@@ -49,7 +49,7 @@ public class HomesCommand extends Command {
         } else
             str = str.substring(0,str.length()-2);
         
-        sender.sendMessage(ChatColor.GREEN + "List of availeble homes:");
+        sender.sendMessage(ChatColor.GREEN + "List of available homes:");
         sender.sendMessage(str);
         
         return true;

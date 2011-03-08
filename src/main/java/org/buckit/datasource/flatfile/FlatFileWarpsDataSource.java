@@ -30,25 +30,30 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
     }
 
     @Override
-    public boolean addWarp(String groupname, String name, Location l, int minaccesslevel) {
+    public boolean addWarp(String groupname, String name, Location l, int minaccesslevel) {       
         nextId++;
         
-        Warp warp = new Warp(nextId, name, groupname, new Location(l.getWorld(), l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw()), minaccesslevel);
-        if (Config.WARPS_GROUPS_ENABLED)
-            warps.put(groupname+"/"+name, warp);
-        else
-            warps.put(name, warp);
+        Warp warp = new Warp(nextId, name, groupname, new Location(l.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()), minaccesslevel);
         
-        return FileHandler.addLine("warps", nextId+FileHandler.sep1+
-                                    name+FileHandler.sep1+
-                                    groupname+FileHandler.sep1+
-                                    l.getWorld()+FileHandler.sep1+
-                                    l.getX()+FileHandler.sep1+
-                                    l.getY()+FileHandler.sep1+
-                                    l.getZ()+FileHandler.sep1+
-                                    l.getPitch()+FileHandler.sep1+
-                                    l.getYaw()+FileHandler.sep1+
-                                    minaccesslevel);
+        String checkName = (Config.WARPS_GROUPS_ENABLED) ? groupname+"/"+name : name;
+        
+        if (!warps.containsKey(checkName)) {
+            warps.put(checkName, warp);
+            
+            return FileHandler.addLine("warps", nextId+FileHandler.sep1+
+                                        name+FileHandler.sep1+
+                                        groupname+FileHandler.sep1+
+                                        l.getWorld().getName()+FileHandler.sep1+
+                                        l.getX()+FileHandler.sep1+
+                                        l.getY()+FileHandler.sep1+
+                                        l.getZ()+FileHandler.sep1+
+                                        l.getYaw()+FileHandler.sep1+
+                                        l.getPitch()+FileHandler.sep1+
+                                        minaccesslevel);
+            
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -107,8 +112,7 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
             
             if (id>nextId)
                 nextId=id;
-        }
-        
+        }        
         return true;
     }
 

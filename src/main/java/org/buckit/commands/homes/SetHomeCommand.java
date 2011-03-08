@@ -35,6 +35,12 @@ public class SetHomeCommand extends Command {
         
         if(Config.HOMES_MULTI_ENABLED && args.length > 0)
             name = args[0].toLowerCase();
+        else if (Config.HOMES_MULTI_ENABLED && args.length==0) {
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified");
+            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + this.getUsage());
+            return true;
+        }
+            
         
         Player player = (Player)sender;
         

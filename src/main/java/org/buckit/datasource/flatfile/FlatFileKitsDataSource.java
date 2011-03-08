@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSource;
@@ -40,8 +41,10 @@ public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
     }
     
     public boolean setKit(Kit kit) {
-
-        kits.put(kit.getName(), kit);
+        Logger.getLogger("Minecraft").info("new kit: "+kit.getName() + FileHandler.sep1 + 
+                                                kit.itemsToString() + FileHandler.sep1 + 
+                                                kit.getDelay() + FileHandler.sep1 + 
+                                                kit.getMinaccesslevel());
     	
     	if (kits.containsKey(kit.getName())) {
         	List<String> lines = FileHandler.getLines("kits");
@@ -58,10 +61,11 @@ public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
                 	lines.set(i, str);
                 }
         	}
-        	
+        	kits.put(kit.getName(), kit);
             return FileHandler.writeFile("kits", lines);
     		
     	} else {
+    	    kits.put(kit.getName(), kit);
             return FileHandler.addLine("kits", kit.getName() + FileHandler.sep1 + 
                                                 kit.itemsToString() + FileHandler.sep1 + 
                                                 kit.getDelay() + FileHandler.sep1 + 

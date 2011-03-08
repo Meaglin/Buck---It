@@ -63,6 +63,11 @@ public class CreateKitCommand extends Command {
         for (int i = 0; i < items.length; i++) {
             parts = items[i].split(",");
             
+            if (parts.length<3){
+                //TODO als itemlist niet klopt, fixt dit de server error... denk ik -pjm
+                return null;
+            }
+            
             rt[i][0] = Integer.parseInt(parts[0]);
             rt[i][1] = Integer.parseInt(parts[1]);
             rt[i][2] = Integer.parseInt(parts[2]);

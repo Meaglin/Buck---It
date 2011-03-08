@@ -41,7 +41,6 @@ public class ModifyCommand extends Command {
 		}
 		
 		List<Player> players = server.matchPlayer(args[0].toLowerCase());
-		userData.getUserData(args[0].toLowerCase());
 		
 		if (players.size() == 0) {
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found to modify");

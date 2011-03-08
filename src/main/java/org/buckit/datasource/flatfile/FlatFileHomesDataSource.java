@@ -1,6 +1,7 @@
 package org.buckit.datasource.flatfile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -56,23 +57,22 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
     @Override
     public Home getHome(int userId, String name) {
         Home home = null;
-
+        
         List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
             int     homeId;  try { homeId = Integer.parseInt(entry[0]); } catch (Exception e) { return home; }
             String  homeName = entry[1];
-            int     homeUserId;  try { homeUserId = Integer.parseInt(entry[2]); } catch (Exception e) { return home; }
             String  world    = entry[4];
             double  x;       try { x = Double.parseDouble(entry[5]); } catch (Exception e) { return home; }
             double  y;       try { y = Double.parseDouble(entry[6]); } catch (Exception e) { return home; }
             double  z;       try { z = Double.parseDouble(entry[7]); } catch (Exception e) { return home; }
-            float   rotX;    try { rotX = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }
-            float   rotY;    try { rotY = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }            
+            float   rotY;    try { rotY = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }     
+            float   rotX;    try { rotX = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }       
          // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
             
-            if (userId==homeUserId && name.equals(homeName)) {
+            if (name.equals(homeName)) {
                 home = new Home(homeId, name, new Location(server.getWorld(world), x, y, z, rotX, rotY));
             }
         }
@@ -94,8 +94,8 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
             double  x;       try { x = Double.parseDouble(entry[5]); } catch (Exception e) { return home; }
             double  y;       try { y = Double.parseDouble(entry[6]); } catch (Exception e) { return home; }
             double  z;       try { z = Double.parseDouble(entry[7]); } catch (Exception e) { return home; }
-            float   rotX;    try { rotX = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }
-            float   rotY;    try { rotY = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }            
+            float   rotY;    try { rotY = Float.parseFloat(entry[8]); } catch (Exception e) { return home; }   
+            float   rotX;    try { rotX = Float.parseFloat(entry[9]); } catch (Exception e) { return home; }         
          // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
             
             home.add(new Home(homeId, homeName, new Location(server.getWorld(world), x, y, z, rotX, rotY)));
@@ -112,7 +112,7 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
         if (files != null) {
 	        List<String> lines;
 	        for (String f : files) {
-	        	lines = FileHandler.getLines(Config.FLATFILE_HOMES_DIRECTORY+f);
+	        	lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+f));
 	        	
 	        	String[] entry;
 	            for (int i=0; i<lines.size(); i++) {
@@ -123,6 +123,8 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
 	                if (homeId > newId) newId = homeId;
 	            }
 	        }
+	        
+	        newId++;
         }
         
         return true;
@@ -130,9 +132,21 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
 
     @Override
     public boolean setHome(int userId, String username, String name, Location home) {
-    	Logger.getLogger("Minecraft").info("New home of '"+username+"': '"+name+"' ("+Config.FLATFILE_HOMES_DIRECTORY+userId+".txt)");
+    	Logger.getLogger("Minecraft").info("New home of '"+username+"': '"+name+"'");
     	boolean exists = false;
-        List<String> lines = FileHandler.readFile(new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt"));
+    	
+    	File file = new File(Config.FLATFILE_HOMES_DIRECTORY+userId+".txt");
+    	if (!file.exists()) {
+            new File(file.getParent()).mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Logger.getLogger("Minecraft").info("Created new file: "+file.getPath());
+    	}
+    	
+        List<String> lines = FileHandler.readFile(file);
         for (int i=0; i<lines.size(); i++) {
             String[] entry = lines.get(i).split(FileHandler.sep1);
             
@@ -140,13 +154,13 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
             String  homeName = entry[1];
          // ID:NAME:USERID:USERNAME:WORLD:X:Y:Z:rotX:rotY
             
-            if (name==homeName) {
+            if (name.equals(homeName)) {
             	exists = true;
                 lines.set(i, homeId+FileHandler.sep1+
                             homeName+FileHandler.sep1+
                             userId+FileHandler.sep1+
                             username+FileHandler.sep1+
-                            home.getWorld()+FileHandler.sep1+
+                            home.getWorld().getName()+FileHandler.sep1+
                             home.getX()+FileHandler.sep1+
                             home.getY()+FileHandler.sep1+
                             home.getZ()+FileHandler.sep1+
@@ -160,7 +174,7 @@ public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
                 name+FileHandler.sep1+
                 userId+FileHandler.sep1+
                 username+FileHandler.sep1+
-                home.getWorld()+FileHandler.sep1+
+                home.getWorld().getName()+FileHandler.sep1+
                 home.getX()+FileHandler.sep1+
                 home.getY()+FileHandler.sep1+
                 home.getZ()+FileHandler.sep1+
