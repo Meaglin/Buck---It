@@ -199,7 +199,7 @@ public class Config {
             
             TP_REQUEST_COMMANDS_ENABLED = gp.getBool("TpRequestEnabled", false);
             
-            DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","^0{$username}");
+            DEFAULT_USER_FORMAT = gp.getProperty("DefaultUserFormat","{$username}");
             DEFAULT_CHAT_FORMAT = gp.getProperty("DefaultChatFormat","<{$usernameformat}> {$message}");
             DEFAULT_ACCESS_LEVEL = gp.getInt("DefaultAccessLevel", 0);
             

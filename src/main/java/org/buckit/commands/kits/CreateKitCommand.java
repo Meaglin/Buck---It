@@ -66,7 +66,7 @@ public class CreateKitCommand extends Command {
         int[][] rt = new int[items.length][3];
         String[] parts;
         for (int i = 0; i < items.length; i++) {
-            parts = items[i].split(",");
+            parts = items[i].split(Config.DATABASE_DELIMITER);
             
             if (parts.length<3){
                 return null;

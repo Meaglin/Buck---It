@@ -200,13 +200,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private UserDataHolder dataholder;
 
     private void loadBuckItData(){
-        dataholder = server.getDataSourceManager().getUserDataSource().getUserData(getName());
+        dataholder = server.getDataSourceManager().getUserDataSource().getUserData(getName().toLowerCase());
         
         String format = Config.DEFAULT_USER_FORMAT;
         
-        if(dataholder.getUsernameformat() != null)
+        if(dataholder.getUsernameformat() != null && !dataholder.getUsernameformat().equals(""))
             format = dataholder.getUsernameformat();
-        else if(getAccessLevel().getUsernameformat() != null)
+        else if(getAccessLevel().getUsernameformat() != null && !getAccessLevel().getUsernameformat().equals(""))
             format = getAccessLevel().getUsernameformat();
         
         setDisplayName(format.replace("{$username}", getName()).replace("{$group}", getAccessLevel().getName()).replace("^", "\u00A7"));

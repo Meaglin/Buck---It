@@ -58,21 +58,22 @@ public class ServerConfigurationManager {
         // CraftBukkit end
 
         this.c = minecraftserver;
-        this.j = minecraftserver.a("banned-players.txt");
+        // this.j = minecraftserver.a("banned-players.txt"); // Buck - It removed!
         this.k = minecraftserver.a("banned-ips.txt");
         this.l = minecraftserver.a("ops.txt");
-        this.m = minecraftserver.a("white-list.txt");
+        // this.m = minecraftserver.a("white-list.txt"); // Buck - It removed!
         // this.d = new PlayerManager(minecraftserver); // CraftBukkit - removed!
-        this.e = minecraftserver.d.a("max-players", 20);
-        this.o = minecraftserver.d.a("white-list", false);
-        this.g();
+        // this.e = minecraftserver.d.a("max-players", 20); // Buck - It removed!
+        this.e = Config.PLAYER_LIMIT;
+        // this.o = minecraftserver.d.a("white-list", false); // Buck - It removed!
+        //this.g();// Buck - It ban list disabled.
         this.i();
         this.k();
-        this.m();
-        this.h();
+        //this.m();// Buck - It white list disabled.
+        //this.h();// Buck - It ban list disabled.
         this.j();
         this.l();
-        this.n();
+        //this.n();// Buck - It white list disabled.
     }
 
     public void a(WorldServer worldserver) {
@@ -150,15 +151,17 @@ public class ServerConfigurationManager {
         s2 = s2.substring(0, s2.indexOf(":"));
 
         UserDataHolder holder = player.getUserDataHolder(); //Buck - It
+        /* Buck - It disabled because we manage this ourselves.
         if (this.f.contains(s.trim().toLowerCase())) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server!");
         } else if (!this.g(s)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are not white-listed on this server!");
-        } else if (this.g.contains(s2)) {
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are not white-listed on this server!"); 
+        */
+        if (this.g.contains(s2)) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "Your IP address is banned from this server!");
         // Buck - It start
         } else if (this.b.size() >= this.e && ((Config.RESERVELIST_ENABLED && !server.getDataSourceManager().getReserveListDataSource().isReserveListed(holder.getId(),holder.getUsername())) || !Config.RESERVELIST_ENABLED)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full!");
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, Config.RESERVELIST_MESSAGE);
         } else if(holder.isBanned()) {
             int time = holder.getBantime() - ((int)(System.currentTimeMillis()/1000));
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned from this server" + (time > 0 ? " for another " + TimeFormat.formatRemaining(time) : "") + "!");
@@ -273,13 +276,15 @@ public class ServerConfigurationManager {
     }
 
     public void a(String s) {
-        this.f.add(s.toLowerCase());
-        this.h();
+        // Buck - It do nothing when the old method to add banns is used.
+        //this.f.add(s.toLowerCase());
+        //this.h();
     }
 
     public void b(String s) {
-        this.f.remove(s.toLowerCase());
-        this.h();
+        // Buck - It do nothing when the old method to add banns is used.
+        //this.f.remove(s.toLowerCase());
+        //this.h();
     }
 
     private void g() {
@@ -508,13 +513,15 @@ public class ServerConfigurationManager {
     public void a(int i, int j, int k, TileEntity tileentity) {}
 
     public void k(String s) {
-        this.i.add(s);
-        this.n();
+        // Buck - It disable built in whitelist
+        //this.i.add(s);
+        //this.n();
     }
 
     public void l(String s) {
-        this.i.remove(s);
-        this.n();
+        // Buck - It disable built in whitelist
+        //this.i.remove(s);
+        //this.n();
     }
 
     public Set e() {

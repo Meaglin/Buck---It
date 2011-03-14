@@ -48,8 +48,8 @@ public final class SimpleCommandMap implements CommandMap {
         register("buckit", new ModifyCommand("modify",server));
         register("buckit", new ReloadPluginCommand("reloadplugin",server));
         register("buckit", new DisablePluginCommand("disableplugin",server));
-        register("buckit", new ReservelistCommand("reservelist",server));
-        register("buckit", new WhitelistCommand("whitelist",server));
+        if(Config.RESERVELIST_ENABLED)register("buckit", new ReservelistCommand("reservelist",server));
+        if(Config.WHITELIST_ENABLED)register("buckit", new WhitelistCommand("whitelist",server));
         register("buckit", new TimeCommand("time",server));
         register("buckit", new SetSpawnCommand("setspawn",server));
         register("buckit", new SpawnMobCommand("spawnmob",server));

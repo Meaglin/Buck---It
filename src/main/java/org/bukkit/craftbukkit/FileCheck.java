@@ -114,17 +114,7 @@ public class FileCheck {
     private static void createMissingConfigFiles() throws IOException {
         for(String file : config_files) {
             if(!fileExists(config_dir + file)) {
-                
-                    InputStream input = null;
-                    try {
-                        input = FileCheck.class.getResourceAsStream(jar_config_dir + file);
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    if(input == null) log("null :< " + jar_config_dir + file );
-                    
-                 
+                    InputStream input = FileCheck.class.getResourceAsStream(jar_config_dir + file);
 
                     //For Overwrite the file.
                     OutputStream output = new FileOutputStream(new File(config_dir + file));
