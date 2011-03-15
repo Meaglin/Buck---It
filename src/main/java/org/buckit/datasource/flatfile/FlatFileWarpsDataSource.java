@@ -97,7 +97,7 @@ public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
     @Override
     public boolean removeWarp(Warp warp) {
         
-        warps.remove(warp.getName());
+        warps.remove(warp.getGroup()+"/"+warp.getName());
         
         List<String> lines = FileHandler.getLines("warps");
         

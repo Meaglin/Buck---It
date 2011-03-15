@@ -21,7 +21,7 @@ public class FileHandler {
     private static Map<String, String> filenames = new HashMap<String, String>();
     private static boolean loaded = false;
     
-    public final static String sep1 = "<-->";
+    public final static String sep1 = "<-<-->->";
     public final static String sep2 = ";";
     public final static String sep3 = ",";
     public final static String sep1Good = ":";

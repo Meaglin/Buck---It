@@ -19,7 +19,7 @@ public class FFLog {
     }
     
     public static void newEdit(String ini, String what) {
-        Logger.getLogger(logname).info("Flatfile - editted: " + ini + " - " + what);
+        Logger.getLogger(logname).info("Flatfile - edited: " + ini + " - " + what);
     }
 
 }

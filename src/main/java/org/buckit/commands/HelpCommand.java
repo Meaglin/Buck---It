@@ -43,19 +43,15 @@ public class HelpCommand extends Command {
         
         int page = 0;
         String commandIn = "";
-        Map<String, Command> commandMap = server.getCommands();
-        
-        String str="";
-        for (String s : commandMap.keySet()) {
-            str+=s+",";
-        }
-        Logger.getLogger("Minecraft").info(str);
+        Map<String, Command> commandMapTemp = server.getCommands();
+        Map<String, Command> commandMap = new HashMap<String, Command>();
         
         String name;
-        for (Entry<String, Command> e : commandMap.entrySet()) {
+        for (Entry<String, Command> e : commandMapTemp.entrySet()) {
             name = e.getValue().getAccessName();
-            if (name==null || !((Player) sender).canUseCommand(name))
-                commandMap.remove(e.getValue());
+            if (name!=null && ((Player) sender).canUseCommand(name) && e.getKey().equals(e.getValue().getName())) {
+                commandMap.put(e.getValue().getName(), e.getValue());
+            }
         }
         
         if (args.length == 0)
@@ -91,7 +87,6 @@ public class HelpCommand extends Command {
             
             String aliasesString = "";
             List<String> aliases = new ArrayList<String>();
-            aliases.add(commandIn);
             aliases.addAll(commandOut.getAliases());
             
             if (aliases.size() != 0) {
@@ -103,7 +98,7 @@ public class HelpCommand extends Command {
                 aliasesString = "none";
             }
             
-            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Info about command /" + commandIn);
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Info about command /" + commandOut.getName());
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Aliases: " + aliasesString);
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Description: " + commandOut.getDescription());
             sender.sendMessage(Config.DEFAULT_INFO_COLOR + "- Usage:   " + commandOut.getUsage());
