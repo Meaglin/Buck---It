@@ -19,6 +19,7 @@ import jline.ConsoleReader;
 import joptsimple.OptionSet;
 
 import org.buckit.Config;
+import org.bukkit.World.Environment;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.LoggerOutputStream;
@@ -189,7 +190,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
                 // CraftBukkit end
             }
         }
-
+        
         this.e();
     }
 
@@ -203,7 +204,14 @@ public class MinecraftServer implements Runnable, ICommandListener {
         this.i = null;
         this.j = 0;
 
+        
         server.loadPlugins(); // CraftBukkit
+        
+        // Buck - It start
+        if(Config.HELL_ENABLED) {
+            server.createWorld(Config.HELL_DIRECTORY, Environment.NETHER);
+        }
+        // Buck - It end
     }
 
     void f() { //CraftBukkit - private -> default

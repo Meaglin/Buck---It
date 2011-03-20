@@ -164,7 +164,7 @@ public class ItemStack {
      * @return The maximum you can stack this material to.
      */
     public int getMaxStackSize() {
-        return -1;
+        return getType().getMaxStackSize();
     }
 
     private void createData(final byte data) {

@@ -7,11 +7,11 @@ import org.buckit.Config;
 public class ChunkProviderGenerate implements IChunkProvider {
 
     private Random j;
-    private NoiseGeneratorOctaves k;
-    private NoiseGeneratorOctaves l;
-    private NoiseGeneratorOctaves m;
-    private NoiseGeneratorOctaves n;
-    private NoiseGeneratorOctaves o;
+    private NoiseGeneratorOctaves noise1;
+    private NoiseGeneratorOctaves noise2;
+    private NoiseGeneratorOctaves noise3;
+    private NoiseGeneratorOctaves noise4;
+    private NoiseGeneratorOctaves noise5;
     public NoiseGeneratorOctaves a;
     public NoiseGeneratorOctaves b;
     public NoiseGeneratorOctaves c;
@@ -33,14 +33,14 @@ public class ChunkProviderGenerate implements IChunkProvider {
     public ChunkProviderGenerate(World world, long i) {
         this.p = world;
         this.j = new Random(i);
-        this.k = new NoiseGeneratorOctaves(this.j, 16);
-        this.l = new NoiseGeneratorOctaves(this.j, 16);
-        this.m = new NoiseGeneratorOctaves(this.j, 8);
-        this.n = new NoiseGeneratorOctaves(this.j, 4);
-        this.o = new NoiseGeneratorOctaves(this.j, 4);
-        this.a = new NoiseGeneratorOctaves(this.j, 10);
-        this.b = new NoiseGeneratorOctaves(this.j, 16);
-        this.c = new NoiseGeneratorOctaves(this.j, 8);
+        this.noise1 = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_1);
+        this.noise2 = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_2);
+        this.noise3 = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_3);
+        this.noise4 = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_4);
+        this.noise5 = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_5);
+        this.a = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_6);
+        this.b = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_7);
+        this.c = new NoiseGeneratorOctaves(this.j, Config.WORLD_NOISE_8);
     }
 
     public void a(int i, int j, byte[] abyte, BiomeBase[] abiomebase, double[] adouble) {
@@ -118,9 +118,9 @@ public class ChunkProviderGenerate implements IChunkProvider {
         byte b0 = 64;
         double d0 = 0.03125D;
 
-        this.r = this.n.a(this.r, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0, d0, 1.0D);
-        this.s = this.n.a(this.s, (double) (i * 16), 109.0134D, (double) (j * 16), 16, 1, 16, d0, 1.0D, d0);
-        this.t = this.o.a(this.t, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+        this.r = this.noise4.a(this.r, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0, d0, 1.0D);
+        this.s = this.noise4.a(this.s, (double) (i * 16), 109.0134D, (double) (j * 16), 16, 1, 16, d0, 1.0D, d0);
+        this.t = this.noise5.a(this.t, (double) (i * 16), (double) (j * 16), 0.0D, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
         for (int k = 0; k < 16; ++k) {
             for (int l = 0; l < 16; ++l) {
@@ -219,9 +219,9 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         this.g = this.a.a(this.g, i, k, l, j1, 1.121D, 1.121D, 0.5D);
         this.h = this.b.a(this.h, i, k, l, j1, 200.0D, 200.0D, 0.5D);
-        this.d = this.m.a(this.d, (double) i, (double) j, (double) k, l, i1, j1, d0 / 80.0D, d1 / 160.0D, d0 / 80.0D);
-        this.e = this.k.a(this.e, (double) i, (double) j, (double) k, l, i1, j1, d0, d1, d0);
-        this.f = this.l.a(this.f, (double) i, (double) j, (double) k, l, i1, j1, d0, d1, d0);
+        this.d = this.noise3.a(this.d, (double) i, (double) j, (double) k, l, i1, j1, d0 / 80.0D, d1 / 160.0D, d0 / 80.0D);
+        this.e = this.noise1.a(this.e, (double) i, (double) j, (double) k, l, i1, j1, d0, d1, d0);
+        this.f = this.noise2.a(this.f, (double) i, (double) j, (double) k, l, i1, j1, d0, d1, d0);
         int k1 = 0;
         int l1 = 0;
         int i2 = 16 / l;

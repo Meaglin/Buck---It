@@ -31,8 +31,8 @@
 		<mkdir dir="${build}/classes" />
 		<mkdir dir="${dist}" />
 		<mkdir dir="${dist}/licenses" />
-		<mkdir dir="${dist}/libs" />
-		<mkdir dir="${dist}/libs/rules" />
+		<!-- <mkdir dir="${dist}/libs" /> -->
+		<mkdir dir="${dist}/config/rules" />
 		<mkdir dir="${dist}/plugins" />
 		<mkdir dir="${dist}/config" />
 	</target>
@@ -91,7 +91,7 @@
 				<include name="GPL.txt" />
 			</fileset>
 		</copy>
-		<copy todir="${dist}/libs/rules">
+		<copy todir="${dist}/config/rules">
 			<fileset dir="rules">
 				<include name="*.rules" />
 				<include name="*.rgs" />

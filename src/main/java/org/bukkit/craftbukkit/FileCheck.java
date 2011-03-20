@@ -24,19 +24,19 @@ public class FileCheck {
     private static String temp_file = "deleteme.jar";
     private static String temp2_file = "deleteme2.jar";
     private static String temp3_file = "deleteme.log";
+    //Now in Jar.
+    //private static String jarjar = "./libs/jarjar.jar";
+    //private static String retroguard = "./libs/retroguard.jar";
     
-    private static String jarjar = "./libs/jarjar.jar";
-    private static String retroguard = "./libs/retroguard.jar";
-    
-    private static String jarjar_rules = "./libs/rules/latest.rules";
-    private static String retroguard_rules = "./libs/rules/latest.rgs";
-    private static String jarjar_namespace_rules = "./libs/rules/namespace.rules";
+    private static String jarjar_rules = "./config/rules/latest.rules";
+    private static String retroguard_rules = "./config/rules/latest.rgs";
+    private static String jarjar_namespace_rules = "./config/rules/namespace.rules";
     
     private static long crc_minecraft_server = 280458825L;
-    private static long crc_minecraft_servero = 3658007949L;
+    private static long crc_minecraft_servero = 2467234520L;
     
-    private static long crc_jarjar = 519567578L;
-    private static long crc_retroguard = 2728595211L;
+    //private static long crc_jarjar = 519567578L;
+    //private static long crc_retroguard = 2728595211L;
     
     private static long crc_jarjar_rules = 149905660L;
     private static long crc_retroguard_rules = 3002032626L;
@@ -44,15 +44,15 @@ public class FileCheck {
     
     public static void checkAllFiles() throws IOException {
         if(!fileExists(minecraft_servero)) {
-            if (!fileExists(jarjar) || !fileExists(retroguard) || !fileExists(jarjar_rules) || !fileExists(retroguard_rules) || !fileExists(jarjar_namespace_rules)) {
+            if (!fileExists(jarjar_rules) || !fileExists(retroguard_rules) || !fileExists(jarjar_namespace_rules)) {
                 log("-----------------------------");
                 log("Some of the tools to make a normalized minecraft jar (aka minecraft_servero.jar) are missing!");
                 log("Without these files or a proper minecraft_servero.jar the server cannot run!");
                 log("-----------------------------");
                 System.exit(0);
             }
-            checkCRC32(jarjar, crc_jarjar);
-            checkCRC32(retroguard, crc_retroguard);
+            //checkCRC32(jarjar, crc_jarjar);
+            //checkCRC32(retroguard, crc_retroguard);
             checkCRC32(jarjar_rules, crc_jarjar_rules);
             checkCRC32(retroguard_rules, crc_retroguard_rules);
             checkCRC32(jarjar_namespace_rules, crc_jarjar_namespace_rules);
@@ -109,7 +109,8 @@ public class FileCheck {
         "FlatFile.properties" , 
         "General.properties" ,
         "motd.txt" ,
-        "World.properties"
+        "World.properties",
+        "Hell.properties"
         };
     private static void createMissingConfigFiles() throws IOException {
         for(String file : config_files) {

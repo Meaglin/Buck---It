@@ -54,6 +54,17 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.height = 0.0F;
     }
 
+    // Buck - It start
+    // Called when a player is standing in/near a gate.
+    long t1 = 0;
+    @Override
+    public void T() {
+        double t3 = 1/((System.currentTimeMillis()-t1)/1000);
+        t1 = System.currentTimeMillis();
+        System.out.println("FPS: " + ((int)Math.floor(t3)));
+    }
+    // Buck - It end
+    
     public void l() {
         this.activeContainer.a((ICrafting) this);
     }

@@ -36,6 +36,12 @@ public class HomesCommand extends Command {
             return false;
         
         Collection<Home> homes = datasource.getHomes(((Player)sender).getPlayerId());
+        
+        if(homes.size() == 0) {
+            sender.sendMessage("No homes made yet.");
+            return true;
+        }
+
         Collection<String> names = new LinkedHashSet<String>();
         for(Home h : homes)
             names.add(h.getName());
@@ -43,11 +49,7 @@ public class HomesCommand extends Command {
         String str = "";
         for(String name : names)
             str += name + ", ";
-        if(str.length() == 0) {
-            sender.sendMessage("No homes made yet.");
-            return true;
-        } else
-            str = str.substring(0,str.length()-2);
+        str = str.substring(0,str.length()-2);
         
         sender.sendMessage(ChatColor.GREEN + "List of available homes:");
         sender.sendMessage(str);

@@ -63,6 +63,7 @@ public class SpawnMobCommand extends Command {
         for(int i = 0; i < count;i++){
             CraftLivingEntity c = new CraftLivingEntity(world.getHandle().getServer(),getEntity(mobname,world));
             c.teleportTo(player.getLocation());
+            world.getHandle().a(c.getHandle());
         }
         
         return true;

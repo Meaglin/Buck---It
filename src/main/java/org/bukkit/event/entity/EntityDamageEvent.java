@@ -1,5 +1,8 @@
 package org.bukkit.event.entity;
 
+import net.minecraft.server.EntityPlayer;
+
+import org.buckit.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -16,6 +19,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public EntityDamageEvent(Entity damagee, DamageCause cause, int damage)
     {
         super(Event.Type.ENTITY_DAMAGED, damagee);
+        if(damagee instanceof EntityPlayer) cancelled = !Config.HEALTH_ENABLED;
         this.cause = cause;
         this.damage = damage;
     }
@@ -23,6 +27,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     protected EntityDamageEvent(Event.Type type, Entity damagee, DamageCause cause, int damage)
     {
         super(type, damagee);
+        if(damagee instanceof EntityPlayer) cancelled = !Config.HEALTH_ENABLED;
         this.cause = cause;
         this.damage = damage;
     }

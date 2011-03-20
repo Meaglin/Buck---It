@@ -17,6 +17,8 @@ public class DataSourceManager {
     private WhiteListDataSource whitelistdatasource;
     private ReserveListDataSource reservelistdatasource;
 
+    private RequestDataSource requestdatasource;
+    
     private Server server;
     private DataType type;
     public DataSourceManager(Server server) {
@@ -57,6 +59,9 @@ public class DataSourceManager {
                 break;
         }
         
+        requestdatasource = new RequestDataSource(this);
+        
+        getRequestDataSource().load();
         getAccessDataSource().load();
         getUserDataSource().load();
         if (Config.WARPS_ENABLED)
@@ -123,6 +128,13 @@ public class DataSourceManager {
      */
     public ReserveListDataSource getReserveListDataSource() {
         return reservelistdatasource;
+    }
+
+    /**
+     * @return the requestdatasource
+     */
+    public RequestDataSource getRequestDataSource() {
+        return requestdatasource;
     }
 
     public Server getServer(){

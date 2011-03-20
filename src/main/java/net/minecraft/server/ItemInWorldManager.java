@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 // CraftBukkit start
+import org.buckit.Config;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.block.BlockBreakEvent;
 // CraftBukkit end
@@ -101,6 +102,7 @@ public class ItemInWorldManager {
         return flag;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean d(int i, int j, int k) {
         // CraftBukkit start
         if (this.a instanceof EntityPlayer) {
@@ -123,7 +125,32 @@ public class ItemInWorldManager {
         ItemStack itemstack = this.a.z();
 
         if (itemstack != null) {
-            itemstack.a(l, i, j, k);
+            // Buck - It start
+            if(Config.DURABILITY_ENABLED) {                
+                itemstack.a(l, i, j, k);
+            } else { 
+                if(Config.DURABILITY_FORCE_UPDATE && this.a instanceof EntityPlayer) {
+                    // Prevent any unnecessary updates.
+                    boolean update = false;
+                    if(itemstack.damage > 0) {
+                        itemstack.damage = 0;
+                        update = true;
+                    } else {
+                        itemstack.a(l, i, j, k);
+                        if(itemstack.damage != 0) {
+                            itemstack.damage = 0;
+                            update = true;
+                        }
+                    }
+                    if(update) {
+                        org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.a.getBukkitEntity();
+                        // TODO: change whenever this gets removed from bukkit.
+                        // This works: ((EntityPlayer)a).l(); (Beta 1.3)
+                        player.updateInventory();
+                    }
+                }
+            }
+            // Buck - It end
             if (itemstack.count == 0) {
                 itemstack.a(this.a);
                 this.a.A();

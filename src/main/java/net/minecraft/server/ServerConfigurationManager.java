@@ -90,7 +90,7 @@ public class ServerConfigurationManager {
 
     public void a(EntityPlayer entityplayer) {
         this.b.add(entityplayer);
-        this.n.b(entityplayer);
+        //this.n.b(entityplayer); // Buck - It fix player world load.
         // CraftBukkit start
         ((WorldServer) entityplayer.world).u.d((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
 
@@ -187,8 +187,9 @@ public class ServerConfigurationManager {
                 entityplayer.a.a("You logged in from another location");
             }
         }
-
-        return new EntityPlayer(this.c, entity.world, s, new ItemInWorldManager(entity.world));
+        entity = new EntityPlayer(this.c, entity.world, s, new ItemInWorldManager(entity.world));
+        this.n.b(entity);// Buck - It load player data be4 we send player login packets.
+        return entity;
         // CraftBukkit end
     }
 

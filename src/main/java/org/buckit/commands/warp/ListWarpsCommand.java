@@ -2,6 +2,7 @@ package org.buckit.commands.warp;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import org.buckit.Config;
 import org.buckit.datasource.type.WarpsDataSource;
@@ -55,10 +56,15 @@ public class ListWarpsCommand extends Command {
         }else{
             Collection<Warp> warps = datasource.getWarps(group);
             String str = "";
+            
+            Collection<String> names = new LinkedHashSet<String>();
             for(Warp w : warps)
                 if(accesslevel >= w.getMinAccessLevel())
-                    str += w.getName() + ", ";
+                    names.add(w.getName());
             
+            for(String name : names) 
+                str += name + ", ";
+                    
             if(str.length() == 0)
                 str = "No warps are available.";
             else

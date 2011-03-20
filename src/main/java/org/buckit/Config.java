@@ -16,7 +16,8 @@ public class Config {
     public static final String FLATFILE_CONFIG_FILE = "./config/Flatfile.properties";
     public static final String WORLD_CONFIG_FILE    = "./config/World.properties";
     public static final String EXPERT_CONFIG_FILE   = "./config/Expert.properties";
-
+    public static final String HELL_CONFIG_FILE     = "./config/Hell.properties";
+    
     // --------------------------------------------------
     // General Properties
     // --------------------------------------------------
@@ -25,6 +26,7 @@ public class Config {
     public static boolean      ONLINE_MODE_ENABLED;
     public static boolean      ANIMALS_ENABLED;
     public static boolean      MONSTERS_ENABLED;
+    public static boolean      HEALTH_ENABLED;
     public static boolean      PVP_ENABLED;
     public static String       SERVER_IP;
     public static int          SERVER_PORT;
@@ -34,6 +36,9 @@ public class Config {
 
     public static DataType     DATA_SOURCE_TYPE;
 
+    public static boolean      DURABILITY_ENABLED;
+    public static boolean      DURABILITY_FORCE_UPDATE;
+    
     public static boolean      TP_REQUEST_COMMANDS_ENABLED;
     public static boolean      KITS_ENABLED;
     public static boolean      HOMES_ENABLED;
@@ -59,6 +64,7 @@ public class Config {
     public static String       NOT_ENOUGH_ACCESS_MESSAGE;
     public static boolean      LIMIT_BUILD_BY_BUILD_FLAG;
     public static boolean      SEND_MOTD_ON_LOGIN;
+    
     // --------------------------------------------------
     // Expert Properties
     // --------------------------------------------------
@@ -66,6 +72,19 @@ public class Config {
     public static String       DATABASE_SEPERATOR;
     public static String       FULL_ACCESS_STRING;
 
+    // --------------------------------------------------
+    // Hell Properties
+    // --------------------------------------------------
+    public static boolean       HELL_ENABLED;
+    public static String        HELL_DIRECTORY;
+    public static boolean       HELL_EMULATE_GATES;
+    
+    public static int           HELL_LIGHTSTONE_OCCURANCE;
+    public static int           HELL_RED_MUSHROOM_OCCURANCE;
+    public static int           HELL_BROWN_MUSHROOM_OCCURANCE;
+    public static int           HELL_FIRE_OCCURANCE;
+    public static int           HELL_RANDOM_LAVA_OCCURANCE;
+    
     // --------------------------------------------------
     // Database Properties
     // --------------------------------------------------
@@ -143,6 +162,16 @@ public class Config {
     public static int          WORLD_BROWN_MUSHROOM_OCCURENCE;
     public static int          WORLD_RED_MUSHROOM_OCCURENCE;
 
+    public static int          WORLD_NOISE_1;
+    public static int          WORLD_NOISE_2;
+    public static int          WORLD_NOISE_3;
+    public static int          WORLD_NOISE_4;
+    public static int          WORLD_NOISE_5;
+    public static int          WORLD_NOISE_6;
+    public static int          WORLD_NOISE_7;
+    public static int          WORLD_NOISE_8;
+    
+    
     private static Logger      log                  = Logger.getLogger(Properties.class.getName());
 
     public static void load() {
@@ -160,6 +189,7 @@ public class Config {
                 break;
         }
         loadExpertProperties();
+        loadHellProperties();
     }
 
     private static void loadGeneralProperties() {
@@ -170,6 +200,7 @@ public class Config {
             ONLINE_MODE_ENABLED = gp.getBool("OnlineMode", true);
             ANIMALS_ENABLED = gp.getBool("SpawnAnimals", true);
             MONSTERS_ENABLED = gp.getBool("SpawnMonsters", true);
+            HEALTH_ENABLED = gp.getBool("HealthEnabled", true);
             PVP_ENABLED = gp.getBool("PvpEnabled", true);
             SERVER_IP = gp.getProperty("ServerIP", "");
             SERVER_PORT = gp.getInt("ServerPort", 25565,1,65535);
@@ -177,6 +208,9 @@ public class Config {
             SPAWN_RADIUS = gp.getInt("SpawnRadius", 16);
             SPAWN_RESPAWN_AREA_RADIUS = gp.getInt("RespawnAreaRadius", "10");
 
+            DURABILITY_ENABLED = gp.getBool("DurabilityEnabled", true);
+            DURABILITY_FORCE_UPDATE = gp.getBool("DurabilityForceUpdate", false);
+            
             String datasource = gp.getProperty("DataSource", "database");
             if(datasource.equalsIgnoreCase("flatfile"))DATA_SOURCE_TYPE = DataType.FLATFILE;
             else if(datasource.equalsIgnoreCase("database"))DATA_SOURCE_TYPE = DataType.DATABASE;
@@ -260,6 +294,15 @@ public class Config {
             WORLD_BROWN_MUSHROOM_OCCURENCE = wp.getInt("BrownMushroomOccurence", 1,0,4);
             WORLD_RED_MUSHROOM_OCCURENCE = wp.getInt("RedMushroomOccurence", 1,0,8);
             
+            WORLD_NOISE_1 = wp.getInt("WorldNoise1", 16,1,50);
+            WORLD_NOISE_2 = wp.getInt("WorldNoise2", 16,1,50);
+            WORLD_NOISE_3 = wp.getInt("WorldNoise3", 8,1,50);
+            WORLD_NOISE_4 = wp.getInt("WorldNoise4", 4,1,50);
+            WORLD_NOISE_5 = wp.getInt("WorldNoise5", 4,1,50);
+            WORLD_NOISE_6 = wp.getInt("WorldNoise6", 10,1,50);
+            WORLD_NOISE_7 = wp.getInt("WorldNoise7", 16,1,50);
+            WORLD_NOISE_8 = wp.getInt("WorldNoise8", 8,1,50);
+            
         } catch (Exception e) {
             e.printStackTrace();
             log.warning("Config: Error loading World properties file.");
@@ -317,5 +360,24 @@ public class Config {
             e.printStackTrace();
             log.warning("Config: Error loading Expert properties file.");
         }
+    }
+ 
+    private static void loadHellProperties() {
+        try {
+            Properties hp = new Properties(new File(HELL_CONFIG_FILE));
+            HELL_ENABLED = hp.getBool("HellEnabled", true);
+            HELL_DIRECTORY = hp.getProperty("HellDirectory", "Nether");
+            HELL_EMULATE_GATES = hp.getBool("HellEmulateGates", false);
+            HELL_LIGHTSTONE_OCCURANCE = hp.getInt("HellLightstoneOccurance", 10, 0, 100);
+            HELL_RED_MUSHROOM_OCCURANCE = hp.getInt("HellRedMushroomOccurance", 1, 0, 100);
+            HELL_BROWN_MUSHROOM_OCCURANCE = hp.getInt("HellBrownMushroomOccurance", 1, 0, 100);
+            HELL_FIRE_OCCURANCE = hp.getInt("HellFireOccurance", 10, 0, 100);
+            HELL_RANDOM_LAVA_OCCURANCE = hp.getInt("HellRandomLavaOccurance", 10, 0, 100);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.warning("Config: Error loading Hell properties file.");
+        }
+        
     }
 }
