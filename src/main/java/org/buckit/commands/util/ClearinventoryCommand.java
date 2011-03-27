@@ -24,8 +24,13 @@ public class ClearInventoryCommand extends Command {
         if (!(sender instanceof Player))
             return false;
         
-        Player player = (Player)sender;
-        if(player.isAdmin() && args.length == 1){
+        boolean isAdmin = false;
+        if(sender instanceof Player)
+            isAdmin = ((Player)sender).isAdmin();
+        else 
+            isAdmin = true;
+        
+        if(isAdmin && args.length == 1){
             String name = args[0].toLowerCase();
             List<Player> list = server.matchPlayer(name);
             if(list.size() == 0) {
@@ -42,7 +47,12 @@ public class ClearInventoryCommand extends Command {
                 sender.sendMessage(str);
             }
         } else {
-            player.getInventory().clear();
+            if(sender instanceof Player){
+                ((Player)sender).getInventory().clear();
+                sender.sendMessage("Your inventory has been cleared.");
+            } else {
+                sender.sendMessage(this.getUsage() + " <player name>");
+            }
         }
         
         return true;

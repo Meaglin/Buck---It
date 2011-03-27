@@ -29,8 +29,6 @@ public class BanCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
         
         if (args.length < 1) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified.");
@@ -74,18 +72,17 @@ public class BanCommand extends Command {
             if(p.getName().equalsIgnoreCase(playername))
                 player = p;
         
-        
         if(time == 0){
             data.setBantime(-1);
             server.getDataSourceManager().getUserDataSource().updateUserBanTime(data);
             if(player != null)player.kickPlayer("You have been permabanned.");
-            log.info("Player '" + playername + "' has been permabanned by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
+            log.info("Player '" + playername + "' has been permabanned by " + (sender instanceof Player ? ((Player)sender).getName() : "CONSOLE" ) + (!reason.equals("") ? " with reason " + reason : "") +".");
 
         } else {
             data.setBantime(time + (int)(System.currentTimeMillis()/1000));
             server.getDataSourceManager().getUserDataSource().updateUserBanTime(data);
             if(player != null)player.kickPlayer("You have been banned for " + TimeFormat.formatRemaining(time) + ".");
-            log.info("Player '" + playername + "' has been banned for "  + TimeFormat.formatRemaining(time) + " by " + ((Player)sender).getName() + (!reason.equals("") ? " with reason " + reason : "") +".");
+            log.info("Player '" + playername + "' has been banned for "  + TimeFormat.formatRemaining(time) + " by " + (sender instanceof Player ? ((Player)sender).getName() : "CONSOLE" ) + (!reason.equals("") ? " with reason " + reason : "") +".");
         }
         
         sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Player '" + playername + "' is now banned " + (time != 0 ? "for " + TimeFormat.formatRemaining(time) : "permanently") + ".");

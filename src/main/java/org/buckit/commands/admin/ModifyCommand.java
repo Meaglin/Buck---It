@@ -21,7 +21,7 @@ public class ModifyCommand extends Command {
 	public ModifyCommand(String name, Server server) {
 		super(name);
         this.description = "Modifies a player's properties.";
-        this.usageMessage = "Usage: /modify <player> <key1>:<value1> <key2>:<value2> <keyN>:<valueN>";
+        this.usageMessage = "Usage: /modify [player] [key1]:[value1] <key2>:<value2> <keyN>:<valueN>";
         this.accessname = "buckit.admin.modify";
         
         this.server = server;
@@ -31,8 +31,7 @@ public class ModifyCommand extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		if (!(sender instanceof Player))
-			return false;
+
 		
 		if (args.length < 2) {
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified");

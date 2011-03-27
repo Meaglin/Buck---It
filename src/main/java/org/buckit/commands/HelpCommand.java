@@ -3,16 +3,10 @@ package org.buckit.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import org.buckit.Config;
 import org.bukkit.ChatColor;
@@ -38,8 +32,6 @@ public class HelpCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
         
         int page = 0;
         String commandIn = "";
@@ -49,7 +41,7 @@ public class HelpCommand extends Command {
         String name;
         for (Entry<String, Command> e : commandMapTemp.entrySet()) {
             name = e.getValue().getAccessName();
-            if (name!=null && ((Player) sender).canUseCommand(name) && e.getKey().equals(e.getValue().getName())) {
+            if (name!=null && (sender instanceof Player ? ((Player) sender).canUseCommand(name) : true) && e.getKey().equals(e.getValue().getName())) {
                 commandMap.put(e.getValue().getName(), e.getValue());
             }
         }

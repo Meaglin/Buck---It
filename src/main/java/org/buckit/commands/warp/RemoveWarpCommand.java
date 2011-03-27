@@ -8,7 +8,6 @@ import org.buckit.model.Warp;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class RemoveWarpCommand extends Command {
 
@@ -29,8 +28,6 @@ public class RemoveWarpCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if(!(sender instanceof Player))
-            return false;
         
         if(args.length < 1){
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No warp name specified.");

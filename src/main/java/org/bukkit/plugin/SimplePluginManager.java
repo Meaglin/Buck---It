@@ -15,12 +15,17 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+
+import org.buckit.Config;
 import org.bukkit.Server;
 import java.util.regex.Pattern;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
  * Handles all plugin management from the Server
@@ -102,7 +107,13 @@ public final class SimplePluginManager implements PluginManager {
                 result.add(plugin);
             }
         }
-
+        // Buck - It start
+        if(Config.PERMISSIONS_COMPATIBILITY_ENABLED) {
+            Permissions p = new Permissions(server);
+            plugins.add(p);
+            lookupNames.put(p.getDescription().getName(), p);
+        }
+        // Buck - It end
         return result.toArray(new Plugin[result.size()]);
     }
 

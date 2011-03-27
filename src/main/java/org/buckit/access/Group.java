@@ -1,26 +1,28 @@
 package org.buckit.access;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.buckit.Config;
 
 public class Group {
     private int               id;
     private String            name;
-    private ArrayList<String> commands;
+    private List<String> commands;
+    private List<String> worlds;
 
-    public Group(int id, String name, String commands) {
-        this.commands = new ArrayList<String>();
-        for (String command : commands.split(Config.DATABASE_DELIMITER))
-            this.commands.add(command);
+    public Group(int id, String name, String commands, String worlds) {
 
+        this.commands = Arrays.asList(commands.split(Config.DATABASE_DELIMITER));
+        this.worlds = Arrays.asList(worlds.split(Config.DATABASE_DELIMITER));
+        
         this.name = name;
         this.id = id;
 
     }
 
-    public boolean canUseCommand(String command) {
-        return commands.contains(command);
+    public boolean canUseCommand(String command, String world) {
+        return commands.contains(command) && (worlds.contains(world) || worlds.contains(Config.FULL_ACCESS_STRING));
     }
 
     public String getName() {

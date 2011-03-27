@@ -6,7 +6,6 @@ import org.buckit.util.MotdReader;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class MotdCommand extends Command {
 
@@ -18,10 +17,7 @@ public class MotdCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
-        
+    public boolean execute(CommandSender sender, String currentAlias, String[] args) {        
         List<String> lines = MotdReader.getMotd();
         for (String line : lines) {
             sender.sendMessage(line);

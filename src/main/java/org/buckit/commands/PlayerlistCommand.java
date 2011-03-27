@@ -25,8 +25,6 @@ public class PlayerListCommand extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		if (!(sender instanceof Player))
-			return false;
 		
 		Player[] players = server.getOnlinePlayers();
 		

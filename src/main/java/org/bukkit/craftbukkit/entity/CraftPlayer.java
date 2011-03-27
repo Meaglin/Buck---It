@@ -167,6 +167,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newEntity.inventory.e = newEntity;
             newEntity.activeContainer = entity.activeContainer;
             newEntity.defaultContainer = entity.defaultContainer;
+            newEntity.lastwarp = entity.lastwarp;// Buck - It
             newWorld.u.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
 
             newEntity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -174,6 +175,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newWorld.a(newEntity);
             manager.b.add(newEntity);
 
+            
             entity.a.e = newEntity;
             entity = newEntity;
         } else {
@@ -230,7 +232,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     // TODO: optimize
     public boolean canUseCommand(String command) {
-        if(dataholder.canUseCommand(command))
+        if(dataholder.canUseCommand(command, getWorld().getName()))
             return true;
         
         String[] split = command.split(".");
@@ -240,7 +242,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 for(int x = 1;x <= i;x++)
                     t += "." + split[x];
                 t += "."+Config.FULL_ACCESS_STRING;
-                if(dataholder.canUseCommand(t))
+                if(dataholder.canUseCommand(t, getWorld().getName()))
                     return true;
             }
         }

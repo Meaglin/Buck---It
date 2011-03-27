@@ -26,7 +26,7 @@ public class SetSpawnCommand extends Command {
 		CraftWorld world = (CraftWorld)player.getWorld();
 		world.setSpawnLocation(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 		//sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "This command isn't supported yet!");
-		sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Warning: spawn location gets reverted after a server restart.");
+		//sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Warning: spawn location gets reverted after a server restart.");
 		sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Spawn changed to your location.");
 		return true;
 	}

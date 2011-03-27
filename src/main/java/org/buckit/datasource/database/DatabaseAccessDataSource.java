@@ -20,10 +20,10 @@ public class DatabaseAccessDataSource implements AccessDataSource, DataSource {
     private Map<Integer, AccessLevel> accesslevelsint;
     private Map<String, AccessLevel>  accesslevels;
 
-    private static String             SELECT_GROUPS       = "SELECT id,name,commands FROM " + Config.DATABASE_ACCESSGROUPS_TABLE;
+    private static String             SELECT_GROUPS       = "SELECT id,name,commands,worlds FROM " + Config.DATABASE_ACCESSGROUPS_TABLE;
     private static String             SELECT_ACCESSLEVELS = "SELECT id,name,usernameformat,accessgroups,admingroup,canbuild FROM " + Config.DATABASE_ACCESS_TABLE;
 
-    private static final Group defaultGroup = new Group(-1,"default","");
+    private static final Group defaultGroup = new Group(-1,"default","","world");
     private static final AccessLevel defaultLevel = new AccessLevel(-1,new Group[]{defaultGroup},"default",null,false,false);
     
     private DataSourceManager datasource;
@@ -83,7 +83,7 @@ public class DatabaseAccessDataSource implements AccessDataSource, DataSource {
             rs = st.executeQuery();
             Group group;
             while (rs.next()) {
-                group = new Group(rs.getInt("id"), rs.getString("name"), rs.getString("commands"));
+                group = new Group(rs.getInt("id"), rs.getString("name"), rs.getString("commands"), rs.getString("worlds"));
                 groups.put(group.getName(), group);
                 groupsint.put(group.getId(), group);
             }

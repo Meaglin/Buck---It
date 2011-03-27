@@ -8,7 +8,6 @@ import org.buckit.model.Kit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CreateKitCommand extends Command {
 
@@ -26,8 +25,6 @@ public class CreateKitCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if(!(sender instanceof Player))
-            return false;
         
         if(args.length < 3) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified");

@@ -25,8 +25,6 @@ public class UnbanCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
         
         if (args.length < 1) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified.");
@@ -47,7 +45,7 @@ public class UnbanCommand extends Command {
         server.getDataSourceManager().getUserDataSource().updateUser(data);
         
         sender.sendMessage(Config.DEFAULT_INFO_COLOR + "Player '" + playername + "' is now unbanned.");
-        log.info("Player '" + playername + "' has been unbanned by " + ((Player)sender).getName() + ".");
+        log.info("Player '" + playername + "' has been unbanned by " + (sender instanceof Player ? ((Player)sender).getName() : "CONSOLE" ) + ".");
         
         return true;
     }

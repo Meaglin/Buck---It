@@ -7,6 +7,7 @@ CREATE TABLE `accessgroups` (
    `id` int(11) not null,
    `name` varchar(50),
    `commands` longtext,
+   `worlds` varchar(255) default '*',
    PRIMARY KEY (`id`),
    UNIQUE KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -56,9 +57,11 @@ CREATE TABLE `users` (
    `usernameformat` varchar(255),
    `password` varchar(255) ,
    `email` varchar(255) ,
+   `ip` varchar(255),
    `firstlogin` int(11) not null default '0',
    `lastlogin` int(11) not null default '0',
    `onlinetime` int(11) not null default '0',
+   `ipbantime` int(11) not null default '0',
    `bantime` int(11) not null default '0',
    `mutetime` int(11) not null default '0',
    `commands` longtext ,

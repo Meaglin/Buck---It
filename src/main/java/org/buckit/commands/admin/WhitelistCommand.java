@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.buckit.Config;
 import org.buckit.datasource.type.WhiteListDataSource;
+import org.buckit.model.UserDataHolder;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -24,9 +25,9 @@ public class WhitelistCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
+    public boolean execute(CommandSender sender, String currentAlias, String[] args) {        
+        String playername = args[0].toLowerCase();
+        UserDataHolder data = server.getDataSourceManager().getUserDataSource().getUserData(playername);
         
         if (args.length < 2) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified.");
@@ -34,40 +35,49 @@ public class WhitelistCommand extends Command {
             return true;
         }
         
-        List<Player> matches = server.matchPlayer(args[1]);
-        
-        if (matches.size() == 0) {
-            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found.");
-            return true;
-        }
-        else if (matches.size() > 1) {
-            String names = "";
-            for (int i=0; i<matches.size(); i++)
-                names += ", " + matches.get(i).getDisplayName() + Config.DEFAULT_ERROR_COLOR;
+        if(data == null) {
+            List<Player> matches = server.matchPlayer(args[1]);
             
-            names = names.substring(2);
-            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found: "+names);
-            return true;
+            if (matches.size() == 0) {
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "No players found.");
+                return true;
+            }
+            else if (matches.size() > 1) {
+                String names = "";
+                for (int i=0; i<matches.size(); i++)
+                    names += ", " + matches.get(i).getDisplayName() + Config.DEFAULT_ERROR_COLOR;
+                
+                names = names.substring(2);
+                sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Multiple players found: "+names);
+                return true;
+            }
+    
+            Player player = matches.get(0);
+            data = player.getUserDataHolder();
         }
 
-        WhiteListDataSource whitelist = server.getDataSourceManager().getWhiteListDataSource();        
-        Player player = matches.get(0);
+        if(data == null) {
+            sender.sendMessage(Config.DEFAULT_INFO_COLOR + "No player found with name '" + playername + "'.");
+            return true;
+        }
         
-        boolean before = whitelist.isWhiteListed(player.getPlayerId(), player.getName());
+        WhiteListDataSource whitelist = server.getDataSourceManager().getWhiteListDataSource();
+        
+        boolean before = whitelist.isWhiteListed(data.getId(), data.getUsername());
         
         if (args[0].equals("add") || args[0].equals("a")) {
-            whitelist.setWhiteListed(player.getPlayerId(),player.getName(), true);
-            sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been added to the whitelist!");
+            whitelist.setWhiteListed(data.getId(), data.getUsername(), true);
+            sender.sendMessage(data.getUsername() + Config.DEFAULT_INFO_COLOR + " has been added to the whitelist!");
             return true;
         }
         else if (args[0].equals("remove") || args[0].equals("r")) {
-            whitelist.setWhiteListed(player.getPlayerId(),player.getName(), false);
-            sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + " has been removed to the whitelist!");
+            whitelist.setWhiteListed(data.getId(), data.getUsername(), false);
+            sender.sendMessage(data.getUsername() + Config.DEFAULT_INFO_COLOR + " has been removed to the whitelist!");
             return true;
         }
         else if (args[0].equals("status") || args[0].equals("s")) {
             String status = (before) ? " is on the whitelist." : "is not on the whitelist.";
-            sender.sendMessage(player.getDisplayName() + Config.DEFAULT_INFO_COLOR + status);
+            sender.sendMessage(data.getUsername() + Config.DEFAULT_INFO_COLOR + status);
             return true;
         }
         else {

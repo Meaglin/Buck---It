@@ -51,8 +51,8 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
         List<String> lines = FileHandler.getLines("user");
         
         LineReader r;
-        int id, firstlogin, uptime, bantime, mutetime, aLevel;
-        String name, format, commands;
+        int id, firstlogin, uptime, ipbantime, bantime, mutetime, aLevel;
+        String name, format, commands, ip;
         Boolean canbuild,isadmin;
         AccessLevel level;
         for (int i=0; i<lines.size(); i++) {
@@ -64,6 +64,7 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
             firstlogin  = r.nextInt();
                         r.skip();
             uptime      = r.nextInt();
+            ipbantime   = r.nextInt();
             bantime     = r.nextInt();
             mutetime    = r.nextInt();
             commands    = r.nextStr();
@@ -71,16 +72,16 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
             isadmin     = r.nextBool();
             aLevel      = r.nextInt();
             level       = getDataSource().getAccessDataSource().getAccessLevel(aLevel);
-            
+            ip          = r.nextStr();
             if (username.equals(name)) {
-                user = new UserDataHolder(id, username, format, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, bantime, mutetime, level);
+                user = new UserDataHolder(id, username, format, isadmin, canbuild, commands, firstlogin, currentTime(), uptime, ipbantime, bantime, mutetime, level,ip);
                 exists = true;
                 break;
             }
         }
         
         if (!exists) {
-            user = new UserDataHolder((lastId+1), username.toLowerCase(), Config.DEFAULT_USER_FORMAT, false, false, "", currentTime(), currentTime(), 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL));
+            user = new UserDataHolder((lastId+1), username.toLowerCase(), Config.DEFAULT_USER_FORMAT, false, false, "", currentTime(), currentTime(), 0, 0, 0, 0, getDataSource().getAccessDataSource().getAccessLevel(Config.DEFAULT_ACCESS_LEVEL),"0.0.0.0");
         	lastId++;
         	
         	lines.add(user.getId()+FileHandler.sep1+
@@ -89,12 +90,14 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                     user.getFirstlogin()+FileHandler.sep1+
                     user.getLastlogin()+FileHandler.sep1+
                     user.getUptime()+FileHandler.sep1+
+                    user.getIpBantime()+FileHandler.sep1+
                     user.getBantime()+FileHandler.sep1+
                     user.getMutetime()+FileHandler.sep1+
                     user.getCommands()+FileHandler.sep1+
                     user.canbuild()+FileHandler.sep1+
                     user.isAdmin()+FileHandler.sep1+
-                    Config.DEFAULT_ACCESS_LEVEL);
+                    Config.DEFAULT_ACCESS_LEVEL+FileHandler.sep1+
+                    user.getIp());
         	
         	FFLog.newEdit("Userdata", "new user '"+username+"' with id "+user.getId());
         	
@@ -123,12 +126,14 @@ public class FlatFileUserDataSource implements UserDataSource, DataSource {
                             holder.getFirstlogin()+FileHandler.sep1+
                             holder.getLastlogin()+FileHandler.sep1+
                             holder.getUptime()+FileHandler.sep1+
+                            holder.getIpBantime()+FileHandler.sep1+
                             holder.getBantime()+FileHandler.sep1+
                             holder.getMutetime()+FileHandler.sep1+
                             holder.getCommands()+FileHandler.sep1+
                             holder.canbuild()+FileHandler.sep1+
                             holder.isAdmin()+FileHandler.sep1+
-                            holder.getAccessLevel().getId());
+                            holder.getAccessLevel().getId()+FileHandler.sep1+
+                            holder.getIp());
                 break;
             }
         }

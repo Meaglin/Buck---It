@@ -9,7 +9,10 @@ import org.buckit.Config;
 
 // CraftBukkit start
 import java.util.ArrayList;
+
+import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -56,14 +59,174 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
 
     // Buck - It start
     // Called when a player is standing in/near a gate.
-    long t1 = 0;
+    private int start = 0;
+    private boolean nearGate = false;
+    private long lastCall = 0;
+    public int lastwarp = 0;
+    private int peak = 0;
     @Override
     public void T() {
-        double t3 = 1/((System.currentTimeMillis()-t1)/1000);
-        t1 = System.currentTimeMillis();
-        System.out.println("FPS: " + ((int)Math.floor(t3)));
+        if(lastwarp > floor(System.currentTimeMillis()/1000)-20)
+            return;
+        
+        if(!nearGate) {
+            start = floor(System.currentTimeMillis()/1000);
+            nearGate = true;
+            lastCall = System.currentTimeMillis();
+            a.b("Warping in ...");
+        } else {
+            long currentCall = System.currentTimeMillis();
+            if(lastCall < currentCall-1000) {
+                nearGate = false;
+                return;
+            }
+            if(floor(lastCall/1000) != floor(currentCall/1000)) {
+                int t = start + 4 - floor(currentCall/1000);
+                if(t != 0)
+                    a.b(t + "...");
+            }
+            if(currentCall-lastCall > peak) peak = (int) (currentCall-lastCall);
+            lastCall = currentCall;
+            if(start < floor(lastCall/1000) - 3) {
+                this.a.b("Warp! " + peak);
+                org.bukkit.entity.Entity entity = getBukkitEntity(); 
+                org.bukkit.World from = entity.getWorld();
+                org.bukkit.World to = null;
+                int tox = 0,toz= 0;
+                if(from.getEnvironment() == org.bukkit.World.Environment.NETHER){
+                    tox = entity.getLocation().getBlockX()*8;
+                    toz = entity.getLocation().getBlockZ()*8;
+                    to = entity.getServer().getWorld("world");
+                } else {
+                    tox = entity.getLocation().getBlockX()/8;
+                    toz = entity.getLocation().getBlockZ()/8;
+                    to = entity.getServer().getWorld(Config.HELL_DIRECTORY);
+                }
+                int range = 20;
+                Location gate = null;
+                for(int x = (tox >> 4)-1;x <= (tox >> 4)+1;x++) {
+                    for(int z = (toz >> 4)-1;z <= (toz >>4)+1;z++) {                        
+                        to.loadChunk(x, z);
+                    }
+                }
+                
+                for(int x = tox-range;x <= tox+range;x++){
+                    for(int z = toz-range;z <= toz+range;z++){
+                        for(int y = 10;y < 124;y++){ 
+                            if(to.getBlockTypeIdAt(x, y, z) == 90) {
+                                gate = new Location(to,x,y,z);
+                            }
+                        }
+                    }
+                }
+                if(gate != null){
+                    if(to.getBlockTypeIdAt(gate.getBlockX(), gate.getBlockY()-1, gate.getBlockZ()) == org.bukkit.Material.PORTAL.getId()){
+                        gate = new Location(to,gate.getBlockX(), gate.getBlockY()-1, gate.getBlockZ());
+                    }
+                    entity.teleportTo(gate);
+                } else {
+                    range:for(int r = 0;r < range;r++) {
+                        for(int z = toz-r;z <= toz+r;z++){
+                            int x = tox+r;
+                            gate = makeGate(to,x,z);
+                            if(gate != null)
+                                break range;
+                        }
+                        for(int x = tox+r-1;x >= tox-r+1;x--){
+                            int z = toz+r;
+                            gate = makeGate(to,x,z);
+                            if(gate != null)
+                                break range;
+                        }
+                        for(int z = toz+r;z >= toz-r;z--){
+                            int x = tox-r;
+                            gate = makeGate(to,x,z);
+                            if(gate != null)
+                                break range;
+                        }
+                        for(int x = tox-r+1;x <= tox+r-1;x++){
+                            int z = toz+r;
+                            gate = makeGate(to,x,z);
+                            if(gate != null)
+                                break range;
+                        }
+                    }
+                    if(gate == null) {
+                        // oh seriously FUCK.
+                        ((org.bukkit.entity.Player)entity).sendMessage("No viable gate location found, go screw yourself.");
+                    
+                    } else {
+                        lastwarp = floor(System.currentTimeMillis()/1000);
+                        //CraftChunk chunk = (CraftChunk) gate.getBlock().getChunk();
+                        //this.a.b((Packet) (new Packet51MapChunk(chunk.getX() * 16, 0, chunk.getZ() * 16, 16, 128, 16, ((CraftWorld)to).getHandle())));
+                        entity.teleportTo(gate);
+                        //entity.teleportTo(gate);
+                        //a.b(new Packet1Login("", "", this.id, this.world.j(), (byte) this.world.m.g));
+                    
+                    }
+                    
+                }
+                start = 0;
+                lastCall = 0;
+                nearGate = false;
+            }
+        }
+    }
+    private Location makeGate(org.bukkit.World world,int x,int z) {
+        int y = 10;
+        int lastType = -1;
+        int curType = -1;
+        height:for(;y < 120;y++){
+            // 87 = netherrack 88 = soul sand 89 = lightstone.
+            curType = world.getBlockTypeIdAt(x, y, z);
+            if(curType == 0 && isSolid(lastType)){
+                lastType = curType;
+                if(world.getBlockTypeIdAt(x, y+1, z) != 0)
+                    continue;
+                
+                int type = -1,typeunder = -1;
+                for(int i = -1;i <= 1;i++)
+                    for(int o = -1;o <=0;o++) {
+                        type = world.getBlockTypeIdAt(x+o, y, z+i);
+                        typeunder = world.getBlockTypeIdAt(x+o, y-1, z+i);
+                        if(!isSolid(type) && !isSolid(typeunder))
+                            continue height;
+                    }
+                
+                for(int i = -1;i <= 1;i++)
+                    for(int o = -1;o <=0;o++)
+                        for(int p = 1;p <= 3;p++)
+                            if(world.getBlockTypeIdAt(x+o, y+p, z+i) != 0)
+                                continue height;
+                
+                for(int i = -1;i <= 2;i++){
+                    ((CraftWorld)world).getHandle().setTypeId(x+i, y, z, 49);
+                    ((CraftWorld)world).getHandle().setTypeId(x+i, y+4, z, 49);
+                }
+                for(int i = 1;i <= 3;i++){
+                    ((CraftWorld)world).getHandle().setTypeId(x-1, y+i, z, 49);
+                    ((CraftWorld)world).getHandle().setTypeId(x+2, y+i, z, 49);
+                }
+                for(int i = 1;i <= 3;i++){
+                    ((CraftWorld)world).getHandle().setTypeId(x, y+i, z, 90);
+                    ((CraftWorld)world).getHandle().setTypeId(x+1, y+i, z, 90);
+                }
+
+                
+                return new Location(world,x,y+1,z);
+            } else {
+                lastType = curType;
+            }
+        }
+        
+        
+        return null;
+    }
+    private boolean isSolid(int type){
+        return (type != 10 && type != 11 && type != 0);
     }
     // Buck - It end
+    private int floor(double l ) {int k = (int)l; return (k > l ? k-1 : k); }
     
     public void l() {
         this.activeContainer.a((ICrafting) this);

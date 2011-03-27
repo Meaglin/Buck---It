@@ -18,7 +18,7 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
     private Map<Integer, AccessLevel> accesslevelsint;
     private Map<String, AccessLevel>  accesslevels;
     
-    private static final Group defaultGroup = new Group(0,"default","");
+    private static final Group defaultGroup = new Group(0,"default","","world");
     private static final AccessLevel defaultLevel = new AccessLevel(0,new Group[]{defaultGroup},"default",null,false,false);
     
     private DataSourceManager datasource;
@@ -43,18 +43,19 @@ public class FlatFileAccessDataSource implements AccessDataSource, DataSource {
         Group group;
         LineReader r;
         int id;
-        String name, commands;
+        String name, commands, worlds;
         for (int i=0; i<lines.size(); i++) {
             
             r = new LineReader(lines.get(i));
             id          = r.nextInt();
             name        = r.nextStr();
             commands    = r.nextStr();
-
+            worlds      = r.nextStr();
             group = new Group(
                         id, 
                         name, 
-                        commands
+                        commands,
+                        worlds
                     );
             
             groups.put(group.getName(), group);

@@ -28,8 +28,6 @@ public class MuteCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!(sender instanceof Player))
-            return false;
         
         if (args.length < 1) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified.");
@@ -72,8 +70,6 @@ public class MuteCommand extends Command {
         for(Player p : list)
             if(p.getName().equalsIgnoreCase(playername))
                 player = p;
-        
-        if(player != null)data = player.getUserDataHolder();
         
         if(time == 0){
             data.setMutetime(-1);

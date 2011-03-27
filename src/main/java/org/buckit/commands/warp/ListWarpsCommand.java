@@ -31,14 +31,17 @@ public class ListWarpsCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if(!(sender instanceof Player))
-            return false;
         
         String group = Config.WARPS_DEFAULT_GROUP_NAME;
         if(args.length > 0 && Config.WARPS_GROUPS_ENABLED)
             group = args[0].toLowerCase();
         
-        int accesslevel = ((Player)sender).getAccessLevel().getId();
+        int accesslevel = Config.DEFAULT_ACCESS_LEVEL;
+        if(sender instanceof Player)
+            accesslevel = ((Player)sender).getAccessLevel().getId();
+        else
+            accesslevel = Integer.MAX_VALUE;
+        
         //some1 is bound to try this out .....
         if(group.equalsIgnoreCase("all") && !Config.WARPS_DEFAULT_GROUP_NAME.equals("all")){
             Collection<Warp> warps = datasource.getAllWarps();
@@ -50,9 +53,22 @@ public class ListWarpsCommand extends Command {
             sender.sendMessage("List of all warps:");
             sender.sendMessage(str);
             
-        // TODO: implement this into the interface.
-        //}else if(group.equals("groups") && !Config.WARPS_DEFAULT_GROUP_NAME.equals("groups")){
-        
+        }else if(group.equals("groups") && !Config.WARPS_DEFAULT_GROUP_NAME.equals("groups")){
+            Collection<String> groups = new LinkedHashSet<String>();
+            for(Warp warp : datasource.getAllWarps())
+                if(!groups.contains(warp.getGroup()) && !warp.getGroup().equals(Config.WARPS_DEFAULT_GROUP_NAME))
+                    groups.add(warp.getGroup());
+                
+            String message = "";
+            for(String str : groups) {
+                message += str + ", ";
+            }
+            if(groups.size() < 1) {
+                sender.sendMessage("No groups found.");
+            } else {
+                sender.sendMessage("List of availeble groups:");
+                sender.sendMessage(message.substring(0,message.length()-2));
+            }
         }else{
             Collection<Warp> warps = datasource.getWarps(group);
             String str = "";

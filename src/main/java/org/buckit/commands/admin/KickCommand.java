@@ -24,8 +24,7 @@ public class KickCommand extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		if (!(sender instanceof Player))
-			return false;
+
 		
 		if (args.length < 2) {
 			sender.sendMessage(Config.DEFAULT_ERROR_COLOR + "Insufficient arguments specified:");
@@ -49,7 +48,7 @@ public class KickCommand extends Command {
 			receivers.get(0).kickPlayer(out);
 			
 			Logger log = Logger.getLogger(KickCommand.class.getName());
-			log.info("Player " + receivers.get(0).getDisplayName() + " has been kicked by " + ((Player) sender).getDisplayName() + " with reason: " + out);	
+			log.info("Player " + receivers.get(0).getDisplayName() + " has been kicked by " + (sender instanceof Player ? ((Player)sender).getName() : "CONSOLE" ) + " with reason: " + out);	
 			
 			return true;
 		}

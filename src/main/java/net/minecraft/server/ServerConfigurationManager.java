@@ -171,6 +171,7 @@ public class ServerConfigurationManager {
         // TODO: optimize.
         
         holder.setLastlogin((int) (System.currentTimeMillis()/1000));
+        holder.setIp(s2);
         server.getDataSourceManager().getUserDataSource().updateUser(holder);
         // Buck - It end
         

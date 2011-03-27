@@ -65,6 +65,7 @@ public class Config {
     public static boolean      LIMIT_BUILD_BY_BUILD_FLAG;
     public static boolean      SEND_MOTD_ON_LOGIN;
     
+    public static boolean      PERMISSIONS_COMPATIBILITY_ENABLED;
     // --------------------------------------------------
     // Expert Properties
     // --------------------------------------------------
@@ -246,6 +247,7 @@ public class Config {
             LIMIT_BUILD_BY_BUILD_FLAG = gp.getBool("LimitBuildByFlag", true);
             SEND_MOTD_ON_LOGIN = gp.getBool("MotdOnLogin", true);
             
+            PERMISSIONS_COMPATIBILITY_ENABLED = gp.getBool("PermissionsCompatibilityEnabled", false);
             
         } catch (Exception e) {
             e.printStackTrace();

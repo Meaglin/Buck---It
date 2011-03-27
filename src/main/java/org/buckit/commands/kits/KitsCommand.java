@@ -28,15 +28,17 @@ public class KitsCommand extends Command {
     
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if(!(sender instanceof Player))
-            return false;
         
-        Player player = (Player)sender;
+        int accesslevel = Config.DEFAULT_ACCESS_LEVEL;
+        if(sender instanceof Player)
+            accesslevel = ((Player)sender).getAccessLevel().getLevel();
+        else
+            accesslevel = Integer.MAX_VALUE;
         
         Collection<Kit> kits = datasource.getKits();
         Collection<String> names = new LinkedHashSet<String>();
         for(Kit k : kits)
-            if(player.getAccessLevel().getId() >= k.getMinaccesslevel())
+            if(accesslevel >= k.getMinaccesslevel())
                 names.add(k.getName());
         
         String str = "";

@@ -7,14 +7,14 @@ import org.buckit.access.AccessLevel;
 
 public class UserDataHolder {
 
-    private int         id, firstlogin, lastlogin, uptime, bantime, mutetime;
-    private String      username, usernameformat, commands;
+    private int         id, firstlogin, lastlogin, uptime, ipbantime, bantime, mutetime;
+    private String      username, usernameformat, commands, ip;
     private boolean     admin, canbuild;
     private AccessLevel accesslevel;
     private ArrayList<String> commandArray;
     private boolean canuseall = false;
     
-    public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int bantime, int mutetime, AccessLevel accesslevel) {
+    public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int ipbantime, int bantime, int mutetime, AccessLevel accesslevel,String ip) {
         this.id = id;
         this.username = username;
         this.usernameformat = usernameformat;
@@ -24,6 +24,7 @@ public class UserDataHolder {
         this.firstlogin = firstlogin;
         this.lastlogin = lastlogin;
         this.uptime = uptime;
+        this.ipbantime = ipbantime;
         this.bantime = bantime;
         this.mutetime = mutetime;
         this.accesslevel = accesslevel;
@@ -32,6 +33,7 @@ public class UserDataHolder {
         for (String command : commands.split(Config.DATABASE_DELIMITER))
             this.commandArray.add(command);
         
+        this.ip = ip;
         canuseall = commandArray.contains(Config.FULL_ACCESS_STRING);
     }
 
@@ -134,6 +136,13 @@ public class UserDataHolder {
             return true;
         
         return (getBantime() == -1);
+    }
+    
+    public boolean isIpBanned() {
+        if((System.currentTimeMillis()/1000) < getIpBantime())
+            return true;
+        
+        return (getIpBantime() == -1);
     }
 
     /**
@@ -239,7 +248,35 @@ public class UserDataHolder {
     }
 
     
-    public boolean canUseCommand(String command) {
-        return canuseall || commandArray.contains(command) || getAccessLevel().canUseCommand(command);
+    /**
+     * @param ip the ip to set
+     */
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    /**
+     * @return the ip
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
+     * @param ipbantime the ipbantime to set
+     */
+    public void setIpbantime(int ipbantime) {
+        this.ipbantime = ipbantime;
+    }
+
+    /**
+     * @return the ipbantime
+     */
+    public int getIpBantime() {
+        return ipbantime;
+    }
+
+    public boolean canUseCommand(String command, String world) {
+        return canuseall || commandArray.contains(command) || getAccessLevel().canUseCommand(command, world);
     }
 }

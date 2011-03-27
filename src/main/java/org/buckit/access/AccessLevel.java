@@ -1,14 +1,12 @@
 package org.buckit.access;
 
-import org.buckit.Config;
-
 public class AccessLevel {
 
     private int    id;
     private String name;
     private String usernameformat;
 
-    private boolean canBuild, isAdmin, hasFullAccess;
+    private boolean canBuild, isAdmin;
     private Group[] childs;
 
     public AccessLevel(int id, Group[] childs, String name, String usernameformat, boolean canBuild, boolean isAdmin) {
@@ -18,7 +16,6 @@ public class AccessLevel {
         this.usernameformat = usernameformat;
         this.canBuild = canBuild;
         this.isAdmin = isAdmin;
-        hasFullAccess = canUseCommand(Config.FULL_ACCESS_STRING);
     }
 
     /**
@@ -28,6 +25,11 @@ public class AccessLevel {
         return id;
     }
 
+    
+    public int getLevel() {
+        return getId();
+    }
+    
     /**
      * @return the name
      */
@@ -63,22 +65,12 @@ public class AccessLevel {
         return childs;
     }
 
-    /**
-     * @return the hasFullAccess
-     */
-    public boolean hasFullAccess() {
-        return hasFullAccess;
-    }
-
-    public boolean canUseCommand(String command) {
-        if (hasFullAccess())
-            return true;
-
+    public boolean canUseCommand(String command, String world) {
         if(getChilds() == null)
             return false;
         
         for (Group g : getChilds())
-            if (g.canUseCommand(command))
+            if (g.canUseCommand(command, world))
                 return true;
 
         return false;
