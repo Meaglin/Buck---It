@@ -203,6 +203,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     private void loadBuckItData(){
         dataholder = server.getDataSourceManager().getUserDataSource().getUserData(getName().toLowerCase());
+        dataholder.setOnline(true);
         
         String format = Config.DEFAULT_USER_FORMAT;
         

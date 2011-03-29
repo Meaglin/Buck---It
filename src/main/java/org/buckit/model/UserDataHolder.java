@@ -12,7 +12,7 @@ public class UserDataHolder {
     private boolean     admin, canbuild;
     private AccessLevel accesslevel;
     private ArrayList<String> commandArray;
-    private boolean canuseall = false;
+    private boolean canuseall = false,online = false;
     
     public UserDataHolder(int id, String username, String usernameformat, boolean admin, boolean canbuild, String commands, int firstlogin, int lastlogin, int uptime, int ipbantime, int bantime, int mutetime, AccessLevel accesslevel,String ip) {
         this.id = id;
@@ -278,5 +278,19 @@ public class UserDataHolder {
 
     public boolean canUseCommand(String command, String world) {
         return canuseall || commandArray.contains(command) || getAccessLevel().canUseCommand(command, world);
+    }
+
+    /**
+     * @param online the online to set
+     */
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    /**
+     * @return the online
+     */
+    public boolean isOnline() {
+        return online;
     }
 }

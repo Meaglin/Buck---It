@@ -54,6 +54,7 @@ public final class SimpleCommandMap implements CommandMap {
         register("buckit", new SetSpawnCommand("setspawn",server));
         register("buckit", new SpawnMobCommand("spawnmob",server));
         register("buckit", new ItemCommand("item",server));
+        register("buckit", new WhoisCommand("whois",server));
         
         if(Config.HOMES_ENABLED) {
             register("buckit", new HomeCommand("home",server));
