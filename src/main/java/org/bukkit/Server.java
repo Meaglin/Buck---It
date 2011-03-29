@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.command.PluginCommand;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -44,6 +45,35 @@ public interface Server {
      * @return The amount of players this server allows
      */
     public int getMaxPlayers();
+
+    /**
+     * Get the game port that the server runs on
+     *
+     * @return The port number of this servers
+     */
+    public int getPort();
+
+    /**
+     * Get the IP that this server is bound to or empty string if not specified
+     *
+     * @return The IP string that this server is bound to, otherwise empty string
+     */
+    public String getIp();
+
+    /**
+     * Get the name of this server
+     *
+     * @return The name of this server
+     */
+    public String getServerName();
+
+    /**
+     * Get an ID of this server. The ID is a simple generally alphanumeric
+     * ID that can be used for uniquely identifying this server.
+     *
+     * @return The ID of this server
+     */
+    public String getServerId();
 
     /**
      * Broadcast a message to all players.
@@ -140,4 +170,18 @@ public interface Server {
      * @return PluginCommand if found, otherwise null
      */
     public PluginCommand getPluginCommand(String name);
+
+    /**
+     * Writes loaded players to disk
+     */
+    public void savePlayers();
+
+    /**
+     * Dispatches a command on the server, and executes it if found.
+     *
+     * @param cmdLine command + arguments. Example: "test abc 123"
+     * @return targetFound returns false if no target is found.
+     * @throws CommandException Thrown when the executor for the given command fails with an unhandled exception
+     */
+    public boolean dispatchCommand(CommandSender sender, String commandLine);
 }

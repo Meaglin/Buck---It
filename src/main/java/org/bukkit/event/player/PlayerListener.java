@@ -15,7 +15,7 @@ public class PlayerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPlayerJoin(PlayerEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
     }
 
     /**
@@ -23,7 +23,7 @@ public class PlayerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPlayerQuit(PlayerEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
     }
 
     /**
@@ -48,7 +48,7 @@ public class PlayerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPlayerCommandPreprocess(PlayerChatEvent event) {
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
     }
 
     /**
@@ -64,7 +64,7 @@ public class PlayerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPlayerTeleport(PlayerMoveEvent event) {
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
     }
 
     /**
@@ -76,11 +76,11 @@ public class PlayerListener implements Listener {
     }
 
     /**
-     * Called when a player uses an item
+     * Called when a player interacts
      *
      * @param event Relevant event details
      */
-    public void onPlayerItem(PlayerItemEvent event) {
+    public void onPlayerInteract(PlayerInteractEvent event) {
     }
 
     /**
@@ -145,5 +145,21 @@ public class PlayerListener implements Listener {
      * @param event Relevant event details
      */
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+    }
+
+    /**
+     * Called when a player fills a bucket
+     * 
+     * @param event Relevant event details
+     */
+    public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+    }
+
+    /**
+     * Called when a player empties a bucket
+     * 
+     * @param event Relevant event details
+     */
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
     }
 }

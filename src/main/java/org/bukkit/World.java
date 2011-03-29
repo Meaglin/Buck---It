@@ -201,6 +201,24 @@ public interface World {
     public boolean unloadChunkRequest(int x, int z, boolean safe);
 
     /**
+     * Regenerates the {@link Chunk} at the specified coordinates
+     *
+     * @param x X-coordinate of the chunk
+     * @param z Z-coordinate of the chunk
+     * @return Whether the chunk was actually regenerated
+     */
+    public boolean regenerateChunk(int x, int z);
+
+    /**
+     * Resends the {@link Chunk} to all clients
+     *
+     * @param x X-coordinate of the chunk
+     * @param z Z-coordinate of the chunk
+     * @return Whether the chunk was actually refreshed
+     */
+    public boolean refreshChunk(int x, int z);
+
+    /**
      * Drops an item at the specified {@link Location}
      *
      * @param location Location to drop the item
@@ -285,9 +303,9 @@ public interface World {
      * 
      * @param loc The location to spawn the creature
      * @param type The creature to spawn
-     * @return Resulting Creature of this method, or null if it was unsuccessful
+     * @return Resulting LivingEntity of this method, or null if it was unsuccessful
      */
-    public Creature spawnCreature(Location loc, CreatureType type);
+    public LivingEntity spawnCreature(Location loc, CreatureType type);
 
     /**
      * Get a list of all entities in this World
@@ -405,4 +423,9 @@ public interface World {
          */
         NETHER
     }
+
+    /**
+     * Saves world to disk
+     */
+    public void save();
 }

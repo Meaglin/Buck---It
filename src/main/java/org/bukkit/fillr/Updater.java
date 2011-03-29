@@ -1,6 +1,5 @@
 package org.bukkit.fillr;
 
-import org.bukkit.entity.Player;
 import org.bukkit.*;
 import org.bukkit.plugin.*;
 
@@ -98,6 +97,8 @@ public class Updater {
         File plugin = new File(DIRECTORY, name + ".jar");
         try {
             server.getPluginManager().loadPlugin(plugin);
+        } catch (UnknownDependencyException ex) {
+            server.getLogger().log(Level.SEVERE, null, ex);
         } catch (InvalidPluginException ex) {
             server.getLogger().log(Level.SEVERE, null, ex);
         } catch (InvalidDescriptionException ex) {

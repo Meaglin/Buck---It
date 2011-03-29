@@ -48,10 +48,24 @@ public interface Player extends HumanEntity, CommandSender {
     public void setCompassTarget(Location loc);
 
     /**
+     * Get the previously set compass target.
+     *
+     * @return location of the target
+     */
+    public Location getCompassTarget();
+
+    /**
      * Gets the socket address of this player
      * @return the player's address
      */
     public InetSocketAddress getAddress();
+    
+    /**
+     * Sends this sender a message raw
+     *
+     * @param message Message to be displayed
+     */
+    public void sendRawMessage(String message);
 
     /**
      * Kicks player with custom kick message.

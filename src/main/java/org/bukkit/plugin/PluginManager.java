@@ -18,7 +18,7 @@ public interface PluginManager {
      * @param loader Class name of the PluginLoader to register
      * @throws IllegalArgumentException Thrown when the given Class is not a valid PluginLoader
      */
-    public void RegisterInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException;
+    public void registerInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException;
 
     /**
      * Checks if the given plugin is loaded and returns it when applicable
@@ -65,7 +65,7 @@ public interface PluginManager {
      * @throws InvalidPluginException Thrown when the specified file is not a valid plugin
      * @throws InvalidDescriptionException Thrown when the specified file contains an invalid description
      */
-    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException;
+    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException;
 
     /**
      * Loads the plugins contained within the specified directory

@@ -2,9 +2,7 @@ package org.bukkit.event.player;
 
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Egg;
-import org.bukkit.entity.MobType;
 import org.bukkit.entity.Player;
-
 
 /**
  *
@@ -17,21 +15,14 @@ public class PlayerEggThrowEvent extends PlayerEvent {
     private CreatureType hatchType;
     private byte numHatches;
 
-    public PlayerEggThrowEvent(Type type, Player player, Egg egg, boolean hatching, byte numHatches, CreatureType hatchType) {
-        super(type, player);
+    public PlayerEggThrowEvent(Player player, Egg egg, boolean hatching, byte numHatches, CreatureType hatchType) {
+        super(Type.PLAYER_EGG_THROW, player);
         this.egg = egg;
         this.hatching = hatching;
         this.numHatches = numHatches;
         this.hatchType = hatchType;
     }
 
-    public PlayerEggThrowEvent(Type type, Player player, Egg egg, boolean hatching, byte numHatches, MobType hatchType) {
-        super(type, player);
-        this.egg = egg;
-        this.hatching = hatching;
-        this.numHatches = numHatches;
-        this.hatchType = CreatureType.fromName(hatchType.getName());
-    }
     /**
      * Get the egg.
      *
@@ -62,12 +53,12 @@ public class PlayerEggThrowEvent extends PlayerEvent {
     }
 
     /**
-     * Get the type of the mob being hatched (MobType.CHICKEN by default)
+     * Get the type of the mob being hatched (CreatureType.CHICKEN by default)
      *
      * @return The type of the mob being hatched by the egg
      */
-    public MobType getHatchType() {
-        return MobType.fromName(hatchType.getName());
+    public CreatureType getHatchType() {
+        return CreatureType.fromName(hatchType.getName());
     }
 
     /**
@@ -79,16 +70,6 @@ public class PlayerEggThrowEvent extends PlayerEvent {
         this.hatchType = hatchType;
     }
 
-    /**
-     * Change the type of mob being hatched by the egg
-     *
-     * @param hatchType The type of the mob being hatched by the egg
-     * 
-     * @deprecated Use setHatchType(CreatureType hatchType) instead.
-     */
-    public void setHatchType(MobType hatchType) {
-        this.hatchType = CreatureType.fromName(hatchType.getName());
-    }
 
     /**
      * Get the number of mob hatches from the egg. By default the number

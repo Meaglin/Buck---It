@@ -33,7 +33,7 @@ public class BlockListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onBlockFlow(BlockFromToEvent event) {
+    public void onBlockFromTo(BlockFromToEvent event) {
     }
 
     /**
@@ -58,22 +58,6 @@ public class BlockListener implements Listener {
      * @param event Relevant event details
      */
     public void onBlockPlace(BlockPlaceEvent event) {
-    }
-
-    /**
-     * Called when a block is interacted with
-     *
-     * @param event Relevant event details
-     */
-    public void onBlockInteract(BlockInteractEvent event) {
-    }
-
-    /**
-     * Called when a player right clicks a block
-     *
-     * @param event Relevant event details
-     */
-    public void onBlockRightClick(BlockRightClickEvent event) {
     }
 
     /**

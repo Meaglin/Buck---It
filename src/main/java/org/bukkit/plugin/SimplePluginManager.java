@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.buckit.Config;
@@ -58,7 +60,7 @@ public final class SimplePluginManager implements PluginManager {
      * @param loader Class name of the PluginLoader to register
      * @throws IllegalArgumentException Thrown when the given Class is not a valid PluginLoader
      */
-    public void RegisterInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
+    public void registerInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
         PluginLoader instance;
 
         if (PluginLoader.class.isAssignableFrom(loader)) {
@@ -67,7 +69,8 @@ public final class SimplePluginManager implements PluginManager {
                 constructor = loader.getConstructor(Server.class);
                 instance = constructor.newInstance(server);
             } catch (NoSuchMethodException ex) {
-                throw new IllegalArgumentException(String.format("Class %s does not have a public %s(Server) constructor", loader.getName()), ex);
+                String className = loader.getName();
+                throw new IllegalArgumentException(String.format("Class %s does not have a public %s(Server) constructor", className,className), ex);
             } catch (Exception ex) {
                 throw new IllegalArgumentException(String.format("Unexpected exception %s while attempting to construct a new instance of %s", ex.getClass().getName(), loader.getName()), ex);
             }
@@ -92,19 +95,45 @@ public final class SimplePluginManager implements PluginManager {
         List<Plugin> result = new ArrayList<Plugin>();
         File[] files = directory.listFiles();
 
-        for (File file : files) {
-            Plugin plugin = null;
+        boolean allFailed = false;
+        boolean finalPass = false;
 
-            try {
-                plugin = loadPlugin(file);
-            } catch (InvalidPluginException ex) {
-                server.getLogger().log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath() + ": " + ex.getMessage(), ex);
-            } catch (InvalidDescriptionException ex) {
-                server.getLogger().log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath() + ": " + ex.getMessage(), ex);
+        LinkedList<File> filesList = new LinkedList(Arrays.asList(files));
+
+        while(!allFailed || finalPass) {
+            allFailed = true;
+            Iterator<File> itr = filesList.iterator();
+            while(itr.hasNext()) {
+                File file = itr.next();
+                Plugin plugin = null;
+
+                try {
+                    plugin = loadPlugin(file);
+                    itr.remove();
+                } catch (UnknownDependencyException ex) {
+                    if(finalPass) {
+                        server.getLogger().log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath() + ": " + ex.getMessage(), ex);
+                        itr.remove();
+                    } else {
+                        plugin = null;
+                    }
+                } catch (InvalidPluginException ex) {
+                    server.getLogger().log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath() + ": " + ex.getMessage(), ex);
+                    itr.remove();
+                } catch (InvalidDescriptionException ex) {
+                    server.getLogger().log(Level.SEVERE, "Could not load " + file.getPath() + " in " + directory.getPath() + ": " + ex.getMessage(), ex);
+                    itr.remove();
+                }
+
+                if (plugin != null) {
+                    result.add(plugin);
+                    allFailed = false;
+                }
             }
-
-            if (plugin != null) {
-                result.add(plugin);
+            if(finalPass) {
+                break;
+            } else if(allFailed) {
+                finalPass = true;
             }
         }
         // Buck - It start
@@ -127,7 +156,7 @@ public final class SimplePluginManager implements PluginManager {
      * @throws InvalidPluginException Thrown when the specified file is not a valid plugin
      * @throws InvalidDescriptionException Thrown when the specified file contains an invalid description
      */
-    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException {
+    public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException {
         Set<Pattern> filters = fileAssociations.keySet();
         Plugin result = null;
 
@@ -251,8 +280,9 @@ public final class SimplePluginManager implements PluginManager {
      */
     public void registerEvent(Event.Type type, Listener listener, Priority priority, Plugin plugin) {
         if (!plugin.isEnabled()) {
-            server.getLogger().warning("Plugin '" + plugin.getDescription().getName() + "' (ver " + plugin.getDescription().getVersion() + ") is registering events before it is enabled. It may be misbehaving and the author needs to fix this.");
+            throw new IllegalPluginAccessException("Plugin attempted to register " + type + " while not enabled");
         }
+
         getEventListeners( type ).add(new RegisteredListener(listener, priority, plugin, type));
     }
 
@@ -266,6 +296,10 @@ public final class SimplePluginManager implements PluginManager {
      * @param plugin Plugin to register
      */
     public void registerEvent(Event.Type type, Listener listener, EventExecutor executor, Priority priority, Plugin plugin) {
+        if (!plugin.isEnabled()) {
+            throw new IllegalPluginAccessException("Plugin attempted to register " + type + " while not enabled");
+        }
+
         getEventListeners( type ).add(new RegisteredListener(listener, executor, priority, plugin));
     }
 

@@ -12,7 +12,7 @@ public class ServerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPluginEnabled(PluginEvent event) {
+    public void onPluginEnable(PluginEnableEvent event) {
     }
 
     /**
@@ -20,7 +20,7 @@ public class ServerListener implements Listener {
      *
      * @param event Relevant event details
      */
-    public void onPluginDisabled(PluginEvent event) {
+    public void onPluginDisable(PluginDisableEvent event) {
     }
 
     /**

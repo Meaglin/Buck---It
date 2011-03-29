@@ -20,6 +20,7 @@ import org.buckit.commands.warp.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
 
 public final class SimpleCommandMap implements CommandMap {
     private final Map<String, Command> knownCommands = new HashMap<String, Command>();
@@ -127,7 +128,7 @@ public final class SimpleCommandMap implements CommandMap {
         knownCommands.put(name.toLowerCase(), command);
         return !nameInUse;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -135,7 +136,7 @@ public final class SimpleCommandMap implements CommandMap {
         String[] args = commandLine.split(" ");
         String sentCommandLabel = args[0].toLowerCase();
 
-        args = Arrays.copyOfRange(args, 1, args.length);
+        args = Arrays_copyOfRange(args, 1, args.length);
 
         Command target = getCommand(sentCommandLabel);
         boolean isRegisteredCommand = (target != null);
@@ -281,11 +282,11 @@ public final class SimpleCommandMap implements CommandMap {
             return true;
         }
     }
-    
+
     private static class PluginsCommand extends Command {
-        
+
         private final Server server;
-        
+
         public PluginsCommand(String name, Server server) {
             super(name);
             this.server = server;
@@ -294,13 +295,13 @@ public final class SimpleCommandMap implements CommandMap {
             this.accessname = "bukkit.info.plugins"; // Buck - It
             this.setAliases(Arrays.asList("pl"));
         }
-        
+
         @Override
         public boolean execute(CommandSender sender, String currentAlias, String[] args) {
             sender.sendMessage("Plugins: " + getPluginList());
             return true;
         }
-        
+
         private String getPluginList() {
             StringBuilder pluginList = new StringBuilder();
             Plugin[] plugins = server.getPluginManager().getPlugins();

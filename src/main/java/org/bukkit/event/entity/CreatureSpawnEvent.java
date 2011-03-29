@@ -1,10 +1,9 @@
 package org.bukkit.event.entity;
 
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.MobType;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 
 /**
  * Stores data for damage events
@@ -13,17 +12,11 @@ public class CreatureSpawnEvent extends EntityEvent implements Cancellable {
 
     private Location location;
     private boolean canceled;
-    private MobType mobtype;
+    private CreatureType creatureType;
 
-    public CreatureSpawnEvent(Entity spawnee, MobType mobtype, Location loc) {
-        super(Event.Type.CREATURE_SPAWN, spawnee);
-        this.mobtype = mobtype;
-        this.location = loc;
-    }
-
-    protected CreatureSpawnEvent(Event.Type type, Entity spawnee, MobType mobtype, Location loc) {
-        super(type, spawnee);
-        this.mobtype = mobtype;
+    public CreatureSpawnEvent(Entity spawnee, CreatureType mobtype, Location loc) {
+        super(Type.CREATURE_SPAWN, spawnee);
+        this.creatureType = mobtype;
         this.location = loc;
     }
 
@@ -60,7 +53,7 @@ public class CreatureSpawnEvent extends EntityEvent implements Cancellable {
      *
      * @return A CreatureType value detailing the type of creature being spawned
      */
-    public MobType getMobType() {
-        return mobtype;
+    public CreatureType getCreatureType() {
+        return creatureType;
     }
 }
