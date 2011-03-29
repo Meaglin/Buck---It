@@ -18,14 +18,12 @@ import org.buckit.model.UserDataHolder;
 import org.buckit.util.MotdReader;
 import org.buckit.util.TimeFormat;
 import org.bukkit.Location;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 // CraftBukkit end
@@ -100,8 +98,18 @@ public class ServerConfigurationManager {
 
         entityplayer.world.a(entityplayer);
         
-        server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_JOIN, server.getPlayer(entityplayer)));
-        ((WorldServer)entityplayer.world).manager.a(entityplayer);
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(server.getPlayer(entityplayer), "\u00A7e" + entityplayer.name + " joined the game.");
+
+        server.getPluginManager().callEvent(playerJoinEvent);
+
+        String joinMessage = playerJoinEvent.getJoinMessage();
+
+        if (joinMessage != null) {
+            this.c.f.a((Packet) (new Packet3Chat(joinMessage)));
+        }
+
+        ((WorldServer) entityplayer.world).manager.a(entityplayer);
+        // CraftBukkit end
         // Craftbukkit end
         
         // Buck - It start
@@ -132,7 +140,7 @@ public class ServerConfigurationManager {
         
         // CraftBukkit start
         ((WorldServer) entityplayer.world).manager.b(entityplayer);
-        server.getPluginManager().callEvent(new PlayerEvent(PlayerEvent.Type.PLAYER_QUIT, server.getPlayer(entityplayer))); // CraftBukkit
+        server.getPluginManager().callEvent(new PlayerQuitEvent(server.getPlayer(entityplayer))); // CraftBukkit
         // CraftBukkit end
     }
 
@@ -143,7 +151,7 @@ public class ServerConfigurationManager {
         // depending on the outcome. Also change any reference to this.e.c to entity.world
         EntityPlayer entity = new EntityPlayer(c, c.worlds.get(0), s, new ItemInWorldManager(c.worlds.get(0)));
         Player player = (entity == null) ? null : (Player) entity.getBukkitEntity();
-        PlayerLoginEvent event = new PlayerLoginEvent(Type.PLAYER_LOGIN, player);
+        PlayerLoginEvent event = new PlayerLoginEvent(player);
 
         String s2 = netloginhandler.b.b().toString();
 
@@ -205,6 +213,8 @@ public class ServerConfigurationManager {
 
         entityplayer1.id = entityplayer.id;
         entityplayer1.a = entityplayer.a;
+        entityplayer1.displayName = entityplayer.displayName; // CraftBukkit
+        entityplayer1.compassTarget = entityplayer.compassTarget; // CraftBukkit
         ((WorldServer) entityplayer.world).u.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
 
         while (entityplayer.world.a(entityplayer1, entityplayer1.boundingBox).size() != 0) {
@@ -215,7 +225,7 @@ public class ServerConfigurationManager {
         Player respawnPlayer = server.getPlayer(entityplayer);
         Location respawnLocation = new Location(respawnPlayer.getWorld(), entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
 
-        PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(Event.Type.PLAYER_RESPAWN, respawnPlayer, respawnLocation );
+        PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, respawnLocation );
         server.getPluginManager().callEvent(respawnEvent);
 
         entityplayer1.world = ((CraftWorld) respawnEvent.getRespawnLocation().getWorld()).getHandle();

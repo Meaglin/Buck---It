@@ -12,15 +12,16 @@ import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.event.Event.Type;
+import org.bukkit.craftbukkit.util.LongHashset;
+import org.bukkit.craftbukkit.util.LongHashtable;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 // CraftBukkit end
 
 public class ChunkProviderServer implements IChunkProvider {
     public LongHashset a = new LongHashset(); // CraftBukkit
-    private Chunk b;
-    private IChunkProvider c;
+    public Chunk b; // CraftBukkit
+    public IChunkProvider c; // CraftBukkit
     private IChunkLoader d;
     public LongHashtable<Chunk> e = new LongHashtable<Chunk>(); // CraftBukkit
     public List f = new ArrayList(); // CraftBukkit
@@ -79,7 +80,7 @@ public class ChunkProviderServer implements IChunkProvider {
                  * the World constructor. We can't reliably alter that, so we have
                  * no way of creating a CraftWorld/CraftServer at that point.
                  */
-                server.getPluginManager().callEvent(new ChunkLoadEvent(Type.CHUNK_LOADED, chunk.bukkitChunk));
+                server.getPluginManager().callEvent(new ChunkLoadEvent(chunk.bukkitChunk));
             }
             // CraftBukkit end
 
@@ -107,8 +108,8 @@ public class ChunkProviderServer implements IChunkProvider {
         Chunk chunk = (Chunk) this.e.get(i, j); // CraftBukkit
 
         chunk = chunk == null ? (this.g.r ? this.d(i, j) : this.b) : chunk;
-        if(chunk == this.b) return chunk;
-        if(i != chunk.j || j != chunk.k) {
+        if (chunk == this.b) return chunk;
+        if (i != chunk.j || j != chunk.k) {
             MinecraftServer.a.info("Chunk (" + chunk.j + ", " + chunk.k +") stored at  (" + i + ", " + j + ")");
             MinecraftServer.a.info(chunk.getClass().getName());
             Throwable x = new Throwable();
@@ -205,12 +206,12 @@ public class ChunkProviderServer implements IChunkProvider {
         if (!this.g.w) {
             // CraftBukkit start
             Server server = g.getServer();
-            while (!this.a.isEmpty()) {
+            for (int i = 0; i < 50 && !this.a.isEmpty(); i++) {
                 long chunkcoordinates = this.a.popFirst();
                 Chunk chunk = e.get(chunkcoordinates);
                 if (chunk == null) continue;
 
-                ChunkUnloadEvent event = new ChunkUnloadEvent(Type.CHUNK_UNLOADED, chunk.bukkitChunk);
+                ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
                 server.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     g.getWorld().preserveChunk( (CraftChunk) chunk.bukkitChunk );

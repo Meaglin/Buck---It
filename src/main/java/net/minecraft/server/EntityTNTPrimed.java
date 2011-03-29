@@ -3,7 +3,7 @@ package net.minecraft.server;
 // CraftBukkit start
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.event.entity.ExplosionPrimedEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 // CraftBukkit end
 
 public class EntityTNTPrimed extends Entity {
@@ -69,13 +69,13 @@ public class EntityTNTPrimed extends Entity {
 
         // CraftBukkit start
         CraftServer server = ((WorldServer) this.world).getServer();
-        org.bukkit.event.Event.Type eventType = ExplosionPrimedEvent.Type.EXPLOSION_PRIMED;
 
-        ExplosionPrimedEvent event = new ExplosionPrimedEvent(eventType, CraftEntity.getEntity(server, this), f, false);
+        ExplosionPrimeEvent event = new ExplosionPrimeEvent(CraftEntity.getEntity(server, this), f, false);
         server.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
-            this.world.a((Entity) null, this.locX, this.locY, this.locZ, event.getRadius(), event.getFire());
+            // give 'this' instead of (Entity) null so we know what causes the damage
+            this.world.a(this, this.locX, this.locY, this.locZ, event.getRadius(), event.getFire());
         }
         // CraftBukkit end
     }

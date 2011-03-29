@@ -8,7 +8,6 @@ import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.Packet;
 import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.Packet6SpawnPosition;
-import net.minecraft.server.Packet9Respawn;
 import net.minecraft.server.ServerConfigurationManager;
 import net.minecraft.server.WorldServer;
 
@@ -22,13 +21,9 @@ import org.bukkit.craftbukkit.TextWrapper;
 import org.bukkit.entity.Player;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
-    private EntityPlayer entity;
-    private String name;
 
     public CraftPlayer(CraftServer server, EntityPlayer entity) {
         super(server, entity);
-        this.name = getName();
-        this.entity = entity;
         
         //Buck - It
         loadBuckItData();
@@ -53,7 +48,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public InetSocketAddress getAddress() {
-        SocketAddress addr = entity.a.b.b();
+        SocketAddress addr = getHandle().a.b.b();
         if (addr instanceof InetSocketAddress) {
             return (InetSocketAddress) addr;
         } else {
@@ -63,7 +58,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public EntityPlayer getHandle() {
-        return entity;
+        return (EntityPlayer) entity;
     }
 
     public double getEyeHeight() {
@@ -71,7 +66,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public double getEyeHeight(boolean ignoreSneaking) {
-        if(ignoreSneaking) {
+        if (ignoreSneaking) {
             return 1.62D;
         } else {
             if (isSneaking()) {
@@ -87,18 +82,22 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.entity = entity;
     }
 
+    public void sendRawMessage(String message) {
+        getHandle().a.b(new Packet3Chat(message));
+    }
+
     public void sendMessage(String message) {
         for (final String line: TextWrapper.wrapText(message)) {
-            entity.a.b(new Packet3Chat(line));
+            getHandle().a.b(new Packet3Chat(line));
         }
     }
 
     public String getDisplayName() {
-        return name;
+        return getHandle().displayName;
     }
 
     public void setDisplayName(final String name) {
-        this.name = name;
+        getHandle().displayName = name;
     }
 
     @Override
@@ -129,15 +128,20 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void kickPlayer(String message) {
-        entity.a.a(message == null ? "" : message);
+        getHandle().a.a(message == null ? "" : message);
     }
 
     public void setCompassTarget(Location loc) {
-        entity.a.b(((Packet) (new Packet6SpawnPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))));
+        // Do not directly assign here, from the packethandler we'll assign it.
+        getHandle().a.b((Packet) new Packet6SpawnPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+    }
+
+    public Location getCompassTarget() {
+        return getHandle().compassTarget;
     }
 
     public void chat(String msg) {
-        entity.a.chat(msg);
+        getHandle().a.chat(msg);
     }
 
     public boolean performCommand(String command) {
@@ -145,17 +149,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void teleportTo(Location location) {
+    public boolean teleport(Location location) {
         WorldServer oldWorld = ((CraftWorld)getWorld()).getHandle();
         WorldServer newWorld = ((CraftWorld)location.getWorld()).getHandle();
         ServerConfigurationManager manager = server.getHandle();
+        EntityPlayer entity = getHandle();
+        boolean teleportSuccess;
 
         if (oldWorld != newWorld) {
-            manager.c.k.a(entity);
-            manager.c.k.b(entity);
-            oldWorld.manager.b(entity);
-            manager.b.remove(entity);
-            oldWorld.e(entity);
 
             EntityPlayer newEntity = new EntityPlayer(manager.c, newWorld, entity.name, new ItemInWorldManager(newWorld));
 
@@ -168,31 +169,48 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newEntity.activeContainer = entity.activeContainer;
             newEntity.defaultContainer = entity.defaultContainer;
             newEntity.lastwarp = entity.lastwarp;// Buck - It
+            newEntity.locX = location.getX();
+            newEntity.locY = location.getY();
+            newEntity.locZ = location.getZ();
+            newEntity.displayName = entity.displayName;
+            newEntity.compassTarget = entity.compassTarget;
             newWorld.u.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
 
-            newEntity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-            newWorld.manager.a(newEntity);
-            newWorld.a(newEntity);
-            manager.b.add(newEntity);
+            teleportSuccess = newEntity.a.teleport(location);
 
-            
-            entity.a.e = newEntity;
-            entity = newEntity;
+            if (teleportSuccess) {
+                manager.c.k.a(entity);
+                manager.c.k.b(entity);
+                oldWorld.manager.b(entity);
+                manager.b.remove(entity);
+                oldWorld.e(entity);
+
+                newWorld.manager.a(newEntity);
+                newWorld.a(newEntity);
+                manager.b.add(newEntity);
+
+                entity.a.e = newEntity;
+                this.entity = newEntity;
+
+                setCompassTarget(getCompassTarget());
+            }
+
+            return teleportSuccess;
         } else {
-            entity.a.a(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            return entity.a.teleport(location);
         }
     }
 
     public void setSneaking(boolean sneak) {
-        entity.b(sneak);
+        getHandle().b(sneak);
     }
 
     public boolean isSneaking() {
-        return entity.U();
+        return getHandle().U();
     }
-    
+
     public void updateInventory() {
-        entity.l();
+        getHandle().l();
     }
 
     /*

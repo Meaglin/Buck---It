@@ -1,14 +1,10 @@
 package net.minecraft.server;
 
 // CraftBukkit start
-import org.buckit.Config;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Type;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.BlockPlaceEvent;
 // CraftBukkit end
 
@@ -23,14 +19,7 @@ public class ItemBlock extends Item {
     }
 
     public boolean a(ItemStack itemstack, EntityHuman entityhuman, World world, int i, int j, int k, int l) {
-        // CraftBukkit start -- Bail if we have nothing of the item in hand
-        if (itemstack.count == 0) {
-            return false;
-        }
-
-        CraftBlock blockClicked = (CraftBlock) ((WorldServer) world).getWorld().getBlockAt(i, j, k);
-        BlockFace faceClicked = CraftBlock.notchToBlockFace(l);
-        // CraftBukkit end
+        int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit;
 
         if (world.getTypeId(i, j, k) == Block.SNOW.id) {
             l = 0;
@@ -63,24 +52,19 @@ public class ItemBlock extends Item {
         if (itemstack.count == 0) {
             return false;
         } else {
-            // CraftBukkit start
-            /* We store the old data so we can undo it. Snow(78) and half-steps(44) are special in that they replace the block itself,
-             * rather than the block touching the face we clicked on.
-             */
-            int typeId = blockClicked.getTypeId();
-            org.bukkit.block.Block replacedBlock = blockClicked.getFace(faceClicked);
-
-            if (typeId == Block.SNOW.id || (typeId == Block.STEP.id && itemstack.id == Block.STEP.id && faceClicked == BlockFace.UP))
-                replacedBlock = blockClicked;
-
-            final BlockState replacedBlockState = new CraftBlockState(replacedBlock);
-            // CraftBukkit end
-
             if (world.a(this.a, i, j, k, false)) {
                 Block block = Block.byId[this.a];
 
                 // CraftBukkit start - This executes the placement of the block
-                /*
+                BlockState replacedBlockState = CraftBlockState.getBlockState(world, i, j, k);
+
+                // Special case the silly stepstone :'(
+                if (l == 1 && world.getTypeId(i, j - 1, k) == Block.STEP.id && itemstack.id == Block.STEP.id) {
+                    replacedBlockState = CraftBlockState.getBlockState(world, i, j - 1, k);
+                }
+                /**
+                 * @see net.minecraft.server.World#b(int i, int j, int k, int l, int i1)
+                 * 
                  * This replaces world.b(IIIII), we're doing this because we need to
                  * hook between the 'placement' and the informing to 'world' so we can
                  * sanely undo this.
@@ -89,21 +73,7 @@ public class ItemBlock extends Item {
                  * replace this with.
                  */
                 if (world.setTypeIdAndData(i, j, k, a, a(itemstack.h()))) { // <-- world.b does this to place the block
-                    org.bukkit.Server server = ((WorldServer) world).getServer();
-                    Type eventType = Type.BLOCK_PLACED;
-                    org.bukkit.block.Block placedBlock = blockClicked.getFace(faceClicked) ;
-                    org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
-                    Player thePlayer = (entityhuman ==null) ? null : (Player) entityhuman.getBukkitEntity();
-
-                    ChunkCoordinates chunkcoordinates = world.l();
-                    int spawnX = chunkcoordinates.a;
-                    int spawnZ = chunkcoordinates.c;
-
-                    
-                    int distanceFromSpawn = (int) Math.max(Math.abs(i - spawnX), Math.abs(k - spawnZ));
-					boolean canBuild = (distanceFromSpawn > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || thePlayer.canBuild())) || thePlayer.isOp() || thePlayer.isAdmin(); // CraftBukkit Configurable spawn protection start
-                    BlockPlaceEvent event = new BlockPlaceEvent(eventType, placedBlock, replacedBlockState, blockClicked, itemInHand, thePlayer, canBuild);
-                    server.getPluginManager().callEvent(event);
+                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, replacedBlockState, clickedX, clickedY, clickedZ, block);
 
                     if (event.isCancelled() || !event.canBuild()) {
                         // CraftBukkit Undo!
@@ -114,7 +84,7 @@ public class ItemBlock extends Item {
 
                         } else {
 
-                            if (this.a == block.ICE.id) {
+                            if (this.a == Block.ICE.id) {
                                 // Ice will explode if we set straight to 0
                                 world.setTypeId(i, j, k, 20);
                             }

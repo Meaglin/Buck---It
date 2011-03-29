@@ -25,9 +25,8 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.LoggerOutputStream;
 import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
-import org.bukkit.event.Event;
-import org.bukkit.event.world.WorldEvent;
-// CraftBukkit end
+import org.bukkit.event.world.WorldSaveEvent;
+
 
 public class MinecraftServer implements Runnable, ICommandListener {
 
@@ -37,7 +36,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
     public PropertyManager d;
     // public WorldServer e; // CraftBukkit - removed
     public ServerConfigurationManager f;
-    private ConsoleCommandHandler o;
+    public ConsoleCommandHandler o; // CraftBukkit - made public
     private boolean p = true;
     public boolean g = false;
     int h = 0;
@@ -214,7 +213,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
         // Buck - It end
     }
 
-    void f() { //CraftBukkit - private -> default
+    void f() { // CraftBukkit - private -> default
         a.info("Saving chunks");
 
         // CraftBukkit start
@@ -222,7 +221,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
             world.a(true, (IProgressUpdate) null);
             world.r();
 
-            WorldEvent event = new WorldEvent( Event.Type.WORLD_SAVED, world.getWorld() );
+            WorldSaveEvent event = new WorldSaveEvent( world.getWorld() );
             server.getPluginManager().callEvent( event );
         }
 
@@ -387,13 +386,8 @@ public class MinecraftServer implements Runnable, ICommandListener {
         while (this.r.size() > 0) {
             ServerCommand servercommand = (ServerCommand) this.r.remove(0);
 
-            // CraftBukkit start
-            if (server.dispatchCommand(console, servercommand.a)) {
-                continue;
-            }
-            // CraftBukkit end
-
-            this.o.a(servercommand);
+            server.dispatchCommand(console, servercommand); // CraftBukkit
+            // this.o.a(servercommand); // CraftBukkit - Removed its now called in server.displatchCommand
         }
     }
 

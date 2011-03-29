@@ -5,6 +5,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import net.minecraft.server.BiomeBase;
+import net.minecraft.server.BlockRedstoneWire;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftChunk;
@@ -90,12 +91,20 @@ public class CraftBlock implements Block {
         chunk.getHandle().d.c(x, y, z, data);
     }
 
+    public void setData(final byte data, boolean applyPhysics) {
+        if (applyPhysics) {
+            chunk.getHandle().d.c(x, y, z, data);
+        } else {
+            chunk.getHandle().d.d(x, y, z, data);
+        }
+    }
+
     /**
      * Gets the metadata for this block
      *
      * @return block specific metadata
      */
-    public byte getRawData() {
+    public byte getData() {
         return (byte) chunk.getHandle().b(this.x & 0xF, this.y & 0x7F, this.z & 0xF);
     }
 
@@ -116,6 +125,26 @@ public class CraftBlock implements Block {
      */
     public boolean setTypeId(final int type) {
         return chunk.getHandle().d.e(x, y, z, type);
+    }
+    
+    public boolean setTypeId(final int type, final boolean applyPhysics) {
+        if (applyPhysics) {
+            return setTypeId(type);
+        } else {
+            return chunk.getHandle().d.setTypeId(x, y, z, type);
+        }
+    }
+
+    public boolean setTypeIdAndData(final int type, final byte data, final boolean applyPhysics) {
+        if (applyPhysics) {
+            return chunk.getHandle().d.b(x, y, z, type, data);
+        } else {
+            boolean success = chunk.getHandle().d.setTypeIdAndData(x, y, z, type, data);
+            if(success) {
+                chunk.getHandle().d.g(x, y, z);
+            }
+            return success;
+        }
     }
 
     /**
@@ -302,8 +331,7 @@ public class CraftBlock implements Block {
     }
 
     public Biome getBiome() {
-        // TODO: This may not be 100% accurate; investigate into getting per-block instead of per-chunk
-        BiomeBase base = chunk.getHandle().d.a().a(chunk.getX(), chunk.getZ());
+        BiomeBase base = chunk.getHandle().d.a().a(x, z);
 
         if (base == BiomeBase.RAINFOREST) {
             return Biome.RAINFOREST;
@@ -354,9 +382,21 @@ public class CraftBlock implements Block {
     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
         return chunk.getHandle().d.j(x, y, z, blockFaceToNotch(face));
     }
-
-    @Deprecated
-    public byte getData() {
-        return getRawData();
+    
+    public int getBlockPower(BlockFace face) {
+        int power = 0;
+        BlockRedstoneWire wire = (BlockRedstoneWire) net.minecraft.server.Block.REDSTONE_WIRE;
+        net.minecraft.server.World world = chunk.getHandle().d;
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.i(x, y - 1, z, 0)) power = wire.g(world, x, y - 1, z, power);
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.i(x, y + 1, z, 1)) power = wire.g(world, x, y + 1, z, power);
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.i(x, y, z - 1, 2)) power = wire.g(world, x, y, z - 1, power);
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.i(x, y, z + 1, 3)) power = wire.g(world, x, y, z + 1, power);
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.i(x - 1, y, z, 4)) power = wire.g(world, x - 1, y, z, power);
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.i(x + 1, y, z, 5)) power = wire.g(world, x + 1, y, z, power);
+        return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
+    }
+    
+    public int getBlockPower() {
+        return getBlockPower(BlockFace.SELF);
     }
 }

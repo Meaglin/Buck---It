@@ -10,7 +10,7 @@ import org.bukkit.util.Vector;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     protected final CraftServer server;
-    private Entity entity;
+    protected Entity entity;
 
     public CraftEntity(final CraftServer server, final Entity entity) {
         this.server = server;
@@ -100,19 +100,30 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.motX = vel.getX();
         entity.motY = vel.getY();
         entity.motZ = vel.getZ();
+        entity.aY = true;
     }
 
     public World getWorld() {
         return ((WorldServer)entity.world).getWorld();
     }
 
-    public void teleportTo(Location location) {
+    public boolean teleport(Location location) {
         entity.world = ((CraftWorld)location.getWorld()).getHandle();
         entity.b(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        // entity.b() throws no event, and so cannot be cancelled
+        return true;
+    }
+
+    public boolean teleport(org.bukkit.entity.Entity destination) {
+        return teleport(destination.getLocation());
+    }
+
+    public void teleportTo(Location location) {
+        teleport(location);
     }
 
     public void teleportTo(org.bukkit.entity.Entity destination) {
-        teleportTo(destination.getLocation());
+        teleport(destination);
     }
 
     public int getEntityId() {
@@ -176,5 +187,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     public CraftServer getServer() {
         return server;
+    }
+
+    public Vector getMomentum() {
+        return getVelocity();
+    }
+
+    public void setMomentum(Vector value) {
+        setVelocity(value);
     }
 }

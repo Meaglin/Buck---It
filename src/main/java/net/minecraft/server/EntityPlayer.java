@@ -16,7 +16,6 @@ import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
 // CraftBukkit end
 
@@ -55,7 +54,14 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.name = s;
         this.c = iteminworldmanager;
         this.height = 0.0F;
+
+        // CraftBukkit start
+        this.displayName = this.name;
     }
+
+    public String displayName;
+    public Location compassTarget;
+    // CraftBukkit end
 
     // Buck - It start
     // Called when a player is standing in/near a gate.
@@ -270,12 +276,14 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         for (int i = 0; i < inventory.a.length; ++i) {
             if (inventory.a[i] != null) {
                 loot.add(new CraftItemStack(inventory.a[i]));
+                inventory.a[i] = null;
             }
         }
 
         for (int i = 0; i < inventory.b.length; ++i) {
             if (inventory.b[i] != null) {
                 loot.add(new CraftItemStack(inventory.b[i]));
+                inventory.b[i] = null;
             }
         }
 
@@ -283,7 +291,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         CraftWorld cworld = ((WorldServer) world).getWorld();
         Server server = ((WorldServer) world).getServer();
 
-        EntityDeathEvent event = new EntityDeathEvent(Event.Type.ENTITY_DEATH, craftEntity, loot);
+        EntityDeathEvent event = new EntityDeathEvent(craftEntity, loot);
         server.getPluginManager().callEvent(event);
 
         for (org.bukkit.inventory.ItemStack stack: event.getDrops()) {
@@ -508,4 +516,11 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.pitch = f2;
         this.yaw = f3;
     }
+
+    // Craftbukkit start
+    @Override
+    public String toString() {
+        return super.toString() + "(" + name + " at " + locX + "," + locY + "," + locZ + ")";
+    }
+    // Craftbukkit end
 }

@@ -9,15 +9,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 // CraftBukkit start
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Type;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.entity.MobType;
 // CraftBukkit end
 
 public class World implements IBlockAccess {
@@ -42,7 +38,7 @@ public class World implements IBlockAccess {
     public boolean l = false;
     public final WorldProvider m;
     protected List n = new ArrayList();
-    protected IChunkProvider o;
+    public IChunkProvider o; // CraftBukkit protected->public
     protected final IDataManager p;
     public WorldData q; // CraftBukkit protected->public
     public boolean r;
@@ -289,21 +285,27 @@ public class World implements IBlockAccess {
     }
 
     public boolean e(int i, int j, int k, int l) {
+        // Craftbukkit start
+        int old = this.getTypeId(i, j, k);
         if (this.setTypeId(i, j, k, l)) {
-            this.f(i, j, k, l);
+            this.f(i, j, k, l == 0 ? old : l);
             return true;
         } else {
             return false;
         }
+        // Craftbukkit end
     }
 
     public boolean b(int i, int j, int k, int l, int i1) {
+        // Craftbukkit start
+        int old = this.getTypeId(i, j, k);
         if (this.setTypeIdAndData(i, j, k, l, i1)) {
-            this.f(i, j, k, l);
+            this.f(i, j, k, l == 0 ? old : l);
             return true;
         } else {
             return false;
         }
+        // Craftbukkit end
     }
 
     public void g(int i, int j, int k) {
@@ -357,7 +359,7 @@ public class World implements IBlockAccess {
                 // CraftBukkit start
                 CraftWorld world = ((WorldServer) this).getWorld();
                 if (world != null) {
-                    BlockPhysicsEvent event = new BlockPhysicsEvent(Event.Type.BLOCK_PHYSICS, world.getBlockAt(i, j, k), l);
+                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(i, j, k), l);
                     ((WorldServer) this).getServer().getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {
@@ -715,43 +717,9 @@ public class World implements IBlockAccess {
 
         // CraftBukkit start
         if (entity instanceof EntityLiving) {
-
-            MobType type = null;
-
-            if (entity instanceof EntityChicken) {
-                type = MobType.CHICKEN;
-            } else if (entity instanceof EntityCow) {
-                type = MobType.COW;
-            } else if (entity instanceof EntityCreeper) {
-                type = MobType.CREEPER;
-            } else if (entity instanceof EntityGhast) {
-                type = MobType.GHAST;
-            } else if (entity instanceof EntityPig) {
-                type = MobType.PIG;
-            } else if (entity instanceof EntityPigZombie) {
-                type = MobType.PIG_ZOMBIE;
-            } else if (entity instanceof EntitySheep) {
-                type = MobType.SHEEP;
-            } else if (entity instanceof EntitySkeleton) {
-                type = MobType.SKELETON;
-            } else if (entity instanceof EntitySpider) {
-                type = MobType.SPIDER;
-            } else if (entity instanceof EntityZombie) {
-                type = MobType.ZOMBIE;
-            } else if (entity instanceof EntitySlime) {
-                type = MobType.SLIME;
-            }
-
-            if (type != null) {
-                CraftServer server = ((WorldServer) this).getServer();
-                Location loc = new Location(((WorldServer) this).getWorld(), entity.bi, entity.bj, entity.bk);
-
-                CreatureSpawnEvent event = new CreatureSpawnEvent(entity.getBukkitEntity(), type, loc);
-                server.getPluginManager().callEvent(event);
-
-                if (event.isCancelled()) {
-                    return false;
-                }
+            CreatureSpawnEvent event = CraftEventFactory.callCreatureSpawnEvent((EntityLiving) entity);
+            if (event.isCancelled()) {
+                return false;
             }
         }
         // CraftBukkit end
@@ -1601,9 +1569,20 @@ public class World implements IBlockAccess {
     }
 
     public void a(List list) {
-        this.b.addAll(list);
-
+        // CraftBukkit start
+        Entity entity = null;
         for (int i = 0; i < list.size(); ++i) {
+            entity = (Entity) list.get(i);
+            // CraftBukkit start
+            if (entity instanceof EntityLiving) {
+                CreatureSpawnEvent event = CraftEventFactory.callCreatureSpawnEvent((EntityLiving) entity);
+                if (event.isCancelled()) {
+                    continue;
+                }
+            }
+
+            this.b.add(entity);
+            // CraftBukkit end
             this.b((Entity) list.get(i));
         }
     }
@@ -1625,11 +1604,11 @@ public class World implements IBlockAccess {
         // CraftBukkit start - We dont want to allow the user to override the bounding box check
         boolean defaultReturn = axisalignedbb != null && !this.a(axisalignedbb) ? false : (block != Block.WATER && block != Block.STATIONARY_WATER && block != Block.LAVA && block != Block.STATIONARY_LAVA && block != Block.FIRE && block != Block.SNOW ? i > 0 && block == null && block1.a(this, j, k, l) : true);
 
-        if (!defaultReturn) {
+        if (axisalignedbb != null && !this.a(axisalignedbb)) {
             return false;
         }
 
-        BlockCanBuildEvent event = new BlockCanBuildEvent(Type.BLOCK_CANBUILD, ((WorldServer) this).getWorld().getBlockAt(j, k, l), i1, defaultReturn);
+        BlockCanBuildEvent event = new BlockCanBuildEvent(((WorldServer) this).getWorld().getBlockAt(j, k, l), i, defaultReturn);
         ((WorldServer) this).getServer().getPluginManager().callEvent(event);
 
         return event.isBuildable();
