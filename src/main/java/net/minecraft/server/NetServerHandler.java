@@ -353,7 +353,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
 
             if (packet14blockdig.e == 0) {
                 // CraftBukkit
-                if ((i1 > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || player.canBuild())) || flag) {
+                if ((i1 > Config.SPAWN_RADIUS && (!Config.LIMIT_BUILD_BY_BUILD_FLAG || ((Player)e.getBukkitEntity()).canBuild())) || flag) {
                     // CraftBukkit add face argument
                     this.e.c.a(i, j, k, packet14blockdig.d);
                 }

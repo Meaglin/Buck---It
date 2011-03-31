@@ -18,12 +18,9 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
     public EntityDamageEvent(Entity damagee, DamageCause cause, int damage)
     {
-<<<<<<< HEAD
-        super(Event.Type.ENTITY_DAMAGED, damagee);
-        if(damagee instanceof EntityPlayer) cancelled = !Config.HEALTH_ENABLED;
-=======
+
         super(Event.Type.ENTITY_DAMAGE, damagee);
->>>>>>> a5b07e7355e39223e19d25e5a23f3646ee579f5b
+        if(damagee instanceof EntityPlayer) cancelled = !Config.HEALTH_ENABLED;
         this.cause = cause;
         this.damage = damage;
     }

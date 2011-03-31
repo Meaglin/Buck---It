@@ -7,8 +7,6 @@ import org.buckit.Config;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginManager;
 
 public class ReloadPluginCommand extends Command {
@@ -40,11 +38,7 @@ public class ReloadPluginCommand extends Command {
         }
         try {
             m.loadPlugin(new File(name+".jar"));
-        } catch (InvalidPluginException e) {
-            sender.sendMessage(Config.DEFAULT_ERROR_COLOR + e.getMessage());
-            e.printStackTrace();
-            return true;
-        } catch (InvalidDescriptionException e) {
+        } catch (Exception e) {
             sender.sendMessage(Config.DEFAULT_ERROR_COLOR + e.getMessage());
             e.printStackTrace();
             return true;
