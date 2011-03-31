@@ -8,6 +8,7 @@ import net.minecraft.server.EntityGhast;
 import net.minecraft.server.EntityGiantZombie;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityMonster;
 import net.minecraft.server.EntityPig;
 import net.minecraft.server.EntityPigZombie;
 import net.minecraft.server.EntitySheep;
@@ -207,14 +208,17 @@ public class CraftEventFactory {
             type = CreatureType.SHEEP;
         } else if (entityliving instanceof EntitySkeleton) {
             type = CreatureType.SKELETON;
-        } else if (entityliving instanceof EntitySpider) {
-            type = CreatureType.SPIDER;
-        } else if (entityliving instanceof EntityZombie) {
-            type = CreatureType.ZOMBIE;
         } else if (entityliving instanceof EntitySlime) {
             type = CreatureType.SLIME;
+        } else if (entityliving instanceof EntitySpider) {
+            type = CreatureType.SPIDER;
         } else if (entityliving instanceof EntitySquid) {
             type = CreatureType.SQUID;
+        } else if (entityliving instanceof EntityZombie) {
+            type = CreatureType.ZOMBIE;
+        // Supertype of many, last!
+        } else if (entityliving instanceof EntityMonster) {
+            type = CreatureType.MONSTER;
         }
 
         CreatureSpawnEvent event = new CreatureSpawnEvent(entity, type, entity.getLocation());
