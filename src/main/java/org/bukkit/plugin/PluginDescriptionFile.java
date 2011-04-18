@@ -23,6 +23,7 @@ public final class PluginDescriptionFile {
     private String description = null;
     private ArrayList<String> authors = new ArrayList<String>();
     private String website = null;
+    private boolean database = false;
 
     @SuppressWarnings("unchecked")
     public PluginDescriptionFile(final InputStream stream) throws InvalidDescriptionException {
@@ -120,9 +121,21 @@ public final class PluginDescriptionFile {
         return website;
     }
 
+    public boolean isDatabaseEnabled() {
+        return database;
+    }
+
+    public void setDatabaseEnabled(boolean database) {
+        this.database = database;
+    }
+
     private void loadMap(Map<String, Object> map) throws InvalidDescriptionException {
         try {
             name = map.get("name").toString();
+
+            if (!name.matches("^[A-Za-z0-9 _.-]+$")) {
+                throw new InvalidDescriptionException("name '" + name +  "' contains invalid characters.");
+            }
         } catch (NullPointerException ex) {
             throw new InvalidDescriptionException(ex, "name is not defined");
         } catch (ClassCastException ex) {
@@ -161,6 +174,14 @@ public final class PluginDescriptionFile {
                 depend = (ArrayList<String>)map.get("depend");
             } catch (ClassCastException ex) {
                 throw new InvalidDescriptionException(ex, "depend is of wrong type");
+            }
+        }
+
+        if (map.containsKey("database")) {
+            try {
+                database = (Boolean)map.get("database");
+            } catch (ClassCastException ex) {
+                throw new InvalidDescriptionException(ex, "database is of wrong type");
             }
         }
 
@@ -204,6 +225,7 @@ public final class PluginDescriptionFile {
         map.put("name", name);
         map.put("main", main);
         map.put("version", version);
+        map.put("database", database);
 
         if (commands != null) map.put("command", commands);
         if (depend != null) map.put("depend", depend);

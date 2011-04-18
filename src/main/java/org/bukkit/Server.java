@@ -1,6 +1,7 @@
 
 package org.bukkit;
 
+import com.avaje.ebean.config.ServerConfig;
 import org.buckit.datasource.DataSourceManager;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -138,6 +139,18 @@ public interface Server {
     public World createWorld(String name, World.Environment environment);
 
     /**
+     * Creates or loads a world with the given name.
+     * If the world is already loaded, it will just return the equivalent of
+     * getWorld(name)
+     *
+     * @param name Name of the world to load
+     * @param environment Environment type of the world
+     * @param seed Seed value to create the world with
+     * @return Newly created or loaded World
+     */
+    public World createWorld(String name, World.Environment environment, long seed);
+
+    /**
      * Gets the world with the given name
      *
      * @param name Name of the world to retrieve
@@ -184,4 +197,11 @@ public interface Server {
      * @throws CommandException Thrown when the executor for the given command fails with an unhandled exception
      */
     public boolean dispatchCommand(CommandSender sender, String commandLine);
+
+    /**
+     * Populates a given {@link ServerConfig} with values attributes to this server
+     *
+     * @param config ServerConfig to populate
+     */
+    public void configureDbConfig(ServerConfig config);
 }

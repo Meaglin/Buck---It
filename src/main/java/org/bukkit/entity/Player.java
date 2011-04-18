@@ -102,6 +102,35 @@ public interface Player extends HumanEntity, CommandSender {
     public void setSneaking(boolean sneak);
 
     /**
+     * Saves the players current location, health, inventory, motion, and other information into the username.dat file, in the world/player folder
+     */
+    public void saveData();
+
+    /**
+     * Loads the players current location, health, inventory, motion, and other information from the username.dat file, in the world/player folder
+     *
+     * Note: This will overwrite the players current inventory, health, motion, etc, with the state from the saved dat file.
+     */
+    public void loadData();
+    
+    /**
+     * Sets whether the player is ignored as not sleeping. If everyone is
+     * either sleeping or has this flag set, then time will advance to the
+     * next day. If everyone has this flag set but no one is actually in bed,
+     * then nothing will happen.
+     * 
+     * @param isSleeping
+     */
+    public void setSleepingIgnored(boolean isSleeping);
+    
+    /**
+     * Returns whether the player is sleeping ignored.
+     * 
+     * @return
+     */
+    public boolean isSleepingIgnored();
+
+    /**
      * Forces an update of the player's entire inventory.
      *
      * @return

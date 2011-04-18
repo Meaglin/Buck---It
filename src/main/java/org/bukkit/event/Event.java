@@ -153,6 +153,13 @@ public abstract class Event implements Serializable {
         PLAYER_LOGIN (Category.PLAYER),
 
         /**
+         * Called when a player has just been authenticated
+         *
+         * @see org.bukkit.event.player.PlayerPreLoginEvent
+         */
+        PLAYER_PRELOGIN (Category.PLAYER),
+
+        /**
          * Called when a player respawns
          *
          * @see org.bukkit.event.player.PlayerEvent
@@ -264,6 +271,27 @@ public abstract class Event implements Serializable {
          */
         PLAYER_BUCKET_FILL(Category.PLAYER),
 
+        /**
+         * Called when a player interacts with the inventory
+         *
+         * @see org.bukkit.event.player.PlayerInventoryEvent
+         */
+        PLAYER_INVENTORY(Category.PLAYER),
+        
+        /**
+         * Called when a player enter a bed
+         * 
+         * @see org.bukkit.event.player.PlayerBedEnterEvent
+         */
+        PLAYER_BED_ENTER(Category.PLAYER),
+        
+        /**
+         * Called when a player leaves a bed
+         * 
+         * @see org.bukkit.event.player.PlayerBedEnterEvent
+         */
+        PLAYER_BED_LEAVE(Category.PLAYER),
+        
         /**
          * BLOCK EVENTS
          */
@@ -455,6 +483,13 @@ public abstract class Event implements Serializable {
         ITEM_SPAWN (Category.WORLD),
 
         /**
+         * Called when a World's spawn is changed
+         *
+         * @see org.bukkit.event.world.SpawnChangeEvent
+         */
+        SPAWN_CHANGE (Category.WORLD),
+
+        /**
          * Called when a world is saved
          * 
          */
@@ -525,6 +560,14 @@ public abstract class Event implements Serializable {
          * @see org.bukkit.event.entity.EntityTargetEvent
          */
         ENTITY_TARGET (Category.LIVING_ENTITY),
+        
+        /**
+         * Called when an entity interacts with a block
+         * This event specifically excludes player entities
+         * 
+         * @see org.bukkit.event.entity.EntityInteractEvent
+         */
+        ENTITY_INTERACT (Category.LIVING_ENTITY),
 
         /**
          * VEHICLE EVENTS
@@ -536,6 +579,13 @@ public abstract class Event implements Serializable {
          * @see org.bukkit.event.vehicle.VehicleCreateEvent
          */
         VEHICLE_CREATE (Category.VEHICLE),
+
+        /**
+         * Called when a vehicle is destroyed
+         *
+         * @see org.bukkit.event.vehicle.VehicleDestroyEvent
+         */
+        VEHICLE_DESTROY (Category.VEHICLE),
 
         /**
          * Called when a vehicle is damaged by a LivingEntity
