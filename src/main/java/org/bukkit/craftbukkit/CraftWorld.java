@@ -11,6 +11,7 @@ import java.util.Random;
 import net.minecraft.server.*;
 
 import org.bukkit.entity.Arrow;
+import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Boat;
 import org.bukkit.Chunk;
@@ -66,13 +67,19 @@ public class CraftWorld implements World {
     }
 
     public Location getSpawnLocation() {
-        ChunkCoordinates spawn = world.l();
+        ChunkCoordinates spawn = world.m();
         return new Location(this, spawn.a, spawn.b, spawn.c);
     }
     
     public boolean setSpawnLocation(int x, int y, int z) {
         try {
+            Location previousLocation = getSpawnLocation();
             world.q.a(x, y, z);
+
+            // Notify anyone who's listening.
+            SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
+            server.getPluginManager().callEvent(event);
+
             return true;
         } catch (Exception e) {
             return false;
@@ -80,7 +87,7 @@ public class CraftWorld implements World {
     }
     
     public Chunk getChunkAt(int x, int z) {
-        return this.provider.d(x,z).bukkitChunk;
+        return this.provider.c(x, z).bukkitChunk;
     }
 
     public Chunk getChunkAt(Block block) {
@@ -124,7 +131,7 @@ public class CraftWorld implements World {
             return false;
         }
         
-        provider.c(x, z);
+        provider.d(x, z);
 
         return true;
     }
@@ -214,7 +221,7 @@ public class CraftWorld implements World {
     public boolean loadChunk(int x, int z, boolean generate) {
         if (generate) {
             // Use the default variant of loadChunk when generate == true.
-            return provider.d(x, z) != null;
+            return provider.c(x, z) != null;
         }
 
         provider.a.remove(x, z);
@@ -406,11 +413,17 @@ public class CraftWorld implements World {
     }
 
     public long getFullTime() {
-        return world.k();
+        return world.l();
     }
 
     public void setFullTime(long time) {
         world.a(time);
+
+        //Forces the client to update to the new time immediately
+        for (Player p: getPlayers()) {
+            CraftPlayer cp = (CraftPlayer) p;
+            cp.getHandle().a.b(new Packet4UpdateTime(time));
+        }
     }
 
     public Environment getEnvironment() {
@@ -524,7 +537,7 @@ public class CraftWorld implements World {
 
     public void save() {
         // Writes level.dat
-        world.r();
+        world.t();
 
         // Saves all chunks/regions
         world.o.a(true, null);

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class NetworkManager {
     public static int b;
     public static int c;
     private Object e = new Object();
-    private Socket f;
+    public Socket f; // CraftBukkit private->public
     private final SocketAddress g;
     private DataInputStream h;
     private DataOutputStream i;
@@ -46,6 +47,11 @@ public class NetworkManager {
         try {
             socket.setSoTimeout(30000);
             socket.setTrafficClass(24);
+        } catch (SocketException socketexception) {
+            System.err.println(socketexception.getMessage());
+        }
+        
+        try {
             this.h = new DataInputStream(socket.getInputStream());
             this.i = new DataOutputStream(socket.getOutputStream());
         } catch (IOException ex) {

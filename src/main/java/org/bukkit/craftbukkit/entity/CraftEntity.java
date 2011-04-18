@@ -1,12 +1,14 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.server.*;
-import net.minecraft.server.WorldServer;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     protected final CraftServer server;
@@ -33,6 +35,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     if (entity instanceof EntityChicken) { return new CraftChicken( server, (EntityChicken) entity); }
                     else if (entity instanceof EntityCow) { return new CraftCow( server, (EntityCow) entity); }
                     else if (entity instanceof EntityPig) { return new CraftPig( server, (EntityPig) entity); }
+                    else if (entity instanceof EntityWolf) { return new CraftWolf( server, (EntityWolf) entity); }
                     else if (entity instanceof EntitySheep) { return new CraftSheep( server, (EntitySheep) entity); }
                     else  { return new CraftAnimals( server, (EntityAnimal) entity); }
                 }
@@ -100,7 +103,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.motX = vel.getX();
         entity.motY = vel.getY();
         entity.motZ = vel.getZ();
-        entity.aY = true;
+        entity.aZ = true;
     }
 
     public World getWorld() {
@@ -126,6 +129,15 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         teleport(destination);
     }
 
+    public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z){
+        List<Entity> notchEntityList = entity.world.b(entity, entity.boundingBox.b(x,y,z));
+        List<org.bukkit.entity.Entity> bukkitEntityList = new java.util.ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
+        for (Entity e: notchEntityList){
+            bukkitEntityList.add(e.getBukkitEntity());
+        }
+        return bukkitEntityList;
+    }
+
     public int getEntityId() {
         return entity.id;
     }
@@ -144,6 +156,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     
     public void remove() {
         entity.dead = true;
+    }
+
+    public boolean isDead() {
+        return entity.dead;
     }
 
     public Entity getHandle() {
@@ -221,5 +237,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
         getHandle().passenger.setPassengerOf(null);
         return true;
+    }
+    
+    public float getFallDistance() {
+        return getHandle().fallDistance;
+    }
+    
+    public void setFallDistance(float distance) {
+        getHandle().fallDistance = distance;
     }
 }

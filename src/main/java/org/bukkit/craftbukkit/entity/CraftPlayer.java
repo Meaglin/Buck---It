@@ -165,7 +165,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newEntity.health = entity.health;
             newEntity.fireTicks = entity.fireTicks;
             newEntity.inventory = entity.inventory;
-            newEntity.inventory.e = newEntity;
+            newEntity.inventory.d = newEntity;
             newEntity.activeContainer = entity.activeContainer;
             newEntity.defaultContainer = entity.defaultContainer;
             newEntity.lastwarp = entity.lastwarp;// Buck - It
@@ -174,7 +174,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             newEntity.locZ = location.getZ();
             newEntity.displayName = entity.displayName;
             newEntity.compassTarget = entity.compassTarget;
-            newWorld.u.d((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
+            newEntity.fauxSleeping = entity.fauxSleeping;
+            newWorld.u.c((int) location.getBlockX() >> 4, (int) location.getBlockZ() >> 4);
 
             teleportSuccess = newEntity.a.teleport(location);
 
@@ -202,15 +203,32 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void setSneaking(boolean sneak) {
-        getHandle().b(sneak);
+        getHandle().e(sneak);
     }
 
     public boolean isSneaking() {
-        return getHandle().U();
+        return getHandle().Z();
+    }
+
+    public void loadData() {
+        server.getHandle().n.b(getHandle());
+    }
+
+    public void saveData() {
+        server.getHandle().n.a(getHandle());
     }
 
     public void updateInventory() {
-        getHandle().l();
+        getHandle().m();
+    }
+
+    public void setSleepingIgnored(boolean isSleeping) {
+        getHandle().fauxSleeping = isSleeping;
+        ((CraftWorld)getWorld()).getHandle().checkSleepStatus();
+    }
+
+    public boolean isSleepingIgnored() {
+        return getHandle().fauxSleeping;
     }
 
     /*

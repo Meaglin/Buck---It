@@ -145,6 +145,36 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             this.lastYaw = this.e.yaw;
             this.lastPitch = this.e.pitch;
         }
+
+        if (Math.abs(packet10flying.a) > 32000000 || Math.abs(packet10flying.c) > 32000000) {
+            System.err.println(player.getName() + " was caught trying to crash the server with an invalid position.");
+            player.kickPlayer("Nope!");
+            return;
+        }
+
+        if (Double.isNaN(packet10flying.a) || packet10flying.a == Double.POSITIVE_INFINITY || packet10flying.a == Double.NEGATIVE_INFINITY) {
+            System.err.println(player.getName() + " was caught trying to set an invalid position.");
+            player.kickPlayer("Nope!");
+            return;
+        }
+
+        if (Double.isNaN(packet10flying.b) || packet10flying.b == Double.POSITIVE_INFINITY || packet10flying.b == Double.NEGATIVE_INFINITY) {
+            System.err.println(player.getName() + " was caught trying to set an invalid position.");
+            player.kickPlayer("Nope!");
+            return;
+        }
+
+        if (Double.isNaN(packet10flying.c) || packet10flying.c == Double.POSITIVE_INFINITY || packet10flying.c == Double.NEGATIVE_INFINITY) {
+            System.err.println(player.getName() + " was caught trying to set an invalid position.");
+            player.kickPlayer("Nope!");
+            return;
+        }
+
+        if (Double.isNaN(packet10flying.d) || packet10flying.d == Double.POSITIVE_INFINITY || packet10flying.d == Double.NEGATIVE_INFINITY) {
+            System.err.println(player.getName() + " was caught trying to set an invalid position.");
+            player.kickPlayer("Nope!");
+            return;
+        }
         // CraftBukkit end
 
         if (this.l) {
@@ -250,7 +280,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             double d8 = d4 * d4 + d6 * d6 + d7 * d7;
             boolean flag1 = false;
 
-            if (d8 > 0.0625D && !this.e.E()) {
+            if (d8 > 0.0625D && !this.e.F()) {
                 flag1 = true;
                 a.warning(this.e.name + " moved wrongly!");
                 System.out.println("Got position " + d1 + ", " + d2 + ", " + d3);
@@ -261,7 +291,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             // CraftBukkit
             boolean flag2 = this.e.world.a(this.e, this.e.boundingBox.b().e((double) f4, (double) f4, (double) f4)).size() == 0;
 
-            if (flag && (flag1 || !flag2) && !this.e.E()) {
+            if (flag && (flag1 || !flag2) && !this.e.F()) {
                 this.a(this.i, this.j, this.k, f2, f3);
                 return;
             }
@@ -313,7 +343,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
 
     public void a(Packet14BlockDig packet14blockdig) {
         if (packet14blockdig.e == 4) {
-            this.e.y();
+            this.e.z();
         } else {
             // CraftBukkit
             boolean flag = ((WorldServer) this.e.world).v = this.d.f.h(this.e.name) || getPlayer().isAdmin();
@@ -343,7 +373,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             }
 
             // CraftBukkit
-            ChunkCoordinates chunkcoordinates = this.e.world.l();
+            ChunkCoordinates chunkcoordinates = this.e.world.m();
             int l = (int) MathHelper.e((float) (i - chunkcoordinates.a));
             int i1 = (int) MathHelper.e((float) (k - chunkcoordinates.c));
 
@@ -431,7 +461,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             int l = packet15place.d;
 
             // CraftBukkit
-            ChunkCoordinates chunkcoordinates = this.e.world.l();
+            ChunkCoordinates chunkcoordinates = this.e.world.m();
             int i1 = (int) MathHelper.e((float) (i - chunkcoordinates.a));
             int j1 = (int) MathHelper.e((float) (k - chunkcoordinates.c));
 
@@ -502,8 +532,10 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         // CraftBukkit start -- rarely it would send a disconnect line twice
         if (!this.c) {
             a.info(this.e.name + " lost connection: " + s);
-            this.d.f.a((Packet) (new Packet3Chat("\u00A7e" + this.e.name + " left the game.")));
-            this.d.f.c(this.e);
+            String quitMessage = this.d.f.c(this.e);
+            if (quitMessage != null) {
+                this.d.f.a((Packet) (new Packet3Chat(quitMessage)));
+            }
         }
         // CraftBukkit end
         this.c = true;
@@ -527,17 +559,6 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
 
     public void a(Packet16BlockItemSwitch packet16blockitemswitch) {
      // CraftBukkit start
-        if (packet16blockitemswitch.a < 0 || packet16blockitemswitch.a > 8) {
-            server.getLogger().severe(
-                "Player " + getPlayer().getName() + "/" + getPlayer().getAddress().toString() +
-                " just sent an invalid ItemInHandIndex: " + packet16blockitemswitch.a +
-                " - very likely a crashing exploit attempt. Recommend ban, and sending a package of joy their way."
-            );
-            this.b(new Packet1Login("", "", 0, 0, (byte)0));
-            this.a("Exploits.");
-            return;
-        }
-
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(getPlayer(), e.inventory.c, packet16blockitemswitch.a);
         server.getPluginManager().callEvent(event);
         // CraftBukkit end
@@ -654,7 +675,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             if (this.d.f.h(this.e.name)) {
                 s1 = s.substring(1);
                 a.info(this.e.name + " issued server command: " + s1);
-                this.d.a(s1, (ICommandListener) this);
+                this.d.a(s1, this);
             } else {
                 s1 = s.substring(1);
                 a.info(this.e.name + " tried command: " + s1);
@@ -693,7 +714,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             server.getPluginManager().callEvent(event);
             // CraftBukkit end
 
-            this.e.r();
+            this.e.m_();
         }
     }
 
@@ -710,11 +731,11 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         // CraftBukkit: Set Sneaking
 
         if (packet19entityaction.b == 1) {
-            this.e.b(true);
+            this.e.e(true);
         } else if (packet19entityaction.b == 2) {
-            this.e.b(false);
+            this.e.e(false);
         } else if (packet19entityaction.b == 3) {
-            this.e.a(false, true);
+            this.e.a(false, true, true);
             this.l = false;
         }
     }
@@ -760,7 +781,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
     }
 
     public void a(Packet101CloseWindow packet101closewindow) {
-        this.e.v();
+        this.e.w();
     }
 
     public void a(Packet102WindowClick packet102windowclick) {
@@ -771,7 +792,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 this.e.a.b((Packet) (new Packet106Transaction(packet102windowclick.a, packet102windowclick.d, true)));
                 this.e.h = true;
                 this.e.activeContainer.a();
-                this.e.u();
+                this.e.v();
                 this.e.h = false;
             } else {
                 this.m.put(Integer.valueOf(this.e.activeContainer.f), Short.valueOf(packet102windowclick.d));
@@ -780,7 +801,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 ArrayList arraylist = new ArrayList();
 
                 for (int i = 0; i < this.e.activeContainer.e.size(); ++i) {
-                    arraylist.add(((Slot) this.e.activeContainer.e.get(i)).b());
+                    arraylist.add(((Slot) this.e.activeContainer.e.get(i)).a());
                 }
 
                 this.e.a(this.e.activeContainer, arraylist);
@@ -801,15 +822,9 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         if (this.e.world.f(packet130updatesign.a, packet130updatesign.b, packet130updatesign.c)) {
             TileEntity tileentity = this.e.world.getTileEntity(packet130updatesign.a, packet130updatesign.b, packet130updatesign.c);
             if (tileentity instanceof TileEntitySign) {
-                TileEntitySign sign = (TileEntitySign)tileentity;
-                if (!sign.fresh) {
-                    int x = packet130updatesign.a;
-                    int y = packet130updatesign.b;
-                    int z = packet130updatesign.c;
-                    server.getLogger().severe("Player " + getPlayer().getName() + "/" + getPlayer().getAddress().toString() + " just tried to change the sign text at " +
-                            x + "," + y + "," + z + " - very likely an exploit attempt. Recommend ban, and sending a package of joy their way.");
-                    this.b(new Packet1Login("", "", 0, 0, (byte)0));
-                    this.a("Exploits.");
+                TileEntitySign tileentitysign = (TileEntitySign)tileentity;
+                if (!tileentitysign.a()) {
+                    this.d.c("Player " + this.e.name + " just tried to change non-editable sign");
                     return;
                 }
             }
@@ -818,34 +833,34 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             int i;
             int j;
 
-            for (i = 0; i < 4; ++i) {
+            for (j = 0; j < 4; ++j) {
                 boolean flag = true;
 
-                if (packet130updatesign.d[i].length() > 15) {
+                if (packet130updatesign.d[j].length() > 15) {
                     flag = false;
                 } else {
-                    for (j = 0; j < packet130updatesign.d[i].length(); ++j) {
-                        if (FontAllowedCharacters.a.indexOf(packet130updatesign.d[i].charAt(j)) < 0) {
+                    for (i = 0; i < packet130updatesign.d[j].length(); ++i) {
+                        if (FontAllowedCharacters.a.indexOf(packet130updatesign.d[j].charAt(i)) < 0) {
                             flag = false;
                         }
                     }
                 }
 
                 if (!flag) {
-                    packet130updatesign.d[i] = "!?";
+                    packet130updatesign.d[j] = "!?";
                 }
             }
 
             if (tileentity instanceof TileEntitySign) {
-                i = packet130updatesign.a;
+                j = packet130updatesign.a;
                 int k = packet130updatesign.b;
 
-                j = packet130updatesign.c;
-                TileEntitySign tileentitysign = (TileEntitySign) tileentity;
+                i = packet130updatesign.c;
+                TileEntitySign tileentitysign1 = (TileEntitySign) tileentity;
 
                 // CraftBukkit start - SIGN_CHANGE hook
                 Player player = server.getPlayer(this.e);
-                SignChangeEvent event = new SignChangeEvent((CraftBlock) player.getWorld().getBlockAt(i, k, j), server.getPlayer(this.e), packet130updatesign.d);
+                SignChangeEvent event = new SignChangeEvent((CraftBlock) player.getWorld().getBlockAt(j, k, i), server.getPlayer(this.e), packet130updatesign.d);
                 server.getPluginManager().callEvent(event);
 
                 if (event.isCancelled()) {
@@ -854,19 +869,17 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                     for (int l = 0; l < 4; ++l) {
                         event.setLine(l, "");
                     }
-                } else {
-                    tileentitysign.fresh = false;
                 }
                 // CraftBukkit end
 
                 for (int l = 0; l < 4; ++l) {
-                    tileentitysign.a[l] = event.getLine(l);
+                    tileentitysign1.a[l] = event.getLine(l);
                     // CraftBukkit
                 }
 
-                tileentitysign.h();
+                tileentitysign1.i();
                 // CraftBukkit
-                this.e.world.g(i, k, j);
+                this.e.world.g(j, k, i);
             }
         }
     }

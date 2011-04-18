@@ -6,6 +6,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+// Craftbukkit start
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+// Craftbukkit end
 
 public abstract class Packet {
 
@@ -67,8 +71,6 @@ public abstract class Packet {
         boolean flag = false;
         Packet packet = null;
 
-        datainputstream.mark(16384);
-
         int i;
 
         try {
@@ -85,9 +87,18 @@ public abstract class Packet {
             packet.a(datainputstream);
         } catch (EOFException eofexception) {
             System.out.println("Reached end of stream");
-            datainputstream.reset();
             return null;
         }
+
+        // Craftbukkit start
+        catch (SocketTimeoutException exception) {
+            System.out.println("Read timed out");
+            return null;
+        } catch (SocketException exception) {
+            System.out.println("Connection reset");
+            return null;
+        }
+        // Craftbukkit end
 
         PacketCounter packetcounter = (PacketCounter) c.get(Integer.valueOf(i));
 
@@ -120,15 +131,16 @@ public abstract class Packet {
     public abstract int a();
 
     static {
+        // CraftBukkit start -- accepted packets from CLIENT
         a(0, Packet0KeepAlive.class);
         a(1, Packet1Login.class);
         a(2, Packet2Handshake.class);
         a(3, Packet3Chat.class);
-        //a(4, Packet4UpdateTime.class); // CraftBukkit
-        //a(5, Packet5EntityEquipment.class); // CraftBukkit
-        //a(6, Packet6SpawnPosition.class); // CraftBukkit
+        //a(4, Packet4UpdateTime.class);
+        //a(5, Packet5EntityEquipment.class);
+        //a(6, Packet6SpawnPosition.class);
         a(7, Packet7UseEntity.class);
-        //a(8, Packet8UpdateHealth.class); // CraftBukkit
+        //a(8, Packet8UpdateHealth.class);
         a(9, Packet9Respawn.class);
         a(10, Packet10Flying.class);
         a(11, Packet11PlayerPosition.class);
@@ -137,43 +149,43 @@ public abstract class Packet {
         a(14, Packet14BlockDig.class);
         a(15, Packet15Place.class);
         a(16, Packet16BlockItemSwitch.class);
-        //a(17, Packet17.class); // CraftBukkit
+        //a(17, Packet17.class);
         a(18, Packet18ArmAnimation.class);
         a(19, Packet19EntityAction.class);
-        //a(20, Packet20NamedEntitySpawn.class); // CraftBukkit
-        //a(21, Packet21PickupSpawn.class); // CraftBukkit
-        //a(22, Packet22Collect.class); // CraftBukkit
-        //a(23, Packet23VehicleSpawn.class); // CraftBukkit
-        //a(24, Packet24MobSpawn.class); // CraftBukkit
-        //a(25, Packet25EntityPainting.class); // CraftBukkit
-        //a(27, Packet27.class); // CraftBukkit
-        //a(28, Packet28EntityVelocity.class); // CraftBukkit
-        //a(29, Packet29DestroyEntity.class); // CraftBukkit
-        //a(30, Packet30Entity.class); // CraftBukkit
-        //a(31, Packet31RelEntityMove.class); // CraftBukkit
-        //a(32, Packet32EntityLook.class); // CraftBukkit
-        //a(33, Packet33RelEntityMoveLook.class); // CraftBukkit
-        //a(34, Packet34EntityTeleport.class); // CraftBukkit
-        //a(38, Packet38EntityStatus.class); // CraftBukkit
-        //a(39, Packet39AttachEntity.class); // CraftBukkit
-        //a(40, Packet40EntityMetadata.class); // CraftBukkit
-        //a(50, Packet50PreChunk.class); // CraftBukkit
-        //a(51, Packet51MapChunk.class); // CraftBukkit
-        //a(52, Packet52MultiBlockChange.class); // CraftBukkit
-        //a(53, Packet53BlockChange.class); // CraftBukkit
-        //a(54, Packet54PlayNoteBlock.class); // CraftBukkit
-        //a(60, Packet60Explosion.class); // CraftBukkit
-        //a(100, Packet100OpenWindow.class); // CraftBukkit
+        //a(20, Packet20NamedEntitySpawn.class);
+        //a(21, Packet21PickupSpawn.class);
+        //a(22, Packet22Collect.class);
+        //a(23, Packet23VehicleSpawn.class);
+        //a(24, Packet24MobSpawn.class);
+        //a(25, Packet25EntityPainting.class);
+        a(27, Packet27.class);
+        //a(28, Packet28EntityVelocity.class);
+        //a(29, Packet29DestroyEntity.class);
+        //a(30, Packet30Entity.class);
+        //a(31, Packet31RelEntityMove.class);
+        //a(32, Packet32EntityLook.class);
+        //a(33, Packet33RelEntityMoveLook.class);
+        //a(34, Packet34EntityTeleport.class);
+        //a(38, Packet38EntityStatus.class);
+        //a(39, Packet39AttachEntity.class);
+        //a(40, Packet40EntityMetadata.class);
+        //a(50, Packet50PreChunk.class);
+        //a(51, Packet51MapChunk.class);
+        //a(52, Packet52MultiBlockChange.class);
+        //a(53, Packet53BlockChange.class);
+        //a(54, Packet54PlayNoteBlock.class);
+        //a(60, Packet60Explosion.class);
+        //a(100, Packet100OpenWindow.class);
         a(101, Packet101CloseWindow.class);
         a(102, Packet102WindowClick.class);
-        //a(103, Packet103SetSlot.class); // CraftBukkit
-        //a(104, Packet104WindowItems.class); // CraftBukkit
-        //a(105, Packet105CraftProgressBar.class); // CraftBukkit
+        //a(103, Packet103SetSlot.class);
+        //a(104, Packet104WindowItems.class);
+        //a(105, Packet105CraftProgressBar.class);
         a(106, Packet106Transaction.class);
         a(130, Packet130UpdateSign.class);
         a(255, Packet255KickDisconnect.class);
 
-        // CraftBukkit start
+        // CraftBukkit packets send from SERVER
         b(0, Packet0KeepAlive.class);
         b(1, Packet1Login.class);
         b(2, Packet2Handshake.class);
@@ -217,6 +229,7 @@ public abstract class Packet {
         b(53, Packet53BlockChange.class);
         b(54, Packet54PlayNoteBlock.class);
         b(60, Packet60Explosion.class);
+        b(70, Packet70Bed.class);
         b(100, Packet100OpenWindow.class);
         b(101, Packet101CloseWindow.class);
         //b(102, Packet102WindowClick.class);

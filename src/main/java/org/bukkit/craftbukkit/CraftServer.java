@@ -2,6 +2,10 @@ package org.bukkit.craftbukkit;
 
 import org.buckit.Config;
 import org.buckit.datasource.DataSourceManager;
+import com.avaje.ebean.config.DataSourceConfig;
+import com.avaje.ebean.config.ServerConfig;
+import com.avaje.ebean.config.dbplatform.SQLitePlatform;
+import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -11,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jline.ConsoleReader;
@@ -35,11 +40,12 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.util.config.Configuration;
 
 public final class CraftServer implements Server {
     private final String serverName = "Craftbukkit";
     private final String serverVersion;
-    private final String protocolVersion = "1.3";
+    private final String protocolVersion = "1.4";
     private final DataSourceManager datasourcemanager = new DataSourceManager(this);
     private final PluginManager pluginManager = new SimplePluginManager(this);
     private final BukkitScheduler scheduler =  new CraftScheduler(this);
@@ -47,13 +53,29 @@ public final class CraftServer implements Server {
     protected final MinecraftServer console;
     protected final ServerConfigurationManager server;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
+    private final Configuration configuration;
 
     public CraftServer(MinecraftServer console, ServerConfigurationManager server) {
         this.console = console;
         this.server = server;
         this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
 
+        Bukkit.setServer(this);
+
         Logger.getLogger("Minecraft").log(Level.INFO, "This server is running " + getName() + " version " + getVersion());
+
+        configuration = new Configuration((File)console.options.valueOf("bukkit-settings"));
+        configuration.load();
+        loadConfigDefaults();
+        configuration.save();
+    }
+
+    private void loadConfigDefaults() {
+        configuration.getString("database.url", "jdbc:sqlite:{DIR}{NAME}.db");
+        configuration.getString("database.username", "bukkit");
+        configuration.getString("database.password", "walrus");
+        configuration.getString("database.driver", "org.sqlite.JDBC");
+        configuration.getString("database.isolation", "SERIALIZABLE");
     }
 
     public void loadPlugins() {
@@ -67,8 +89,8 @@ public final class CraftServer implements Server {
                 for (Plugin plugin : plugins) {
                     try {
                         plugin.onLoad();
-                    } catch (AbstractMethodError ame) {
-                        Logger.getLogger("Minecraft").warning("Plugin: " + plugin.getDescription().getName() + " does not support the onLoad() method");
+                    } catch (Throwable ex) {
+                        Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
                     }
                 }
                 for (Plugin plugin : plugins) {
@@ -282,6 +304,10 @@ public final class CraftServer implements Server {
     }
 
     public World createWorld(String name, World.Environment environment) {
+        return createWorld(name, environment, (new Random()).nextLong());
+    }
+
+    public World createWorld(String name, World.Environment environment, long seed) {
         File folder = new File(name);
         World world = getWorld(name);
 
@@ -299,7 +325,7 @@ public final class CraftServer implements Server {
             converter.a(name, new ConvertProgressUpdater(console));
         }
 
-        WorldServer internal = new WorldServer(console, new ServerNBTManager(new File("."), name, true), name, environment == World.Environment.NETHER ? -1 : 0);
+        WorldServer internal = new WorldServer(console, new ServerNBTManager(new File("."), name, true), name, environment == World.Environment.NETHER ? -1 : 0, seed);
 
         internal.a(new WorldManager(console, internal));
         internal.j = 1;
@@ -325,10 +351,10 @@ public final class CraftServer implements Server {
                     i = l;
                 }
 
-                ChunkCoordinates chunkcoordinates = internal.l();
-                internal.u.d(chunkcoordinates.a + j >> 4, chunkcoordinates.c + k >> 4);
+                ChunkCoordinates chunkcoordinates = internal.m();
+                internal.u.c(chunkcoordinates.a + j >> 4, chunkcoordinates.c + k >> 4);
 
-                while (internal.e()) {
+                while (internal.f()) {
                     ;
                 }
             }
@@ -381,6 +407,22 @@ public final class CraftServer implements Server {
 
     public void savePlayers() {
         server.d();
+    }
+
+    public void configureDbConfig(ServerConfig config) {
+        DataSourceConfig ds = new DataSourceConfig();
+        ds.setDriver(configuration.getString("database.driver"));
+        ds.setUrl(configuration.getString("database.url"));
+        ds.setUsername(configuration.getString("database.username"));
+        ds.setPassword(configuration.getString("database.password"));
+        ds.setIsolationLevel(TransactionIsolation.getLevel(configuration.getString("database.isolation")));
+
+        if (ds.getDriver().contains("sqlite")) {
+            config.setDatabasePlatform(new SQLitePlatform());
+            config.getDatabasePlatform().getDbDdlSyntax().setIdentity("");
+        }
+
+        config.setDataSourceConfig(ds);
     }
 
     // Inner class to capture the output of default server commands

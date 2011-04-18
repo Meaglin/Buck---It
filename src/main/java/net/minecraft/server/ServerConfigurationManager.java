@@ -43,7 +43,7 @@ public class ServerConfigurationManager {
     private File k;
     private File l;
     private File m;
-    private PlayerFileData n;
+    public PlayerFileData n; // CraftBukkit - private->public
     private boolean o;
 
     // CraftBukkit start
@@ -77,7 +77,7 @@ public class ServerConfigurationManager {
     public void a(WorldServer worldserver) {
         // CraftBukkit start
         if (this.n == null) {
-            this.n = worldserver.m().d();
+            this.n = worldserver.o().d();
         }
         // CraftBukkit end
     }
@@ -90,7 +90,7 @@ public class ServerConfigurationManager {
         this.b.add(entityplayer);
         //this.n.b(entityplayer); // Buck - It fix player world load.
         // CraftBukkit start
-        ((WorldServer) entityplayer.world).u.d((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
+        ((WorldServer) entityplayer.world).u.c((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
 
         while (entityplayer.world.a(entityplayer, entityplayer.boundingBox).size() != 0) {
             entityplayer.a(entityplayer.locX, entityplayer.locY + 1.0D, entityplayer.locZ);
@@ -127,7 +127,14 @@ public class ServerConfigurationManager {
         ((WorldServer) entityplayer.world).manager.c(entityplayer); // CraftBukkit
     }
 
-    public void c(EntityPlayer entityplayer) {
+    public String c(EntityPlayer entityplayer) { // CraftBukkit - changed return type
+        // CraftBukkit start
+        // Quitting must be before we do final save of data, in case plugins need to modify it
+        ((WorldServer) entityplayer.world).manager.b(entityplayer);
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(server.getPlayer(entityplayer), "\u00A7e" + entityplayer.name + " left the game.");
+        server.getPluginManager().callEvent(playerQuitEvent);
+        // CraftBukkit end
+
         this.n.a(entityplayer);
         entityplayer.world.d(entityplayer); // CraftBukkit
         this.b.remove(entityplayer);
@@ -137,11 +144,8 @@ public class ServerConfigurationManager {
             server.getDataSourceManager().getUserDataSource().updateUserDataOnDisconnect(server.getPlayer(entityplayer).getUserDataHolder());
         }
         // Buck - It end
-        
-        // CraftBukkit start
-        ((WorldServer) entityplayer.world).manager.b(entityplayer);
-        server.getPluginManager().callEvent(new PlayerQuitEvent(server.getPlayer(entityplayer))); // CraftBukkit
-        // CraftBukkit end
+
+        return playerQuitEvent.getQuitMessage(); // CraftBukkit
     }
 
     public EntityPlayer a(NetLoginHandler netloginhandler, String s, String s1) {
@@ -209,13 +213,27 @@ public class ServerConfigurationManager {
         ((WorldServer) entityplayer.world).manager.b(entityplayer);
         this.b.remove(entityplayer);
         entityplayer.world.e(entityplayer);
+        ChunkCoordinates chunkcoordinates = entityplayer.H();
         EntityPlayer entityplayer1 = new EntityPlayer(this.c, entityplayer.world, entityplayer.name, new ItemInWorldManager(entityplayer.world));
 
         entityplayer1.id = entityplayer.id;
         entityplayer1.a = entityplayer.a;
         entityplayer1.displayName = entityplayer.displayName; // CraftBukkit
         entityplayer1.compassTarget = entityplayer.compassTarget; // CraftBukkit
-        ((WorldServer) entityplayer.world).u.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
+        entityplayer1.fauxSleeping = entityplayer.fauxSleeping; // CraftBukkit
+        
+        if (chunkcoordinates != null) {
+            ChunkCoordinates chunkcoordinates1 = EntityHuman.a(entityplayer.world, chunkcoordinates);
+
+            if (chunkcoordinates1 != null) {
+                entityplayer1.c((double) ((float) chunkcoordinates1.a + 0.5F), (double) ((float) chunkcoordinates1.b + 0.1F), (double) ((float) chunkcoordinates1.c + 0.5F), 0.0F, 0.0F);
+                entityplayer1.a(chunkcoordinates);
+            } else {
+                entityplayer1.a.b((Packet) (new Packet70Bed(0)));
+            }
+        }
+        
+        ((WorldServer) entityplayer.world).u.c((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
 
         while (entityplayer.world.a(entityplayer1, entityplayer1.boundingBox).size() != 0) {
             entityplayer1.a(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
@@ -236,18 +254,18 @@ public class ServerConfigurationManager {
         entityplayer1.pitch = respawnEvent.getRespawnLocation().getPitch();
         entityplayer1.c = new ItemInWorldManager(((CraftWorld) respawnEvent.getRespawnLocation().getWorld()).getHandle());
         entityplayer1.c.a = entityplayer1;
-        ((WorldServer) entityplayer1.world).u.d((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
+        ((WorldServer) entityplayer1.world).u.c((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
         // CraftBukkit end
 
         entityplayer1.a.b((Packet) (new Packet9Respawn()));
         entityplayer1.a.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
         // CraftBukkit start
-        ((WorldServer) entityplayer1.world).manager.a(entityplayer1);
         entityplayer.world.a(entityplayer1);
+        ((WorldServer) entityplayer1.world).manager.a(entityplayer1);
         // CraftBukkit end
         this.b.add(entityplayer1);
-        entityplayer1.l();
-        entityplayer1.s();
+        entityplayer1.m();
+        entityplayer1.t();
         return entityplayer1;
     }
 
