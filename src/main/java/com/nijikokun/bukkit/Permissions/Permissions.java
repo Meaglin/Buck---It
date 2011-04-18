@@ -125,4 +125,11 @@ public class Permissions implements Plugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }
+
+    public boolean isNaggable() {
+        return false;
+    }
+
+    public void setNaggable(boolean canNag) {
+    }
 }

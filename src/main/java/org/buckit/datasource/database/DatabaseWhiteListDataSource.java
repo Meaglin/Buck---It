@@ -1,10 +1,9 @@
 package org.buckit.datasource.database;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
-public class DatabaseWhiteListDataSource implements WhiteListDataSource, DataSource {
+public class DatabaseWhiteListDataSource implements WhiteListDataSource{
 
     public DatabaseWhiteListDataSource(DataSourceManager dataSource) {
         // do nothing

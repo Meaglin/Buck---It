@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-public class DatabaseHomesDataSource implements HomesDataSource, DataSource {
+public class DatabaseHomesDataSource implements HomesDataSource{
 
     private static String SELECT_HOME  = "SELECT id,x,y,z,rotX,rotY,world FROM " + Config.DATABASE_HOMES_TABLE + " WHERE userid = ? AND name = ? LIMIT 1";
     private static String INSERT_HOME  = "INSERT INTO " + Config.DATABASE_HOMES_TABLE + " (name,userid,username,world,x,y,z,rotX,rotY) VALUES (?,?,?,?,?,?,?,?,?)";

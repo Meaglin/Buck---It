@@ -1,6 +1,7 @@
 package com.nijikokun.bukkit.Permissions;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.buckit.access.AccessLevel;
 import org.buckit.datasource.DataSourceManager;
@@ -13,6 +14,7 @@ import com.nijiko.permissions.PermissionHandler;
 public class PermissionsEmu extends PermissionHandler {
 
     private Server server;
+    private final Logger log = Logger.getLogger("Minecraft");
     public PermissionsEmu(Server server) {
         this.server = server;
     }
@@ -138,7 +140,10 @@ public class PermissionsEmu extends PermissionHandler {
     @Override
     public boolean inGroup(String world, String name, String group) {
         Player player = server.getPlayer(name);
-        if(player == null)return false;
+        if(player == null){
+            log.info("[PermissionsEmu]inGroup - Player not found " + name);
+            return false;
+        }
         
         AccessLevel level = server.getDataSourceManager().getAccessDataSource().getAccessLevel(group);
         if(level == null)return false;
@@ -149,7 +154,10 @@ public class PermissionsEmu extends PermissionHandler {
     @Override
     public boolean inSingleGroup(String world, String name, String group) {
         Player player = server.getPlayer(name);
-        if(player == null)return false;
+        if(player == null){
+            log.info("[PermissionsEmu]SingleGroup - Player not found " + name);
+            return false;
+        }
         return player.getAccessLevel().getName().equalsIgnoreCase(group);
     }
 

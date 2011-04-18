@@ -9,11 +9,10 @@ import java.util.Map;
 import org.buckit.Config;
 import org.buckit.access.AccessLevel;
 import org.buckit.access.Group;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.AccessDataSource;
 
-public class DatabaseAccessDataSource implements AccessDataSource, DataSource {
+public class DatabaseAccessDataSource implements AccessDataSource {
 
     private Map<Integer, Group>       groupsint;
     private Map<String, Group>        groups;

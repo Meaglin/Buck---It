@@ -1,10 +1,9 @@
 package org.buckit.datasource.database;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
-public class DatabaseReserveListDataSource implements ReserveListDataSource, DataSource {
+public class DatabaseReserveListDataSource implements ReserveListDataSource{
 
     public DatabaseReserveListDataSource(DataSourceManager dataSource) {
         // do nothing

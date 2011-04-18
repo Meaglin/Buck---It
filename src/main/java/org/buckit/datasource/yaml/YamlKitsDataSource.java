@@ -2,12 +2,11 @@ package org.buckit.datasource.yaml;
 
 import java.util.Collection;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
-public class YamlKitsDataSource implements KitsDataSource, DataSource {
+public class YamlKitsDataSource implements KitsDataSource{
 
     public YamlKitsDataSource(DataSourceManager dataSource) {
         // TODO: Implement.

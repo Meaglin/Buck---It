@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.HomesDataSource;
 import org.buckit.model.Home;
 import org.bukkit.Location;
 import org.bukkit.Server;
 
-public class FlatFileHomesDataSource implements HomesDataSource, DataSource {
+public class FlatFileHomesDataSource implements HomesDataSource{
 
     private DataSourceManager datasource;
     private Server server;

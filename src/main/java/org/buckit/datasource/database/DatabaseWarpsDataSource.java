@@ -11,13 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 
-public class DatabaseWarpsDataSource implements WarpsDataSource, DataSource {
+public class DatabaseWarpsDataSource implements WarpsDataSource{
 
     private static String           INSERT_WARP  = "REPLACE INTO " + Config.DATABASE_WARPS_TABLE + " (name,groupname,world,x,y,z,rotX,rotY) VALUES (?,?,?,?,?,?,?,?)";
     private static String           DELETE_WARP  = "DELETE FROM " + Config.DATABASE_WARPS_TABLE + " WHERE id = ?";

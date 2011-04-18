@@ -1,10 +1,9 @@
 package org.buckit.datasource.yaml;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
-public class YamlReserveListDataSource implements ReserveListDataSource, DataSource {
+public class YamlReserveListDataSource implements ReserveListDataSource{
 
     public YamlReserveListDataSource(DataSourceManager dataSource) {
         // TODO: Implement.

@@ -1,8 +1,8 @@
 package org.buckit.datasource.type;
 
-public interface WhiteListDataSource {
+import org.buckit.datasource.DataSource;
 
-    public boolean load();
+public interface WhiteListDataSource extends DataSource {
     
     public boolean isWhiteListed(int userid, String username);
     public boolean setWhiteListed(int userid, String username, boolean whitelisted);

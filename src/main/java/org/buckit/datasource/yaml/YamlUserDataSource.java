@@ -1,11 +1,10 @@
 package org.buckit.datasource.yaml;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-public class YamlUserDataSource implements UserDataSource, DataSource {
+public class YamlUserDataSource implements UserDataSource{
 
     public YamlUserDataSource(DataSourceManager dataSource) {
         // TODO: Implement.

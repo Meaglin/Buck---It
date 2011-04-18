@@ -5,13 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.buckit.datasource.DataSource;
+
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 
-public class FlatFileWarpsDataSource implements WarpsDataSource, DataSource {
+public class FlatFileWarpsDataSource implements WarpsDataSource{
 
     private DataSourceManager datasource;
 

@@ -2,11 +2,10 @@ package org.buckit.datasource.flatfile;
 
 import java.util.List;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.ReserveListDataSource;
 
-public class FlatFileReserveListDataSource implements ReserveListDataSource, DataSource {
+public class FlatFileReserveListDataSource implements ReserveListDataSource {
 
     public FlatFileReserveListDataSource(DataSourceManager dataSource) {
     }

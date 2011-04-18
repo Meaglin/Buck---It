@@ -2,13 +2,12 @@ package org.buckit.datasource.yaml;
 
 import java.util.Collection;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WarpsDataSource;
 import org.buckit.model.Warp;
 import org.bukkit.Location;
 
-public class YamlWarpsDataSource implements WarpsDataSource, DataSource {
+public class YamlWarpsDataSource implements WarpsDataSource{
 
     public YamlWarpsDataSource(DataSourceManager dataSource) {
         // TODO: Implement.

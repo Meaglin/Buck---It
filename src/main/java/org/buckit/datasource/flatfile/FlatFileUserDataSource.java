@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.buckit.Config;
 import org.buckit.access.AccessLevel;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-public class FlatFileUserDataSource implements UserDataSource, DataSource {
+public class FlatFileUserDataSource implements UserDataSource{
 
     private DataSourceManager datasource;
     private int lastId=0;

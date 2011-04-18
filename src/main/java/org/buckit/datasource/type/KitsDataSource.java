@@ -2,12 +2,12 @@ package org.buckit.datasource.type;
 
 import java.util.Collection;
 
+import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.model.Kit;
 
-public interface KitsDataSource {
+public interface KitsDataSource extends DataSource  {
 
-    public boolean load();
     public DataSourceManager getDataSource();
 
     public Kit getKit(String name);

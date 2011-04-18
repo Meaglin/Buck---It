@@ -2,11 +2,10 @@ package org.buckit.datasource.flatfile;
 
 import java.util.List;
 
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.WhiteListDataSource;
 
-public class FlatFileWhiteListDataSource implements WhiteListDataSource, DataSource {
+public class FlatFileWhiteListDataSource implements WhiteListDataSource{
 
     public FlatFileWhiteListDataSource(DataSourceManager dataSource) {
     }

@@ -254,6 +254,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if(dataholder.canUseCommand(command, getWorld().getName()))
             return true;
         
+        if(dataholder.canUseCommand(Config.FULL_ACCESS_STRING, getWorld().getName()))
+            return true;
+        
         String[] split = command.split(".");
         if(split.length > 1){
             for(int i = 0;i < split.length;i++){

@@ -9,13 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.database.Field.Type;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
-public class DatabaseKitsDataSource implements KitsDataSource, DataSource {
+public class DatabaseKitsDataSource implements KitsDataSource{
 
     private Map<String, Kit> kits;
 

@@ -1,18 +1,16 @@
 package org.buckit.datasource.flatfile;
 
-import java.util.List;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
-import org.buckit.datasource.flatfile.FileHandler;
 import org.buckit.datasource.type.KitsDataSource;
 import org.buckit.model.Kit;
 
-public class FlatFileKitsDataSource implements KitsDataSource, DataSource {
+public class FlatFileKitsDataSource implements KitsDataSource{
 
     private DataSourceManager datasource;
     

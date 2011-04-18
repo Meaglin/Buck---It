@@ -6,12 +6,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.buckit.Config;
-import org.buckit.datasource.DataSource;
 import org.buckit.datasource.DataSourceManager;
 import org.buckit.datasource.type.UserDataSource;
 import org.buckit.model.UserDataHolder;
 
-public class DatabaseUserDataSource implements UserDataSource, DataSource {
+public class DatabaseUserDataSource implements UserDataSource{
 
     
     private static String SELECT_USER           = "SELECT * FROM " + Config.DATABASE_USERS_TABLE + " WHERE username = ?";
