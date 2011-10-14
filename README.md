@@ -1,10 +1,16 @@
-<img src="https://github.com/Meaglin/Buck---It/raw/master/logo.png" />
+THIS PROJECT IS DEAD.
+=======
+
 Buck-it
 ======
+
 
 A Minecraft Server API, based on bukkit
 
 That's all!
+
+
+
 
 Licenses
 ======
